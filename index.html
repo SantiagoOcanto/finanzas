@@ -55,41 +55,60 @@
     </div>
 
     <div id="cont2" style="display:none;">
-        <div class="card-custom">
-            <form onsubmit="saveGral(event, 'Personal')">
-                <input type="text" name="concepto" class="form-control" placeholder="Concepto (Ej: Alquiler)" required>
-                <div class="row g-2">
-                    <div class="col-6"><input type="text" class="form-control montoMask" name="monto" placeholder="0,00" required></div>
-                    <div class="col-6"><select name="tipo" class="form-select"><option value="Egreso">Salida</option><option value="Ingreso">Entrada</option></select></div>
+    <div class="card-custom">
+        <form onsubmit="saveGral(event, 'Personal')">
+            <label class="small fw-bold">Fecha:</label>
+            <input type="date" name="fecha_manual" class="form-control" required>
+            
+            <input type="text" name="concepto" class="form-control" placeholder="Concepto" required>
+            <div class="row g-2">
+                <div class="col-6"><input type="text" class="form-control montoMask" name="monto" placeholder="0,00" required></div>
+                <div class="col-6"><select name="tipo" class="form-select"><option value="Egreso">Salida</option><option value="Ingreso">Entrada</option></select></div>
+            </div>
+            <div class="row g-2">
+                <div class="col-6">
+                    <select name="categoria" class="form-select">
+                        <option value="Servicios">Servicios</option>
+                        <option value="Compras">Compras</option>
+                        <option value="Otros">Otros</option>
+                    </select>
                 </div>
-                <div class="row g-2">
-                    <div class="col-6"><select name="categoria" class="form-select"><option value="Servicios">Servicios</option><option value="Compras">Compras</option><option value="Otros">Otros</option></select></div>
-                    <div class="col-6"><select name="metodo" class="form-select"><option value="Digital">Digital</option><option value="Efectivo">Efectivo</option></select></div>
-                </div>
-                <button type="submit" class="btn-pink">GUARDAR GASTO PERSONAL</button>
-            </form>
-        </div>
-        <div id="histPersonal" class="card-custom"></div>
+                <div class="col-6"><select name="metodo" class="form-select"><option value="Digital">Digital</option><option value="Efectivo">Efectivo</option></select></div>
+            </div>
+            <button type="submit" class="btn-pink">GUARDAR PERSONAL</button>
+        </form>
     </div>
+    <div id="histPersonal" class="card-custom"></div>
+</div>
 
-    <div id="cont3" style="display:none;">
-        <div class="card-custom">
-            <div style="font-weight: 800; margin-bottom: 10px;">Gasto/Ingreso Trabajo</div>
-            <form onsubmit="saveGral(event, 'Trabajos')">
-                <input type="text" name="concepto" class="form-control" placeholder="Concepto" required>
-                <div class="row g-2">
-                    <div class="col-6"><input type="text" class="form-control montoMask" name="monto" placeholder="0,00" required></div>
-                    <div class="col-6"><select name="tipo" class="form-select"><option value="Egreso">Salida</option><option value="Ingreso">Entrada</option></select></div>
+<div id="cont3" style="display:none;">
+    <div class="card-custom">
+        <div style="font-weight: 800; margin-bottom: 10px;">Gasto/Ingreso Trabajo</div>
+        <form onsubmit="saveGral(event, 'Trabajos')">
+            <label class="small fw-bold">Fecha:</label>
+            <input type="date" name="fecha_manual" class="form-control" required>
+
+            <input type="text" name="concepto" class="form-control" placeholder="Concepto" required>
+            <div class="row g-2">
+                <div class="col-6"><input type="text" class="form-control montoMask" name="monto" placeholder="0,00" required></div>
+                <div class="col-6"><select name="tipo" class="form-select"><option value="Egreso">Salida</option><option value="Ingreso">Entrada</option></select></div>
+            </div>
+            <div class="row g-2">
+                <div class="col-6">
+                    <select name="categoria" class="form-select">
+                        <option value="Alquiler">Alquiler</option>
+                        <option value="Servicios">Servicios</option>
+                        <option value="Insumos">Insumos</option>
+                        <option value="Otros">Otros</option>
+                    </select>
                 </div>
-                <div class="row g-2">
-                    <div class="col-6"><select name="metodo" class="form-select"><option value="Digital">Digital</option><option value="Efectivo">Efectivo</option></select></div>
-                    <div class="col-6"><input type="text" name="categoria" class="form-control" placeholder="Categoría"></div>
-                </div>
-                <button type="submit" class="btn-pink">GUARDAR</button>
-            </form>
-        </div>
-        <div id="histTrabajo" class="card-custom"></div>
+                <div class="col-6"><select name="metodo" class="form-select"><option value="Digital">Digital</option><option value="Efectivo">Efectivo</option></select></div>
+            </div>
+            <button type="submit" class="btn-pink">GUARDAR TRABAJO</button>
+        </form>
     </div>
+    <div id="histTrabajo" class="card-custom"></div>
+</div>
 
     <div id="cont4" style="display:none;">
         <div class="card-custom">
@@ -237,6 +256,11 @@
             renderHist('histTrabajo', db.trabajos);
             renderEventos();
             llenarMeses();
+            document.querySelectorAll('input[name="fecha_manual"]').forEach(inp => {
+            if(!inp.value) { // Solo si está vacío, le pone la fecha de hoy
+                inp.value = new Date().toISOString().split('T')[0];
+            }
+        });
         }
 
         function renderEventos() {
@@ -333,14 +357,41 @@
             document.getElementById('movEvNombre').innerText = "Nuevo registro en: " + nom;
             modMov.show();
         }
-        async function saveGral(e, hoja) {
-            e.preventDefault();
-            const fd = new FormData(e.target);
-            fd.append('action', 'add_movimiento');
-            fd.append('hoja', hoja);
-            await fetch(scriptURL, { method: 'POST', body: fd });
-            modMov.hide(); e.target.reset(); cargar();
-        }
+       async function saveGral(e, hoja) {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    
+    // Si existe fecha manual, la usamos, si no enviamos la actual (como respaldo)
+    const fecha = fd.get('fecha_manual');
+    if (fecha) {
+        fd.append('fecha', fecha); 
+    }
+
+    fd.append('action', 'add_movimiento');
+    fd.append('hoja', hoja);
+
+    // Efecto visual de carga
+    const btn = e.target.querySelector('button');
+    const originalText = btn.innerText;
+    btn.innerText = "GUARDANDO...";
+    btn.disabled = true;
+
+    try {
+        await fetch(scriptURL, { method: 'POST', body: fd });
+        e.target.reset();
+        // Ponemos la fecha de hoy por defecto después de resetear
+        const inputFecha = e.target.querySelector('[name="fecha_manual"]');
+        if(inputFecha) inputFecha.valueAsDate = new Date();
+        
+        if(hoja === 'Eventos') modMov.hide();
+        await cargar();
+    } catch (err) {
+        alert("Error al guardar");
+    } finally {
+        btn.innerText = originalText;
+        btn.disabled = false;
+    }
+}
         document.getElementById('formEv').onsubmit = async (e) => {
             e.preventDefault();
             const fd = new FormData(e.target);
