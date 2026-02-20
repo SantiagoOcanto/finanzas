@@ -202,7 +202,7 @@
             saldoReal = total;
             document.getElementById('txtSaldo').innerText = ojo ? "$" + fmt.format(total) : "••••••";
             document.getElementById('txtGastoMes').innerText = "$" + fmt.format(gastoDelMes);
-
+         document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
             renderHist('histPersonal', db.personal, 'Personal'); 
             renderHist('histTrabajo', db.trabajos, 'Trabajos');   
             renderEventos();
@@ -387,5 +387,6 @@ async function eliminarMovimiento(hoja, concepto, fecha) {
 </script>
 </body>
 </html>
+
 
 
