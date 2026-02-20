@@ -154,6 +154,26 @@
         'Trabajos': ['Pago por servicio', 'Insumos', 'Viáticos', 'Otros']
     };
 
+    function parseFechaSegura(valor) {
+    if (!valor) return new Date(0);
+
+    // Si ya es Date válido
+    const d = new Date(valor);
+    if (!isNaN(d)) return d;
+
+    // Si viene como "dd/MM/yyyy hh:mm:ss"
+    if (typeof valor === "string" && valor.includes("/")) {
+        const partes = valor.split(" ")[0].split("/");
+        return new Date(
+            parseInt(partes[2]),
+            parseInt(partes[1]) - 1,
+            parseInt(partes[0]),
+            12,0,0
+        );
+    }
+
+    return new Date(0);
+}
     function verTab(n) {
         [1,2,3,4].forEach(i => {
             document.getElementById('cont'+i).style.display = i === n ? 'block' : 'none';
@@ -183,41 +203,45 @@
     }
 
     async function cargar() {
-        try {
-            const r = await fetch(`${scriptURL}?t=${Date.now()}`);
-            db = await r.json();
-            let total = 0, gastoDelMes = 0;
-            const mesActual = new Date().getMonth();
+    try {
+        const r = await fetch(`${scriptURL}?t=${Date.now()}`);
+        db = await r.json();
+        let total = 0, gastoDelMes = 0;
+        const mesActual = new Date().getMonth();
 
-            ["personal", "trabajos", "eventos_det"].forEach(k => {
-                if(db[k]) db[k].forEach(f => {
-                    const ing = parseFloat(String(f[2]).replace(/\./g, '').replace(',', '.')) || 0;
-                    const egr = parseFloat(String(f[3]).replace(/\./g, '').replace(',', '.')) || 0;
-                    total += (ing - egr);
-                    const fMov = new Date(f[0] || f[6]);
-                    if (!isNaN(fMov) && fMov.getMonth() === mesActual) gastoDelMes += egr;
-                });
+        ["personal", "trabajos", "eventos_det"].forEach(k => {
+            if(db[k]) db[k].forEach(f => {
+                const ing = parseFloat(String(f[2]).replace(/\./g, '').replace(',', '.')) || 0;
+                const egr = parseFloat(String(f[3]).replace(/\./g, '').replace(',', '.')) || 0;
+                total += (ing - egr);
+                const fMov = new Date(f[0]);
+                if (!isNaN(fMov) && fMov.getMonth() === mesActual) gastoDelMes += egr;
             });
+        });
 
-            saldoReal = total;
-            document.getElementById('txtSaldo').innerText = ojo ? "$" + fmt.format(total) : "••••••";
-            document.getElementById('txtGastoMes').innerText = "$" + fmt.format(gastoDelMes);
-         document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
-            renderHist('histPersonal', db.personal, 'Personal'); 
-            renderHist('histTrabajo', db.trabajos, 'Trabajos');   
-            renderEventos();
-            llenarMeses();
-            actualizarCategorias();
-            document.getElementById('fechaMain').value = new Date().toISOString().split('T')[0];
-        } catch(e) { console.error(e); }
-    }
+        saldoReal = total;
+        document.getElementById('txtSaldo').innerText = ojo ? "$" + fmt.format(total) : "••••••";
+        document.getElementById('txtGastoMes').innerText = "$" + fmt.format(gastoDelMes);
+        
+        // CORRECCIÓN AQUÍ: El ID correcto es 'fechaMain'
+        const inputFecha = document.getElementById('fechaMain');
+        if (inputFecha && !inputFecha.value) { 
+            inputFecha.value = new Date().toISOString().split('T')[0];
+        }
 
+        renderHist('histPersonal', db.personal, 'Personal'); 
+        renderHist('histTrabajo', db.trabajos, 'Trabajos');   
+        renderEventos();
+        llenarMeses();
+        actualizarCategorias();
+    } catch(e) { console.error("Error cargando datos:", e); }
+}
  function renderHist(id, data, hojaNombre) {
     const contenedor = document.getElementById(id);
     // Quitamos el .slice(0, 5) para mostrar TODO
     let datosLimpios = data.filter(row => row[1] && row[1].toString().trim() !== "");
 
-    datosLimpios.sort((a, b) => new Date(b[0]) - new Date(a[0]));
+  datosLimpios.sort((a, b) => parseFechaSegura(b[0]) - parseFechaSegura(a[0]));
 
     const hoyStr = new Date().toDateString();
 
@@ -227,7 +251,7 @@
         const monto = ingreso > 0 ? ingreso : egreso;
         const clase = ingreso > 0 ? 'v-ing' : 'v-egr';
         
-        const fechaObj = new Date(m[0]);
+       const fechaObj = parseFechaSegura(m[0]);
         let displayFecha;
         
         // Si es hoy, mostrar hora. Si no, mostrar día/mes.
@@ -245,7 +269,7 @@
             </div>
             <div style="display:flex; align-items:center; gap:10px;">
                 <span class="${clase}">${fmt.format(monto)}</span>
-                <span onclick="eliminarMovimiento('${hojaNombre}', '${m[1]}', '${m[0]}')" style="cursor:pointer; filter: grayscale(1);">🗑️</span>
+                <span onclick="eliminarMovimiento('${hojaNombre}', '${m[1]}', ${parseFechaSegura(m[0]).getTime()})" style="cursor:pointer; filter: grayscale(1);">🗑️</span>
             </div>
         </div>`;
     }).join('');
@@ -348,7 +372,7 @@ async function eliminarMovimiento(hoja, concepto, fecha) {
     let todos = [...db.personal, ...db.trabajos, ...db.eventos_det];
     
     let filtrados = todos.filter(m => {
-        const f = new Date(m[0] || m[6]);
+        const f = parseFechaSegura(m[0] || m[6]);
         return f.getMonth() === mes && (filtroActual === 'TODO' || m[5] === filtroActual) && m[1];
     });
 
@@ -369,7 +393,7 @@ async function eliminarMovimiento(hoja, concepto, fecha) {
         const val = parseFloat(String(m[2]).replace(/\./g, '').replace(',', '.')) || parseFloat(String(m[3]).replace(/\./g, '').replace(',', '.')) || 0;
         return `
         <div class="mov-item">
-            <span>${m[1]} <br><small class="text-muted">${new Date(m[0]||m[6]).getDate()}/${mes+1} | ${m[5]}</small></span>
+            <span>${m[1]} <br><small class="text-muted">${parseFechaSegura(m[0]||m[6]).getDate()}/${mes+1} | ${m[5]}</small></span>
             <span class="${parseFloat(m[2])>0?'v-ing':'v-egr'}">${fmt.format(val)}</span>
         </div>`;
     }).join('') || "Sin movimientos.";
@@ -387,6 +411,5 @@ async function eliminarMovimiento(hoja, concepto, fecha) {
 </script>
 </body>
 </html>
-
 
 
