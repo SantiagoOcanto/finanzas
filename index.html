@@ -1,415 +1,796 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>Naza Web</title>
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <style>
-        :root { --soft-pink: #fff5f7; --main-pink: #fce4ec; --accent-pink: #f06292; --text: #5d1029; }
-        body { background-color: var(--soft-pink); color: var(--text); font-family: sans-serif; padding: 10px; padding-bottom: 80px; }
-        .card-custom { background: white; border-radius: 20px; padding: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 12px; border: none; position: relative; }
-        .btn-pink { background: var(--accent-pink); color: white; border: none; border-radius: 12px; padding: 10px; font-weight: bold; width: 100%; }
-        .btn-icon { background: var(--main-pink); border: none; border-radius: 10px; color: var(--accent-pink); font-size: 0.7rem; padding: 5px 10px; font-weight: bold; }
-        .form-control, .form-select { border-radius: 12px; border: 1px solid var(--main-pink); margin-bottom: 8px; font-size: 0.9rem; }
-        .tab-nav { display: flex; background: white; border-radius: 15px; overflow: hidden; margin-bottom: 15px; }
-        .tab-nav button { flex: 1; border: none; background: none; padding: 12px; font-size: 0.65rem; font-weight: 800; color: #bfa5ae; }
-        .tab-nav button.active { color: var(--accent-pink); border-bottom: 3px solid var(--accent-pink); background: #fffafb; }
-        .mov-item { display: flex; justify-content: space-between; font-size: 0.8rem; padding: 8px 0; border-bottom: 1px solid var(--soft-pink); }
-        .v-ing { color: #2fb380; font-weight: bold; }
-        .v-egr { color: #e55039; font-weight: bold; }
-        .filter-bar { display: flex; gap: 5px; overflow-x: auto; padding: 5px 0; }
-        .badge-filter { padding: 6px 12px; border-radius: 20px; background: white; border: 1px solid var(--main-pink); font-size: 0.7rem; cursor: pointer; color: var(--text); white-space: nowrap; }
-        .badge-filter.active { background: var(--accent-pink); color: white; border-color: var(--accent-pink); }
+      :root {
+        --soft-pink: #fff5f7;
+        --main-pink: #fce4ec;
+        --accent-pink: #f06292;
+        --text: #5d1029;
+      }
+      body {
+        background-color: var(--soft-pink);
+        color: var(--text);
+        font-family: sans-serif;
+        padding: 10px;
+        padding-bottom: 80px;
+      }
+      .card-custom {
+        background: white;
+        border-radius: 20px;
+        padding: 15px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-bottom: 12px;
+        border: none;
+        position: relative;
+      }
+      .btn-pink {
+        background: var(--accent-pink);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 10px;
+        font-weight: bold;
+        width: 100%;
+      }
+      .btn-icon {
+        background: var(--main-pink);
+        border: none;
+        border-radius: 10px;
+        color: var(--accent-pink);
+        font-size: 0.7rem;
+        padding: 5px 10px;
+        font-weight: bold;
+      }
+      .form-control,
+      .form-select {
+        border-radius: 12px;
+        border: 1px solid var(--main-pink);
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+      }
+      .tab-nav {
+        display: flex;
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        margin-bottom: 15px;
+      }
+      .tab-nav button {
+        flex: 1;
+        border: none;
+        background: none;
+        padding: 12px;
+        font-size: 0.65rem;
+        font-weight: 800;
+        color: #bfa5ae;
+      }
+      .tab-nav button.active {
+        color: var(--accent-pink);
+        border-bottom: 3px solid var(--accent-pink);
+        background: #fffafb;
+      }
+      .mov-item {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--soft-pink);
+      }
+      .v-ing {
+        font-weight: bold;
+      }
+      .v-egr {
+        font-weight: bold;
+      }
+      .filter-bar {
+        display: flex;
+        gap: 5px;
+        overflow-x: auto;
+        padding: 5px 0;
+      }
+      .badge-filter {
+        padding: 6px 12px;
+        border-radius: 20px;
+        background: white;
+        border: 1px solid var(--main-pink);
+        font-size: 0.7rem;
+        cursor: pointer;
+        color: var(--text);
+        white-space: nowrap;
+      }
+      .badge-filter.active {
+        background: var(--accent-pink);
+        color: white;
+        border-color: var(--accent-pink);
+      }
     </style>
-</head>
-<body>
-
-    <div class="row g-2 mb-3" style="display:none;">
-        <div class="col-6" style="display:none;">
-            <div class="card-custom text-center p-2">
-                <div style="font-size: 0.6rem; font-weight: bold; color: var(--accent-pink);">SALDO</div>
-                <div id="txtSaldo" style="font-weight: 800; font-size: 1rem;" onclick="toggleOjo()">••••••</div>
-            </div>
+  </head>
+  <body>
+    <div class="row g-2 mb-3">
+      <div class="col-6" style="display: none">
+        <div class="card-custom text-center p-2">
+          <div
+            style="
+              font-size: 0.6rem;
+              font-weight: bold;
+              color: var(--accent-pink);
+            "
+          >
+            SALDO
+          </div>
+          <div
+            id="txtSaldo"
+            style="font-weight: 800; font-size: 1rem"
+            onclick="toggleOjo()"
+          >
+            ••••••
+          </div>
         </div>
-        <div class="col-6">
-            <div class="card-custom text-center p-2">
-                <div style="font-size: 0.6rem; font-weight: bold; color: #888;">GASTO MES</div>
-                <div id="txtGastoMes" style="font-weight: 800; font-size: 1rem; color: #e55039;">$ 0,00</div>
-            </div>
+      </div>
+      <div class="col-6" style="display: none">
+        <div class="card-custom text-center p-2">
+          <div style="font-size: 0.6rem; font-weight: bold; color: #888">
+            GASTO MES
+          </div>
+          <div
+            id="txtGastoMes"
+            style="font-weight: 800; font-size: 1rem; color: #e55039"
+          >
+            $ 0,00
+          </div>
         </div>
+      </div>
     </div>
 
     <div class="tab-nav">
-        <button id="t1" class="active" onclick="verTab(1)">NUEVO</button>
-        <button id="t2" onclick="verTab(2)">EVENTOS</button>
-        <button id="t3" onclick="verTab(3)">HISTORIAL</button>
-        <button id="t4" onclick="verTab(4)">REPORTES</button>
+      <button id="t1" class="active" onclick="verTab(1)">NUEVO</button>
+      <button id="t2" onclick="verTab(2)">EVENTOS</button>
+      <button id="t3" onclick="verTab(3)">HISTORIAL</button>
+      <button id="t4" onclick="verTab(4)">REPORTES</button>
     </div>
-    
+
     <div id="cont1">
-        <div class="card-custom">
-            <div style="font-weight: 800; margin-bottom: 10px; font-size: 0.9rem;">Cargar Movimiento</div>
-            <form id="formUnico" onsubmit="prepararEnvio(event)">
-                <div class="row g-2">
-                    <div class="col-6">
-                        <label class="small fw-bold">Destino:</label>
-                        <select name="hoja" id="selectorHoja" class="form-select" onchange="actualizarCategorias()">
-                            <option value="Personal">Personal</option>
-                            <option value="Trabajos">Trabajo</option>
-                        </select>
-                    </div>
-                    <div class="col-6">
-                        <label class="small fw-bold">Fecha:</label>
-                        <input type="date" name="fecha_manual" id="fechaMain" class="form-control" required>
-                    </div>
-                </div>
-
-                <input type="text" name="concepto" class="form-control" placeholder="Concepto (ej: Supermercado)" required>
-                
-                <div class="row g-2">
-                    <div class="col-6">
-                        <input type="text" class="form-control montoMask" name="monto" placeholder="0,00" required>
-                    </div>
-                    <div class="col-6">
-                        <select name="tipo" class="form-select">
-                            <option value="Egreso">Salida (-)</option>
-                            <option value="Ingreso">Entrada (+)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="row g-2">
-                    <div class="col-6">
-                        <select name="categoria" id="catDinamica" class="form-select"></select>
-                    </div>
-                    <div class="col-6">
-                        <select name="metodo" class="form-select">
-                            <option value="Digital">Digital</option>
-                            <option value="Efectivo">Efectivo</option>
-                        </select>
-                    </div>
-                </div>
-                <button type="submit" id="btnMain" class="btn-pink mt-2">GUARDAR REGISTRO</button>
-            </form>
+      <div class="card-custom">
+        <div style="font-weight: 800; margin-bottom: 10px; font-size: 0.9rem">
+          Cargar Movimiento
         </div>
-    </div>
-
-    <div id="cont2" style="display:none;">
-        <button class="btn-pink mb-3" onclick="nuevoEv()">+ CREAR NUEVO EVENTO</button>
-        <div id="listaEventos"></div>
-    </div>
-
-    <div id="cont3" style="display:none;">
-        <div class="card-custom" id="histPersonal"></div>
-        <div class="card-custom" id="histTrabajo"></div>
-    </div>
-
-    <div id="cont4" style="display:none;">
-        <div class="card-custom">
-            <div style="font-weight: 800; font-size: 0.9rem; margin-bottom: 10px;">Análisis Mensual</div>
-            <div class="row g-2 mb-3">
-                <div class="col-4"style="display:none;">
-                    <div style="background: #e8f5e9; padding: 8px; border-radius: 12px; text-align: center;">
-                        <div id="resIngreso" style="font-size: 0.75rem; font-weight: 800; color: #1b5e20;">$0</div>
-                    </div>
-                </div>
-                <div class="col-4"style="display:none;">
-                    <div style="background: #ffebee; padding: 8px; border-radius: 12px; text-align: center;">
-                        <div id="resGasto" style="font-size: 0.75rem; font-weight: 800; color: #b71c1c;">$0</div>
-                    </div>
-                </div>
-                <div class="col-4"style="display:none;">
-                    <div style="background: var(--soft-pink); padding: 8px; border-radius: 12px; text-align: center;">
-                        <div id="resNeto" style="font-size: 0.75rem; font-weight: 800;">$0</div>
-                    </div>
-                </div>
+        <form id="formUnico" onsubmit="prepararEnvio(event)">
+          <div class="row g-2">
+            <div class="col-6">
+              <label class="small fw-bold">Destino:</label>
+              <select
+                name="hoja"
+                id="selectorHoja"
+                class="form-select"
+                onchange="actualizarCategorias()"
+              >
+                <option value="Personal">Personal</option>
+                <option value="Trabajos">Trabajo</option>
+              </select>
             </div>
-            <select id="selMes" class="form-select" onchange="renderFiltros()"></select>
-            <div class="filter-bar">
-                <div class="badge-filter active" onclick="cambiarFiltro('TODO', this)">Todo</div>
-                <div class="badge-filter" onclick="cambiarFiltro('Efectivo', this)">Efectivo</div>
-                <div class="badge-filter" onclick="cambiarFiltro('Digital', this)">Digital</div>
+            <div class="col-6">
+              <label class="small fw-bold">Fecha:</label>
+              <input
+                type="date"
+                name="fecha_manual"
+                id="fechaMain"
+                class="form-control"
+                required
+              />
             </div>
-            <div id="resFiltros" class="mt-3"></div>
+          </div>
+
+          <input
+            type="text"
+            name="concepto"
+            class="form-control"
+            placeholder="Concepto (ej: Supermercado)"
+            required
+          />
+
+          <div class="row g-2">
+            <div class="col-6">
+              <input
+                type="text"
+                class="form-control montoMask"
+                name="monto"
+                placeholder="0,00"
+                required
+              />
+            </div>
+            <div class="col-6">
+              <select name="tipo" class="form-select">
+                <option value="Egreso">Salida (-)</option>
+                <option value="Ingreso">Entrada (+)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row g-2">
+            <div class="col-6">
+              <select
+                name="categoria"
+                id="catDinamica"
+                class="form-select"
+              ></select>
+            </div>
+            <div class="col-6">
+              <select name="metodo" class="form-select">
+                <option value="Digital">Digital</option>
+                <option value="Efectivo">Efectivo</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" id="btnMain" class="btn-pink mt-2">
+            GUARDAR REGISTRO
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div id="cont2" style="display: none">
+      <button class="btn-pink mb-3" onclick="nuevoEv()">
+        + CREAR NUEVO EVENTO
+      </button>
+      <div id="listaEventos"></div>
+    </div>
+
+    <div id="cont3" style="display: none">
+      <div class="card-custom" id="histPersonal"></div>
+      <div class="card-custom" id="histTrabajo"></div>
+    </div>
+
+    <div id="cont4" style="display: none">
+      <div class="card-custom">
+        <div style="font-weight: 800; font-size: 0.9rem; margin-bottom: 10px">
+          Análisis Mensual
         </div>
+        <div class="row g-2 mb-3">
+          <div class="col-4" style="display: none">
+            <div
+              style="
+                background: #e8f5e9;
+                padding: 8px;
+                border-radius: 12px;
+                text-align: center;
+              "
+            >
+              <div
+                id="resIngreso"
+                style="font-size: 0.75rem; font-weight: 800; color: #1b5e20"
+              >
+                $0
+              </div>
+            </div>
+          </div>
+          <div class="col-4" style="display: none">
+            <div
+              style="
+                background: #ffebee;
+                padding: 8px;
+                border-radius: 12px;
+                text-align: center;
+              "
+            >
+              <div
+                id="resGasto"
+                style="font-size: 0.75rem; font-weight: 800; color: #b71c1c"
+              >
+                $0
+              </div>
+            </div>
+          </div>
+          <div class="col-4" style="display: none">
+            <div
+              style="
+                background: var(--soft-pink);
+                padding: 8px;
+                border-radius: 12px;
+                text-align: center;
+              "
+            >
+              <div id="resNeto" style="font-size: 0.75rem; font-weight: 800">
+                $0
+              </div>
+            </div>
+          </div>
+        </div>
+        <select
+          id="selMes"
+          class="form-select"
+          onchange="renderFiltros()"
+        ></select>
+        <div class="filter-bar">
+          <div
+            class="badge-filter active"
+            onclick="cambiarFiltro('TODO', this)"
+          >
+            Todo
+          </div>
+          <div class="badge-filter" onclick="cambiarFiltro('Efectivo', this)">
+            Efectivo
+          </div>
+          <div class="badge-filter" onclick="cambiarFiltro('Digital', this)">
+            Digital
+          </div>
+        </div>
+        <div id="resFiltros" class="mt-3"></div>
+      </div>
     </div>
 
-    <div class="modal fade" id="modalEv" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content" style="border-radius:25px; padding:15px;"><form id="formEv"><input type="hidden" name="action" value="upsert_evento"><input type="hidden" name="nombre_original" id="evOrig"><input type="text" name="nombre" id="evNom" class="form-control" placeholder="Nombre Evento" required><div class="row g-2"><div class="col-6"><label class="small">Inicio</label><input type="date" name="inicio" id="evIni" class="form-control"></div><div class="col-6"><label class="small">Fin</label><input type="date" name="fin" id="evFin" class="form-control"></div></div><button type="submit" class="btn-pink mt-3">GUARDAR EVENTO</button></form></div></div></div>
-    
-    <div class="modal fade" id="modalMov" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content" style="border-radius:25px; padding:15px;"><h6 id="movEvNombre"></h6><form onsubmit="saveGral(event, 'Eventos')"><input type="hidden" name="evento_padre" id="movEvPadre"><input type="text" name="concepto" class="form-control" placeholder="Concepto" required><div class="row g-2"><div class="col-6"><input type="text" class="form-control montoMask" name="monto" placeholder="0,00" required></div><div class="col-6"><select name="tipo" class="form-select"><option value="Egreso">Salida</option><option value="Ingreso">Entrada</option></select></div></div><div class="row g-2"><div class="col-6"><select name="metodo" class="form-select"><option value="Digital">Digital</option><option value="Efectivo">Efectivo</option></select></div><div class="col-6"><input type="text" name="categoria" class="form-control" placeholder="Categoría"></div></div><button type="submit" class="btn-pink mt-2">REGISTRAR EN EVENTO</button></form></div></div></div>
+    <div class="modal fade" id="modalEv" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 25px; padding: 15px">
+          <form id="formEv">
+            <input type="hidden" name="action" value="upsert_evento" /><input
+              type="hidden"
+              name="nombre_original"
+              id="evOrig"
+            /><input
+              type="text"
+              name="nombre"
+              id="evNom"
+              class="form-control"
+              placeholder="Nombre Evento"
+              required
+            />
+            <div class="row g-2">
+              <div class="col-6">
+                <label class="small">Inicio</label
+                ><input
+                  type="date"
+                  name="inicio"
+                  id="evIni"
+                  class="form-control"
+                />
+              </div>
+              <div class="col-6">
+                <label class="small">Fin</label
+                ><input
+                  type="date"
+                  name="fin"
+                  id="evFin"
+                  class="form-control"
+                />
+              </div>
+            </div>
+            <button type="submit" class="btn-pink mt-3">GUARDAR EVENTO</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modalMov" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 25px; padding: 15px">
+          <h6 id="movEvNombre"></h6>
+          <form onsubmit="saveGral(event, 'Eventos')">
+            <input type="hidden" name="evento_padre" id="movEvPadre" /><input
+              type="text"
+              name="concepto"
+              class="form-control"
+              placeholder="Concepto"
+              required
+            />
+            <div class="row g-2">
+              <div class="col-6">
+                <input
+                  type="text"
+                  class="form-control montoMask"
+                  name="monto"
+                  placeholder="0,00"
+                  required
+                />
+              </div>
+              <div class="col-6">
+                <select name="tipo" class="form-select">
+                  <option value="Egreso">Salida</option>
+                  <option value="Ingreso">Entrada</option>
+                </select>
+              </div>
+            </div>
+            <div class="row g-2">
+              <div class="col-6">
+                <select name="metodo" class="form-select">
+                  <option value="Digital">Digital</option>
+                  <option value="Efectivo">Efectivo</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <input
+                  type="text"
+                  name="categoria"
+                  class="form-control"
+                  placeholder="Categoría"
+                />
+              </div>
+            </div>
+            <button type="submit" class="btn-pink mt-2">
+              REGISTRAR EN EVENTO
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwZi85N-iFxBXTk3Ial_2QHAmVq_Nm3i5Y4DZmQqAoU-n7B2WmxVXGn_hr7tkp3IABi/exec';
-    let db = { personal: [], trabajos: [], eventos: [], eventos_det: [] };
-    let saldoReal = 0; let ojo = false; let enviandoDatos = false; let filtroActual = 'TODO';
-    const fmt = new Intl.NumberFormat('es-AR', { minimumFractionDigits: 2 });
-    const modEv = new bootstrap.Modal(document.getElementById('modalEv'));
-    const modMov = new bootstrap.Modal(document.getElementById('modalMov'));
+      const scriptURL =
+        "https://script.google.com/macros/s/AKfycbwZi85N-iFxBXTk3Ial_2QHAmVq_Nm3i5Y4DZmQqAoU-n7B2WmxVXGn_hr7tkp3IABi/exec";
+      let db = { personal: [], trabajos: [], eventos: [], eventos_det: [] };
+      let saldoReal = 0;
+      let ojo = false;
+      let enviandoDatos = false;
+      let filtroActual = "TODO";
+      const fmt = new Intl.NumberFormat("es-AR", { minimumFractionDigits: 2 });
+      const modEv = new bootstrap.Modal(document.getElementById("modalEv"));
+      const modMov = new bootstrap.Modal(document.getElementById("modalMov"));
 
-    const CATEGORIAS = {
-        'Personal': ['Compras', 'Servicios', 'Comida', 'Otros'],
-        'Trabajos': ['Pago por servicio', 'Insumos', 'Viáticos', 'Otros']
-    };
+      const CATEGORIAS = {
+        Personal: ["Compras", "Servicios", "Comida", "Otros"],
+        Trabajos: ["Pago por servicio", "Insumos", "Viáticos", "Otros"],
+      };
 
-    function parseFechaSegura(valor) {
-    if (!valor) return new Date(0);
+      function parseFechaSegura(valor) {
+        if (!valor) return new Date();
 
-    // Si ya es Date válido
-    const d = new Date(valor);
-    if (!isNaN(d)) return d;
+        // Si ya es un objeto Date
+        if (valor instanceof Date && !isNaN(valor)) return valor;
 
-    // Si viene como "dd/MM/yyyy hh:mm:ss"
-    if (typeof valor === "string" && valor.includes("/")) {
-        const partes = valor.split(" ")[0].split("/");
-        return new Date(
-            parseInt(partes[2]),
-            parseInt(partes[1]) - 1,
-            parseInt(partes[0]),
-            12,0,0
-        );
-    }
+        // Si es un string de Google (ISO)
+        let d = new Date(valor);
+        if (!isNaN(d.getTime())) return d;
 
-    return new Date(0);
-}
-    function verTab(n) {
-        [1,2,3,4].forEach(i => {
-            document.getElementById('cont'+i).style.display = i === n ? 'block' : 'none';
-            document.getElementById('t'+i).classList.toggle('active', i === n);
-        });
-        if(n === 4) renderFiltros();
-    }
+        // Si es formato dd/mm/yyyy hh:mm:ss
+        if (typeof valor === "string" && valor.includes("/")) {
+          try {
+            let partes = valor.split(" ");
+            let fechaPartes = partes[0].split("/");
+            let horaPartes = partes[1] ? partes[1].split(":") : [12, 0, 0];
 
-    function actualizarCategorias() {
-        const hoja = document.getElementById('selectorHoja').value;
-        const catSelect = document.getElementById('catDinamica');
-        catSelect.innerHTML = CATEGORIAS[hoja].map(c => `<option value="${c}">${c}</option>`).join('');
-    }
-
-    // Máscara de moneda
-    document.addEventListener('input', e => {
-        if(e.target.classList.contains('montoMask')) {
-            let v = e.target.value.replace(/\D/g, '');
-            v = (v / 100).toFixed(2).replace('.', ',');
-            e.target.value = v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            return new Date(
+              parseInt(fechaPartes[2]), // año
+              parseInt(fechaPartes[1]) - 1, // mes
+              parseInt(fechaPartes[0]), // día
+              parseInt(horaPartes[0]), // hora
+              parseInt(horaPartes[1]), // min
+              0,
+            );
+          } catch (e) {
+            return new Date();
+          }
         }
-    });
+        return new Date();
+      }
+      function verTab(n) {
+        [1, 2, 3, 4].forEach((i) => {
+          document.getElementById("cont" + i).style.display =
+            i === n ? "block" : "none";
+          document.getElementById("t" + i).classList.toggle("active", i === n);
+        });
+        if (n === 4) renderFiltros();
+      }
 
-    function toggleOjo() { 
-        ojo = !ojo; 
-        document.getElementById('txtSaldo').innerText = ojo ? "$" + fmt.format(saldoReal) : "••••••"; 
-    }
+      function actualizarCategorias() {
+        const hoja = document.getElementById("selectorHoja").value;
+        const catSelect = document.getElementById("catDinamica");
+        catSelect.innerHTML = CATEGORIAS[hoja]
+          .map((c) => `<option value="${c}">${c}</option>`)
+          .join("");
+      }
 
-    async function cargar() {
-    try {
-        const r = await fetch(`${scriptURL}?t=${Date.now()}`);
-        db = await r.json();
-        let total = 0, gastoDelMes = 0;
-        const mesActual = new Date().getMonth();
+      // Máscara de moneda
+      document.addEventListener("input", (e) => {
+        if (e.target.classList.contains("montoMask")) {
+          let v = e.target.value.replace(/\D/g, "");
+          v = (v / 100).toFixed(2).replace(".", ",");
+          e.target.value = v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+      });
 
-        ["personal", "trabajos", "eventos_det"].forEach(k => {
-            if(db[k]) db[k].forEach(f => {
-                const ing = parseFloat(String(f[2]).replace(/\./g, '').replace(',', '.')) || 0;
-                const egr = parseFloat(String(f[3]).replace(/\./g, '').replace(',', '.')) || 0;
-                total += (ing - egr);
+      function toggleOjo() {
+        ojo = !ojo;
+        document.getElementById("txtSaldo").innerText = ojo
+          ? "$" + fmt.format(saldoReal)
+          : "••••••";
+      }
+      // Función para obtener la fecha local correcta (evita problemas de UTC)
+      function setFechaHoy() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        const fechaLocal = `${year}-${month}-${day}`;
+
+        const inputFecha = document.getElementById("fechaMain");
+        if (inputFecha) inputFecha.value = fechaLocal;
+      }
+      async function cargar() {
+        setFechaHoy();
+        try {
+          const r = await fetch(`${scriptURL}?t=${Date.now()}`);
+          db = await r.json();
+          let total = 0,
+            gastoDelMes = 0;
+          const mesActual = new Date().getMonth();
+
+          ["personal", "trabajos", "eventos_det"].forEach((k) => {
+            if (db[k])
+              db[k].forEach((f) => {
+                const ing =
+                  parseFloat(
+                    String(f[2]).replace(/\./g, "").replace(",", "."),
+                  ) || 0;
+                const egr =
+                  parseFloat(
+                    String(f[3]).replace(/\./g, "").replace(",", "."),
+                  ) || 0;
+                total += ing - egr;
                 const fMov = new Date(f[0]);
-                if (!isNaN(fMov) && fMov.getMonth() === mesActual) gastoDelMes += egr;
-            });
-        });
+                if (!isNaN(fMov) && fMov.getMonth() === mesActual)
+                  gastoDelMes += egr;
+              });
+          });
 
-        saldoReal = total;
-        document.getElementById('txtSaldo').innerText = ojo ? "$" + fmt.format(total) : "••••••";
-        document.getElementById('txtGastoMes').innerText = "$" + fmt.format(gastoDelMes);
-        
-        // CORRECCIÓN AQUÍ: El ID correcto es 'fechaMain'
-        const inputFecha = document.getElementById('fechaMain');
-        if (inputFecha && !inputFecha.value) { 
-            inputFecha.value = new Date().toISOString().split('T')[0];
+          saldoReal = total;
+          document.getElementById("txtSaldo").innerText = ojo
+            ? "$" + fmt.format(total)
+            : "••••••";
+          document.getElementById("txtGastoMes").innerText =
+            "$" + fmt.format(gastoDelMes);
+
+          // 2. Pasamos siempre un array aunque no haya datos (evita el crasheo del historial)
+          renderHist("histPersonal", db.personal || [], "Personal");
+          renderHist("histTrabajo", db.trabajos || [], "Trabajos");
+
+          renderEventos();
+          llenarMeses();
+          actualizarCategorias();
+        } catch (e) {
+          console.error("Error cargando datos:", e);
+        }
+      }
+      function renderHist(id, data, hojaNombre) {
+        const contenedor = document.getElementById(id);
+        if (!data || data.length === 0) {
+          contenedor.innerHTML = `<div class="small fw-bold mb-2 text-uppercase" style="color:var(--accent-pink)">Historial ${hojaNombre}</div><div class="small">No hay datos</div>`;
+          return;
         }
 
-        renderHist('histPersonal', db.personal, 'Personal'); 
-        renderHist('histTrabajo', db.trabajos, 'Trabajos');   
-        renderEventos();
-        llenarMeses();
-        actualizarCategorias();
-    } catch(e) { console.error("Error cargando datos:", e); }
-}
- function renderHist(id, data, hojaNombre) {
-    const contenedor = document.getElementById(id);
-    // Quitamos el .slice(0, 5) para mostrar TODO
-    let datosLimpios = data.filter(row => row[1] && row[1].toString().trim() !== "");
+        let datosLimpios = data.filter(
+          (row) => row[1] && row[1].toString().trim() !== "",
+        );
+        // Ordenamos: lo más nuevo arriba en la WEB
+        datosLimpios.sort(
+          (a, b) => parseFechaSegura(b[0]) - parseFechaSegura(a[0]),
+        );
 
-  datosLimpios.sort((a, b) => parseFechaSegura(b[0]) - parseFechaSegura(a[0]));
+        const html = datosLimpios
+          .map((m) => {
+            const ing =
+              parseFloat(String(m[2]).replace(/\./g, "").replace(",", ".")) ||
+              0;
+            const egr =
+              parseFloat(String(m[3]).replace(/\./g, "").replace(",", ".")) ||
+              0;
+            const monto = ing > 0 ? ing : egr;
+            const clase = ing > 0 ? "v-ing" : "v-egr";
+            const fObj = parseFechaSegura(m[0]);
 
-    const hoyStr = new Date().toDateString();
-
-    const html = datosLimpios.map(m => {
-        const ingreso = parseFloat(String(m[2]).replace(/\./g, '').replace(',', '.')) || 0;
-        const egreso = parseFloat(String(m[3]).replace(/\./g, '').replace(',', '.')) || 0;
-        const monto = ingreso > 0 ? ingreso : egreso;
-        const clase = ingreso > 0 ? 'v-ing' : 'v-egr';
-        
-       const fechaObj = parseFechaSegura(m[0]);
-        let displayFecha;
-        
-        // Si es hoy, mostrar hora. Si no, mostrar día/mes.
-        if (fechaObj.toDateString() === hoyStr) {
-            displayFecha = fechaObj.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
-        } else {
-            displayFecha = fechaObj.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit' });
-        }
-
-        return `
-        <div class="mov-item">
-            <div>
-                <div style="font-weight:bold;">${m[1]} <small style="color:#888;">(${displayFecha})</small></div>
-                <div style="font-size:0.65rem; color:#bfa5ae;">${m[4] || ''} | ${m[5] || ''}</div>
+            return `
+        <div class="mov-item" style="align-items: center;">
+            <div style="flex-grow: 1;">
+                <div style="font-weight:bold;">${m[1]} <small style="color:#888;">(${fObj.toLocaleDateString("es-AR", { day: "2-digit", month: "2-digit" })})</small></div>
+                <div style="font-size:0.65rem; color:#bfa5ae;">${m[4] || ""} | ${m[5] || ""}</div>
             </div>
-            <div style="display:flex; align-items:center; gap:10px;">
+            <div style="display:flex; align-items:center; gap:15px;">
                 <span class="${clase}">${fmt.format(monto)}</span>
-                <span onclick="eliminarMovimiento('${hojaNombre}', '${m[1]}', ${parseFechaSegura(m[0]).getTime()})" style="cursor:pointer; filter: grayscale(1);">🗑️</span>
+                <span onclick="eliminarMovimiento('${hojaNombre}', '${m[1]}', ${fObj.getTime()})" 
+                      style="cursor:pointer; font-size: 1.1rem; padding: 5px;">🗑️</span>
             </div>
         </div>`;
-    }).join('');
+          })
+          .join("");
 
-    contenedor.innerHTML = `<div class="small fw-bold mb-2 text-uppercase" style="font-size:0.7rem; color:var(--accent-pink)">Historial ${hojaNombre}</div>` + html;
-}
+        contenedor.innerHTML =
+          `<div class="small fw-bold mb-2 text-uppercase" style="font-size:0.7rem; color:var(--accent-pink)">Historial ${hojaNombre}</div>` +
+          html;
+      }
 
-    function renderEventos() {
-        const list = document.getElementById('listaEventos');
-        list.innerHTML = db.eventos.filter(e => e[3] === "Activo").map((e, idx) => `
+      function renderEventos() {
+        const list = document.getElementById("listaEventos");
+        list.innerHTML = db.eventos
+          .filter((e) => e[3] === "Activo")
+          .map(
+            (e, idx) => `
             <div class="card-custom">
                 <div style="font-weight: 800;">${e[0]}</div>
                 <button class="btn-icon w-100 mt-2" onclick="abrirAddMov('${e[0]}')">+ REGISTRAR GASTO</button>
-            </div>`).join('');
-    }
+            </div>`,
+          )
+          .join("");
+      }
 
-    function prepararEnvio(e) {
-        const hoja = document.getElementById('selectorHoja').value;
+      function prepararEnvio(e) {
+        const hoja = document.getElementById("selectorHoja").value;
         saveGral(e, hoja);
-    }
-
-    async function saveGral(e, hoja) {
+      }
+      // Reemplaza tu función saveGral actual por esta:
+      async function saveGral(e, hoja) {
         e.preventDefault();
         if (enviandoDatos) return;
-        
+
         const form = e.target;
-        const btn = form.querySelector('button');
+        const btn = form.querySelector("button");
         enviandoDatos = true;
-        btn.disabled = true; btn.innerText = "GUARDANDO...";
+        btn.disabled = true;
+        btn.innerText = "GUARDANDO...";
 
         const fd = new FormData(form);
-        fd.append('action', 'add_movimiento');
-        fd.append('hoja', hoja);
-        fd.append('fecha', fd.get('fecha_manual'));
+        fd.append("action", "add_movimiento");
+        fd.append("hoja", hoja);
+
+        // CORRECCIÓN: Si no hay fecha en el formulario, asigna la de hoy
+        let fecha = fd.get("fecha_manual");
+        if (!fecha) {
+          fecha = new Date().toISOString().split("T")[0];
+        }
+        fd.append("fecha", fecha);
 
         try {
-            const resp = await fetch(scriptURL, { method: 'POST', body: fd });
-            if (resp.ok) {
-                form.reset();
-                if(hoja === 'Eventos') modMov.hide();
-                await cargar();
-                alert("¡Guardado con éxito!");
-            }
-        } catch (err) { alert("Error de conexión"); }
-        finally {
-            enviandoDatos = false;
-            btn.disabled = false; btn.innerText = "GUARDAR REGISTRO";
+          const resp = await fetch(scriptURL, { method: "POST", body: fd });
+          if (resp.ok) {
+            form.reset();
+            if (hoja === "Eventos") modMov.hide();
+            await cargar();
+            alert("¡Guardado con éxito!");
+          }
+        } catch (err) {
+          alert("Error de conexión");
+        } finally {
+          enviandoDatos = false;
+          btn.disabled = false;
+          btn.innerText = "GUARDAR REGISTRO";
         }
-    }
+      }
+      // Funciones de Reportes (Simplificadas)
+      function llenarMeses() {
+        const sel = document.getElementById("selMes");
+        const meses = [
+          "Enero",
+          "Febrero",
+          "Marzo",
+          "Abril",
+          "Mayo",
+          "Junio",
+          "Julio",
+          "Agosto",
+          "Septiembre",
+          "Octubre",
+          "Noviembre",
+          "Diciembre",
+        ];
+        sel.innerHTML = meses
+          .map(
+            (m, i) =>
+              `<option value="${i}" ${i === new Date().getMonth() ? "selected" : ""}>${m}</option>`,
+          )
+          .join("");
+      }
 
-    // Funciones de Reportes (Simplificadas)
-    function llenarMeses() {
-        const sel = document.getElementById('selMes');
-        const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-        sel.innerHTML = meses.map((m, i) => `<option value="${i}" ${i === new Date().getMonth() ? 'selected' : ''}>${m}</option>`).join('');
-    }
-
-    function cambiarFiltro(tipo, el) {
+      function cambiarFiltro(tipo, el) {
         filtroActual = tipo;
-        document.querySelectorAll('.badge-filter').forEach(b => b.classList.remove('active'));
-        el.classList.add('active');
+        document
+          .querySelectorAll(".badge-filter")
+          .forEach((b) => b.classList.remove("active"));
+        el.classList.add("active");
         renderFiltros();
-    }
-async function eliminarMovimiento(hoja, concepto, fecha) {
-    // 1. Mensaje de comprobación antes de hacer nada
-    const confirmar = confirm(`¿Estás seguro de que quieres borrar "${concepto}"?`);
-    if (!confirmar) return;
+      }
+      async function eliminarMovimiento(hoja, concepto, timestamp) {
+        if (!confirm(`¿Borrar "${concepto}"?`)) return;
 
-    // Bloqueo visual simple
-    console.log("Eliminando...");
+        // Buscamos el ícono o fila para dar feedback visual (opcional)
+        console.log("Eliminando de " + hoja + "...");
 
-    const fd = new FormData();
-    fd.append('action', 'eliminar_movimiento');
-    fd.append('hoja', hoja);
-    fd.append('concepto', concepto);
-    fd.append('fecha', fecha);
+        const fd = new FormData();
+        fd.append("action", "eliminar_movimiento");
+        fd.append("hoja", hoja);
+        fd.append("concepto", concepto);
+        fd.append("fecha", timestamp);
 
-    try {
-        const resp = await fetch(scriptURL, { method: 'POST', body: fd });
-        const texto = await resp.text();
+        try {
+          const resp = await fetch(scriptURL, { method: "POST", body: fd });
+          const texto = await resp.text();
 
-        if (texto.includes("Eliminado")) {
-            // 2. Mensaje de éxito
-            alert("✅ Registro eliminado correctamente.");
-            await cargar(); // Refresca toda la web para que desaparezca de la vista
-        } else {
-            alert("⚠️ " + texto);
+          if (texto.includes("Eliminado")) {
+            await cargar(); // Recargamos todo para actualizar saldo y lista
+          } else {
+            alert("Error: " + texto);
+          }
+        } catch (err) {
+          alert("Error de conexión al eliminar.");
         }
-    } catch (err) {
-        console.error("Error:", err);
-        alert("❌ Error de conexión al intentar borrar.");
-    }
-}
-  function renderFiltros() {
-    const selMes = document.getElementById('selMes');
-    if(!selMes) return;
-    const mes = parseInt(selMes.value);
-    const res = document.getElementById('resFiltros');
-    
-    let todos = [...db.personal, ...db.trabajos, ...db.eventos_det];
-    
-    let filtrados = todos.filter(m => {
-        const f = parseFechaSegura(m[0] || m[6]);
-        return f.getMonth() === mes && (filtroActual === 'TODO' || m[5] === filtroActual) && m[1];
-    });
+      }
+      function renderFiltros() {
+        const selMes = document.getElementById("selMes");
+        if (!selMes) return;
+        const mes = parseInt(selMes.value);
+        const res = document.getElementById("resFiltros");
 
-    let tIn = 0; let tOut = 0;
-    filtrados.forEach(m => { 
-        // Limpieza profunda para evitar el NaN
-        const ing = parseFloat(String(m[2]).replace(/\./g, '').replace(',', '.')) || 0;
-        const egr = parseFloat(String(m[3]).replace(/\./g, '').replace(',', '.')) || 0;
-        tIn += ing; 
-        tOut += egr; 
-    });
+        let todos = [
+          ...(db.personal || []),
+          ...(db.trabajos || []),
+          ...(db.eventos_det || []),
+        ];
 
-    document.getElementById('resIngreso').innerText = "+" + fmt.format(tIn);
-    document.getElementById('resGasto').innerText = "-" + fmt.format(tOut);
-    document.getElementById('resNeto').innerText = fmt.format(tIn - tOut);
+        let filtrados = todos.filter((m) => {
+          const f = parseFechaSegura(m[0] || m[6]);
+          return (
+            f.getMonth() === mes &&
+            (filtroActual === "TODO" || m[5] === filtroActual) &&
+            m[1]
+          );
+        });
 
-    res.innerHTML = filtrados.map(m => {
-        const val = parseFloat(String(m[2]).replace(/\./g, '').replace(',', '.')) || parseFloat(String(m[3]).replace(/\./g, '').replace(',', '.')) || 0;
-        return `
+        let tIn = 0;
+        let tOut = 0;
+        filtrados.forEach((m) => {
+          const ing =
+            parseFloat(String(m[2]).replace(/\./g, "").replace(",", ".")) || 0;
+          const egr =
+            parseFloat(String(m[3]).replace(/\./g, "").replace(",", ".")) || 0;
+          tIn += ing;
+          tOut += egr;
+        });
+
+        document.getElementById("resIngreso").innerText = "+" + fmt.format(tIn);
+        document.getElementById("resGasto").innerText = "-" + fmt.format(tOut);
+        document.getElementById("resNeto").innerText = fmt.format(tIn - tOut);
+
+        res.innerHTML =
+          filtrados
+            .map((m) => {
+              const ing =
+                parseFloat(String(m[2]).replace(/\./g, "").replace(",", ".")) ||
+                0;
+              const egr =
+                parseFloat(String(m[3]).replace(/\./g, "").replace(",", ".")) ||
+                0;
+              const val = ing > 0 ? ing : egr;
+              const claseColor = ing > 0 ? "v-ing" : "v-egr";
+
+              return `
         <div class="mov-item">
-            <span>${m[1]} <br><small class="text-muted">${parseFechaSegura(m[0]||m[6]).getDate()}/${mes+1} | ${m[5]}</small></span>
-            <span class="${parseFloat(m[2])>0?'v-ing':'v-egr'}">${fmt.format(val)}</span>
+            <span>${m[1]} <br><small class="text-muted">${parseFechaSegura(m[0] || m[6]).getDate()}/${mes + 1} | ${m[5] || "Otro"}</small></span>
+            <span class="${claseColor}">${fmt.format(val)}</span>
         </div>`;
-    }).join('') || "Sin movimientos.";
-}
+            })
+            .join("") || "Sin movimientos en este mes.";
+      }
 
-    function abrirAddMov(nom) {
-        document.getElementById('movEvPadre').value = nom;
-        document.getElementById('movEvNombre').innerText = nom;
+      function abrirAddMov(nom) {
+        document.getElementById("movEvPadre").value = nom;
+        document.getElementById("movEvNombre").innerText = nom;
         modMov.show();
-    }
+      }
 
-    function nuevoEv() { modEv.show(); }
+      function nuevoEv() {
+        modEv.show();
+      }
 
-    window.onload = cargar;
-</script>
-</body>
+      window.onload = cargar;
+    </script>
+  </body>
 </html>
-
-
