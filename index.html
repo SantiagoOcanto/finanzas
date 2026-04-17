@@ -2,10 +2,19 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>Naza Web</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <style>
       :root {
         --soft-pink: #fff5f7;
@@ -36,6 +45,7 @@
         background: #fafafa;
         display: flex;
         align-items: center;
+        border-radius: 10px 0 0 10px;
       }
       .card-custom {
         background: white;
@@ -53,14 +63,13 @@
         font-weight: bold;
         width: 100%;
       }
-      /* Botones de orden ultra pequeños */
       .btn-xs {
-        padding: 2px 6px;
+        padding: 2px 8px;
         font-size: 0.65rem;
         border-radius: 6px;
-        line-height: 1.2;
       }
-      .form-control, .form-select {
+      .form-control,
+      .form-select {
         border-radius: 12px;
         border: 1px solid var(--main-pink);
         margin-bottom: 8px;
@@ -84,9 +93,14 @@
         color: var(--accent-pink);
         border-bottom: 3px solid var(--accent-pink);
       }
-      .v-ing { color: #1b5e20; font-weight: bold; }
-      .v-egr { color: #b71c1c; font-weight: bold; }
-      
+      .v-ing {
+        color: #1b5e20;
+        font-weight: bold;
+      }
+      .v-egr {
+        color: #b71c1c;
+        font-weight: bold;
+      }
       #floatSuma {
         display: none;
         position: fixed;
@@ -99,22 +113,14 @@
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         z-index: 1000;
       }
-      /* Quitar el borde azul al hacer clic en los iconos */
-  .btn:focus, .btn:active {
-    outline: none !important;
-    box-shadow: none !important;
-  }
-  
-  /* Hacer los botones de acción un poco más sutiles */
-  .btn-sm.text-primary, .btn-sm.text-danger {
-    background: transparent;
-    border: none;
-    transition: transform 0.1s ease;
-  }
-  
-  .btn-sm.text-primary:active, .btn-sm.text-danger:active {
-    transform: scale(0.9); /* Efecto de rebote al tocar */
-  }
+      /* Estilo para ocultar montos */
+      .monto-oculto {
+        filter: blur(5px);
+        transition: filter 0.3s;
+      }
+      .monto-visible {
+        filter: blur(0);
+      }
     </style>
   </head>
   <body>
@@ -131,7 +137,13 @@
           <div class="row g-2 mb-2">
             <div class="col-7">
               <label class="small fw-bold">Plata ($):</label>
-              <input type="text" class="form-control montoMask" name="monto" placeholder="0,00" required />
+              <input
+                type="text"
+                class="form-control montoMask"
+                name="monto"
+                placeholder="0,00"
+                required
+              />
             </div>
             <div class="col-5">
               <label class="small fw-bold">Tipo:</label>
@@ -142,19 +154,47 @@
             </div>
           </div>
           <label class="small fw-bold">Fecha:</label>
-          <input type="date" name="fecha_manual" id="fechaMain" class="form-control mb-3" required />
-          <label class="small fw-bold">¿Qué es? (Concepto)</label>
-          <input type="text" name="concepto" class="form-control mb-3" placeholder="Ej: Supermercado" required />
+          <input
+            type="date"
+            name="fecha_manual"
+            id="fechaMain"
+            class="form-control mb-3"
+            required
+          />
+          <label class="small fw-bold">¿Qué es?</label>
+          <input
+            type="text"
+            name="concepto"
+            class="form-control mb-3"
+            placeholder="Ej: Supermercado"
+            required
+          />
           <label class="small fw-bold">Categoría:</label>
-          <select id="catDinamica" class="form-select mb-2" onchange="checkManual(this.value)"></select>
+          <select
+            id="catDinamica"
+            class="form-select mb-2"
+            onchange="checkManual(this.value)"
+          ></select>
           <div id="wrapperManual" style="display: none">
-            <input type="text" id="catManual" name="categoria" class="form-control mb-3" placeholder="Nombre de categoría nueva..." style="border: 2px solid var(--accent-pink)" />
+            <input
+              type="text"
+              id="catManual"
+              name="categoria"
+              class="form-control mb-3"
+              placeholder="Nueva categoría..."
+              style="border: 2px solid var(--accent-pink)"
+            />
           </div>
           <hr />
           <div class="row g-2">
             <div class="col-6">
-              <label class="small fw-bold">Guardar en:</label>
-              <select name="hoja" id="selectorHoja" class="form-select" onchange="actualizarCategorias()">
+              <label class="small fw-bold">Hoja:</label>
+              <select
+                name="hoja"
+                id="selectorHoja"
+                class="form-select"
+                onchange="actualizarCategorias()"
+              >
                 <option value="Personal">Personal</option>
                 <option value="Trabajos">Trabajos</option>
               </select>
@@ -167,7 +207,9 @@
               </select>
             </div>
           </div>
-          <button type="submit" id="btnMain" class="btn-pink mt-3">GUARDAR REGISTRO</button>
+          <button type="submit" id="btnMain" class="btn-pink mt-3">
+            GUARDAR REGISTRO
+          </button>
         </form>
       </div>
     </div>
@@ -175,85 +217,73 @@
     <div id="cont4" style="display: none">
       <div class="card-custom">
         <div class="d-flex align-items-center justify-content-between mb-3">
-          <select id="selMes" class="form-select form-select-sm m-0" style="width: auto; height: 32px;" onchange="renderReporte()"></select>
-          <div class="d-flex gap-1">
-            <button type="button" class="btn btn-xs btn-pink fw-bold" id="btnOrdenCarga" onclick="cambiarOrden('carga')">CARGA</button>
-            <button type="button" class="btn btn-xs btn-outline-secondary fw-bold" id="btnOrdenFecha" onclick="cambiarOrden('fecha')">FECHA</button>
+          <select
+            id="selMes"
+            class="form-select form-select-sm m-0"
+            style="width: auto; height: 32px; min-width: 100px"
+            onchange="renderReporte()"
+          ></select>
+          <div class="d-flex gap-2 align-items-center">
+            <i
+              id="btnToggleOjo"
+              class="bi bi-eye-slash text-muted"
+              style="font-size: 1.2rem; cursor: pointer"
+              onclick="toggleVisibilidadMontos()"
+            ></i>
+            <button
+              class="btn btn-xs btn-pink fw-bold"
+              id="btnOrdenCarga"
+              onclick="cambiarOrden('carga')"
+            >
+              CARGA
+            </button>
+            <button
+              class="btn btn-xs btn-outline-secondary fw-bold"
+              id="btnOrdenFecha"
+              onclick="cambiarOrden('fecha')"
+            >
+              FECHA
+            </button>
           </div>
         </div>
 
-        <div id="gridCategorias" class="mb-3"></div>
+        <div
+          id="gridCategorias"
+          style="
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+          "
+        ></div>
 
         <div id="listaDetallada"></div>
-        
-        <div id="wrapperVerMas" class="text-center my-3" style="display:none">
-            <button class="btn btn-sm fw-bold" style="color: var(--accent-pink); background: white; border: 1px solid var(--accent-pink); border-radius: 10px;" onclick="mostrarTodos()">Ver todos los movimientos</button>
+        <div id="wrapperVerMas" class="text-center my-3" style="display: none">
+          <button
+            class="btn btn-sm fw-bold"
+            style="
+              color: var(--accent-pink);
+              background: white;
+              border: 1px solid var(--accent-pink);
+              border-radius: 10px;
+            "
+            onclick="mostrarTodos()"
+          >
+            Ver todos
+          </button>
         </div>
       </div>
     </div>
 
     <div class="modal fade" id="modalEdit" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="border-radius: 20px; padding: 15px">
+        <div
+          class="modal-content"
+          style="border-radius: 20px; padding: 15px; border: none"
+        >
           <form id="formEdit" onsubmit="enviarEdicion(event)">
             <input type="hidden" name="rowIdx" id="editIdx" />
             <input type="hidden" name="hojaOrig" id="editHoja" />
-            <label class="small fw-bold">Fecha:</label>
-            <input type="date" name="fecha" id="editFecha" class="form-control mb-2" required />
-            <label class="small fw-bold">Concepto:</label>
-            <input type="text" name="concepto" id="editConcepto" class="form-control mb-2" required />
-            <div class="row g-2 mb-2">
-              <div class="col-6">
-                <label class="small fw-bold">Monto:</label>
-                <input type="text" name="monto" id="editMonto" class="form-control montoMask" />
-              </div>
-              <div class="col-6">
-                <label class="small fw-bold">Tipo:</label>
-                <select name="tipo" id="editTipo" class="form-select">
-                  <option value="Ingreso">Entrada (+)</option>
-                  <option value="Egreso">Salida (-)</option>
-                </select>
-              </div>
-            </div>
-            <label class="small fw-bold">Categoría:</label>
-            <input type="text" name="categoria" id="editCat" class="form-control mb-3" />
-            <button type="submit" class="btn-pink">GUARDAR CAMBIOS</button>
-          </form>
-        </div>
-      </div>
-    </div>
-
-    <div id="cont4" style="display: none">
-  <div class="card-custom">
-    <div class="d-flex gap-2 mb-2">
-      <button type="button" class="btn btn-sm btn-pink w-100 fw-bold" id="btnOrdenCarga" onclick="cambiarOrden('carga')">ORDEN CARGA</button>
-      <button type="button" class="btn btn-sm btn-pink w-100 fw-bold" id="btnOrdenFecha" onclick="cambiarOrden('fecha')">ORDEN FECHA</button>
-    </div>
-
-    <div id="gridCategorias" class="d-flex flex-wrap gap-2 mb-3">
-      </div>
-
-    <div class="d-flex align-items-center gap-2 mb-3">
-      <select id="selMes" class="form-select m-0" onchange="renderReporte()"></select>
-      
-    </div>
-
-    <div id="listaDetallada"></div>
-    
-    <div id="wrapperVerMas" class="text-center my-3" style="display:none">
-        <button class="btn btn-sm fw-bold" style="color: var(--accent-pink); background: white; border: 1px solid var(--accent-pink); border-radius: 10px;" onclick="mostrarTodos()">Ver todos los movimientos</button>
-    </div>
-  </div>
- 
-
-
-    <div class="modal fade" id="modalEdit" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="border-radius: 20px; padding: 15px">
-          <form id="formEdit" onsubmit="enviarEdicion(event)">
-            <input type="hidden" name="rowIdx" id="editIdx" />
-            <input type="hidden" name="hojaOrig" id="editHoja" />
-            <label class="small fw-bold">Fecha:</label>
             <input
               type="date"
               name="fecha"
@@ -261,7 +291,6 @@
               class="form-control mb-2"
               required
             />
-            <label class="small fw-bold">Concepto:</label>
             <input
               type="text"
               name="concepto"
@@ -271,7 +300,6 @@
             />
             <div class="row g-2 mb-2">
               <div class="col-6">
-                <label class="small fw-bold">Monto:</label>
                 <input
                   type="text"
                   name="monto"
@@ -280,14 +308,12 @@
                 />
               </div>
               <div class="col-6">
-                <label class="small fw-bold">Tipo:</label>
                 <select name="tipo" id="editTipo" class="form-select">
                   <option value="Ingreso">Entrada (+)</option>
                   <option value="Egreso">Salida (-)</option>
                 </select>
               </div>
             </div>
-            <label class="small fw-bold">Categoría:</label>
             <input
               type="text"
               name="categoria"
@@ -301,310 +327,314 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-  const scriptURL = "https://script.google.com/macros/s/AKfycbzWuiMzgMmE2rl9eM29YyvPsXWbJ95w4W4f7pzEGvHo2pj7nFnThk8C3owH0kSMpaW_/exec";
+    <script>
+      const scriptURL =
+        "https://script.google.com/macros/s/AKfycbzWuiMzgMmE2rl9eM29YyvPsXWbJ95w4W4f7pzEGvHo2pj7nFnThk8C3owH0kSMpaW_/exec";
+      let db = { personal: [], trabajos: [] },
+        categoriasExtra = { Personal: [], Trabajos: [] };
+      let filtroCategoria = null,
+        criterioOrden = "carga",
+        mostrandoTodo = false,
+        sumaAcumulada = 0,
+        montosVisibles = false;
+      const fmt = new Intl.NumberFormat("es-AR", { minimumFractionDigits: 2 });
+      const modEdit = new bootstrap.Modal(document.getElementById("modalEdit"));
+      const CATS = {
+        Personal: ["Compras", "Servicios", "Salud", "Transporte"],
+        Trabajos: ["Sueldo", "Insumos", "Viáticos", "Herramientas"],
+      };
 
-  let mostrandoTodo = false; 
-  let resumenOculto = false; 
-  let db = { personal: [], trabajos: [] };
-  let categoriasExtra = { Personal: [], Trabajos: [] };
-  let sumaAcumulada = 0;
-  let criterioOrden = "carga"; 
-  const fmt = new Intl.NumberFormat("es-AR", { minimumFractionDigits: 2 });
-  const modEdit = new bootstrap.Modal(document.getElementById("modalEdit"));
+      function verTab(n) {
+        document.getElementById("cont1").style.display =
+          n === 1 ? "block" : "none";
+        document.getElementById("cont4").style.display =
+          n === 4 ? "block" : "none";
+        document.getElementById("t1").className = n === 1 ? "active" : "";
+        document.getElementById("t4").className = n === 4 ? "active" : "";
+        if (n === 4) {
+          mostrandoTodo = false;
+          filtroCategoria = null;
+          renderReporte();
+        }
+      }
 
-  function toggleVisibilidadResumen() {
-    resumenOculto = !resumenOculto;
-    renderReporte();
-  }
+      function toggleVisibilidadMontos() {
+        montosVisibles = !montosVisibles;
+        const btn = document.getElementById("btnToggleOjo");
+        btn.className = montosVisibles
+          ? "bi bi-eye text-primary"
+          : "bi bi-eye-slash text-muted";
+        renderReporte();
+      }
 
-  function mostrarTodos() {
-    mostrandoTodo = true;
-    renderReporte();
-  }
+      function cambiarOrden(nuevo) {
+        criterioOrden = nuevo;
+        document.getElementById("btnOrdenCarga").className =
+          nuevo === "carga"
+            ? "btn btn-xs btn-pink fw-bold"
+            : "btn btn-xs btn-outline-secondary fw-bold";
+        document.getElementById("btnOrdenFecha").className =
+          nuevo === "fecha"
+            ? "btn btn-xs btn-pink fw-bold"
+            : "btn btn-xs btn-outline-secondary fw-bold";
+        renderReporte();
+      }
 
-  const CATS = {
-    Personal: [ "Compras", "Servicios", "Salud", "Transporte"],
-    Trabajos: ["Sueldo", "Insumos", "Viáticos", "Herramientas"],
-  };
+      function filtrarPorCategoria(cat) {
+        filtroCategoria = filtroCategoria === cat ? null : cat;
+        renderReporte();
+      }
+      function mostrarTodos() {
+        mostrandoTodo = true;
+        renderReporte();
+      }
 
-  function verTab(n) {
-    document.getElementById("cont1").style.display = n === 1 ? "block" : "none";
-    document.getElementById("cont4").style.display = n === 4 ? "block" : "none";
-    document.getElementById("t1").classList.toggle("active", n === 1);
-    document.getElementById("t4").classList.toggle("active", n === 4);
-    if (n === 4) {
-      mostrandoTodo = false; 
-      renderReporte();
-    }
-  }
+      document.addEventListener("input", (e) => {
+        if (e.target.classList.contains("montoMask")) {
+          let v = e.target.value.replace(/\D/g, "");
+          v = (v / 100).toFixed(2).replace(".", ",");
+          e.target.value = v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+      });
 
-  function cambiarOrden(nuevo) {
-    criterioOrden = nuevo;
-    document.getElementById("btnOrdenCarga").className = nuevo === "carga" ? "btn btn-xs btn-pink fw-bold" : "btn btn-xs btn-outline-secondary fw-bold";
-    document.getElementById("btnOrdenFecha").className = nuevo === "fecha" ? "btn btn-xs btn-pink fw-bold" : "btn btn-xs btn-outline-secondary fw-bold";
-    renderReporte();
-  }
+      async function cargar() {
+        document.getElementById("fechaMain").value = new Date()
+          .toISOString()
+          .split("T")[0];
+        try {
+          const r = await fetch(`${scriptURL}?t=${Date.now()}`);
+          db = await r.json();
+          extraerCategoriasNuevas();
+          llenarMeses();
+          actualizarCategorias();
+          if (document.getElementById("cont4").style.display === "block")
+            renderReporte();
+        } catch (e) {
+          console.error(e);
+        }
+      }
 
-  function actualizarCategorias() {
-    const h = document.getElementById("selectorHoja").value;
-    const sel = document.getElementById("catDinamica");
-    const todas = [...new Set([...CATS[h], ...categoriasExtra[h]])];
-    sel.innerHTML = `<option value="" disabled selected>Seleccioná...</option>` +
-      todas.map((c) => `<option value="${c}">${c}</option>`).join("") +
-      `<option value="OTRA" style="font-weight:bold; color:var(--accent-pink);">+ AGREGAR NUEVA</option>`;
-    checkManual(sel.value);
-  }
-
-  function checkManual(v) {
-    const wrapper = document.getElementById("wrapperManual");
-    const input = document.getElementById("catManual");
-    if (v === "OTRA") {
-      wrapper.style.display = "block";
-      input.value = "";
-      input.focus();
-    } else {
-      wrapper.style.display = "none";
-      input.value = v;
-    }
-  }
-
-  document.addEventListener("input", (e) => {
-    if (e.target.classList.contains("montoMask")) {
-      let v = e.target.value.replace(/\D/g, "");
-      v = (v / 100).toFixed(2).replace(".", ",");
-      e.target.value = v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    }
-  });
-
-  async function prepararEnvio(e) {
-    e.preventDefault();
-    const btn = document.getElementById("btnMain");
-    btn.disabled = true;
-    const fd = new FormData(e.target);
-    fd.set("categoria", document.getElementById("catManual").value);
-    fd.append("action", "add_movimiento");
-    try {
-      await fetch(scriptURL, { method: "POST", body: fd });
-      e.target.reset();
-      await cargar();
-    } catch (err) {
-      alert("Error al guardar");
-    }
-    btn.disabled = false;
-  }
-
-  async function cargar() {
-    document.getElementById("fechaMain").value = new Date().toISOString().split("T")[0];
-    try {
-      const r = await fetch(`${scriptURL}?t=${Date.now()}`);
-      db = await r.json();
-      extraerCategoriasNuevas();
-      llenarMeses();
-      actualizarCategorias();
-      if (document.getElementById("cont4").style.display === "block") renderReporte();
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
-  function extraerCategoriasNuevas() {
-    categoriasExtra = { Personal: [], Trabajos: [] };
-    ["personal", "trabajos"].forEach((key) => {
-      if (db[key]) {
-        db[key].forEach((m) => {
-          const cat = m[4];
-          const hojaKey = key.charAt(0).toUpperCase() + key.slice(1);
-          if (cat && !CATS[hojaKey].includes(cat) && !categoriasExtra[hojaKey].includes(cat)) {
-            categoriasExtra[hojaKey].push(cat);
-          }
+      function extraerCategoriasNuevas() {
+        categoriasExtra = { Personal: [], Trabajos: [] };
+        ["personal", "trabajos"].forEach((key) => {
+          if (db[key])
+            db[key].forEach((m) => {
+              const cat = m[4],
+                hKey = key.charAt(0).toUpperCase() + key.slice(1);
+              if (
+                cat &&
+                !CATS[hKey].includes(cat) &&
+                !categoriasExtra[hKey].includes(cat)
+              )
+                categoriasExtra[hKey].push(cat);
+            });
         });
       }
-    });
-  }
 
-  function llenarMeses() {
-    const sel = document.getElementById("selMes");
-    if (sel.options.length > 0) return;
-    const meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-    sel.innerHTML = meses.map((m, i) => `<option value="${i}" ${i === new Date().getMonth() ? "selected" : ""}>${m}</option>`).join("");
-  }
+      function actualizarCategorias() {
+        const h = document.getElementById("selectorHoja").value,
+          sel = document.getElementById("catDinamica");
+        const todas = [...new Set([...CATS[h], ...categoriasExtra[h]])];
+        sel.innerHTML =
+          `<option value="" disabled selected>Seleccioná...</option>` +
+          todas.map((c) => `<option value="${c}">${c}</option>`).join("") +
+          `<option value="OTRA" style="font-weight:bold; color:var(--accent-pink);">+ NUEVA</option>`;
+      }
 
-  // Nueva función para eliminar movimientos
- async function eliminarMov(hoja, id, concepto) {
-  if (!confirm(`¿Estás seguro de eliminar "${concepto}"?`)) return;
-  
-  const fila = document.getElementById(`fila-${id}`);
-  if (fila) fila.style.opacity = "0.3";
+      function checkManual(v) {
+        const w = document.getElementById("wrapperManual"),
+          i = document.getElementById("catManual");
+        w.style.display = v === "OTRA" ? "block" : "none";
+        i.value = v === "OTRA" ? "" : v;
+        if (v === "OTRA") i.focus();
+      }
 
-  // Construimos la URL con los parámetros para borrar
-  const urlBorrar = `${scriptURL}?action=delete_movimiento&hoja=${hoja}&id=${id}`;
+      function llenarMeses() {
+        const sel = document.getElementById("selMes");
+        const meses = [
+          "Enero",
+          "Febrero",
+          "Marzo",
+          "Abril",
+          "Mayo",
+          "Junio",
+          "Julio",
+          "Agosto",
+          "Septiembre",
+          "Octubre",
+          "Noviembre",
+          "Diciembre",
+        ];
+        if (sel.options.length === 0)
+          sel.innerHTML = meses
+            .map(
+              (m, i) =>
+                `<option value="${i}" ${i === new Date().getMonth() ? "selected" : ""}>${m}</option>`,
+            )
+            .join("");
+      }
 
-  try {
-    // Usamos mode: 'no-cors' para evitar errores de bloqueo del navegador
-    await fetch(urlBorrar, { method: "GET", mode: 'no-cors' });
-    
-    // Esperamos un momento para que Google procese y recargamos
-    setTimeout(() => {
-      cargar();
-      alert("Movimiento eliminado");
-    }, 600);
-    
-  } catch (e) {
-    console.error("Error:", e);
-    alert("No se pudo eliminar");
-    if (fila) fila.style.opacity = "1";
-  }
-}
-  function renderReporte() {
-    const mes = parseInt(document.getElementById("selMes").value);
-    sumaAcumulada = 0;
-    document.getElementById("floatSuma").style.display = "none";
+      async function prepararEnvio(e) {
+        e.preventDefault();
+        const btn = document.getElementById("btnMain");
+        btn.disabled = true;
+        const fd = new FormData(e.target);
+        fd.set("categoria", document.getElementById("catManual").value);
+        fd.append("action", "add_movimiento");
+        try {
+          await fetch(scriptURL, { method: "POST", body: fd });
+          e.target.reset();
+          cargar();
+          alert("¡Guardado!");
+        } catch (err) {
+          alert("Error");
+        }
+        btn.disabled = false;
+      }
 
-    let todos = [];
-    if (db.personal) db.personal.forEach((m, i) => todos.push({ d: m, id: i + 2, h: "Personal" }));
-    if (db.trabajos) db.trabajos.forEach((m, i) => todos.push({ d: m, id: i + 2, h: "Trabajos" }));
+      async function eliminarMov(hoja, id, concepto) {
+        if (!confirm(`¿Eliminar "${concepto}"?`)) return;
+        try {
+          await fetch(
+            `${scriptURL}?action=delete_movimiento&hoja=${hoja}&id=${id}`,
+            { method: "GET", mode: "no-cors" },
+          );
+          setTimeout(cargar, 600);
+        } catch (e) {
+          alert("Error");
+        }
+      }
 
-    let filtrados = todos.filter((x) => new Date(x.d[0]).getUTCMonth() === mes);
+      function renderReporte() {
+        const mes = parseInt(document.getElementById("selMes").value);
+        sumaAcumulada = 0;
+        document.getElementById("floatSuma").style.display = "none";
+        let todos = [];
+        if (db.personal)
+          db.personal.forEach((m, i) =>
+            todos.push({ d: m, id: i + 2, h: "Personal" }),
+          );
+        if (db.trabajos)
+          db.trabajos.forEach((m, i) =>
+            todos.push({ d: m, id: i + 2, h: "Trabajos" }),
+          );
+        let filtrados = todos.filter(
+          (x) => new Date(x.d[0]).getUTCMonth() === mes,
+        );
 
-    // 1. RESUMEN POR CATEGORÍA
-    let grupos = {};
-    filtrados.forEach((x) => {
-      let cat = x.d[4] || "Otros";
-      let ing = parseFloat(String(x.d[2]).replace(/\./g, "").replace(",", ".")) || 0;
-      let egr = parseFloat(String(x.d[3]).replace(/\./g, "").replace(",", ".")) || 0;
-      if (!grupos[cat]) grupos[cat] = 0;
-      grupos[cat] += ing - egr;
-    });
+        let grupos = {};
+        filtrados.forEach((x) => {
+          let cat = x.d[4] || "Otros",
+            ing =
+              parseFloat(String(x.d[2]).replace(/\./g, "").replace(",", ".")) ||
+              0,
+            egr =
+              parseFloat(String(x.d[3]).replace(/\./g, "").replace(",", ".")) ||
+              0;
+          if (!grupos[cat]) grupos[cat] = 0;
+          grupos[cat] += ing - egr;
+        });
 
-    const gridCat = document.getElementById("gridCategorias");
-    if (gridCat) {
-        gridCat.style.display = "grid";
-        gridCat.style.gridTemplateColumns = "repeat(auto-fill, minmax(95px, 1fr))";
-        gridCat.style.gap = "8px";
-        gridCat.style.marginBottom = "15px";
-
-        gridCat.innerHTML = Object.keys(grupos).map(c => {
-            const valorTotal = resumenOculto ? "****" : `$${fmt.format(Math.abs(grupos[c]))}`;
+        const gridCat = document.getElementById("gridCategorias");
+        gridCat.innerHTML = Object.keys(grupos)
+          .map((c) => {
+            const valor = `$${fmt.format(Math.abs(grupos[c]))}`,
+              activo = filtroCategoria === c;
             return `
-                <button class="btn btn-sm" 
-                        onclick="toggleVisibilidadResumen()"
-                        style="border-radius: 8px; text-align: center; padding: 6px 2px; background: #fff5f7; border: 1px solid #fce4ec; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 48px; width: 100%;">
-                    <div style="font-size: 0.6rem; text-transform: uppercase; color: #ad1457; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 95%; line-height: 1.1;">${c}</div>
-                    <div style="font-size: 0.82rem; line-height: 1;" class="${grupos[c] >= 0 ? 'v-ing' : 'v-egr'} fw-bold">${valorTotal}</div>
-                </button>`;
-        }).join("");
-    }
+            <div onclick="filtrarPorCategoria('${c}')" style="border: ${activo ? "2px solid var(--accent-pink)" : "1px solid #eee"}; background: ${activo ? "#fce4ec" : "white"}; border-radius: 12px; padding: 8px 4px; text-align: center; cursor: pointer; display: flex; flex-direction: column; justify-content: center; min-height: 55px;">
+              <div style="font-size: 0.55rem; text-transform: uppercase; color: #888; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${c}</div>
+              <div style="font-size: 0.75rem;" class="${grupos[c] >= 0 ? "v-ing" : "v-egr"} fw-bold ${montosVisibles ? "monto-visible" : "monto-oculto"}">${valor}</div>
+            </div>`;
+          })
+          .join("");
 
-    // 2. ORDEN Y LISTADO
-    if (criterioOrden === "fecha") {
-      filtrados.sort((a, b) => new Date(b.d[0]) - new Date(a.d[0]));
-    } else {
-      filtrados.sort((a, b) => b.id - a.id);
-    }
+        if (filtroCategoria)
+          filtrados = filtrados.filter(
+            (x) => (x.d[4] || "Otros") === filtroCategoria,
+          );
+        if (criterioOrden === "fecha")
+          filtrados.sort((a, b) => new Date(b.d[0]) - new Date(a.d[0]));
+        else filtrados.sort((a, b) => b.id - a.id);
 
-    const totalMovs = filtrados.length;
-    const aMostrar = mostrandoTodo ? filtrados : filtrados.slice(0, 10);
-    const btnVerMas = document.getElementById("wrapperVerMas");
-    if (btnVerMas) btnVerMas.style.display = !mostrandoTodo && totalMovs > 10 ? "block" : "none";
+        const listaFinal = filtroCategoria
+          ? filtrados
+          : mostrandoTodo
+            ? filtrados
+            : filtrados.slice(0, 10);
+        document.getElementById("wrapperVerMas").style.display =
+          !mostrandoTodo && filtrados.length > 10 && !filtroCategoria
+            ? "block"
+            : "none";
 
-    document.getElementById("listaDetallada").innerHTML = aMostrar.map((x) => {
-      let ing = parseFloat(String(x.d[2]).replace(/\./g, "").replace(",", ".")) || 0;
-      let egr = parseFloat(String(x.d[3]).replace(/\./g, "").replace(",", ".")) || 0;
-      let monto = ing > 0 ? ing : egr;
-      let valorSuma = ing > 0 ? monto : -monto;
-      const f = new Date(x.d[0]);
-      const fLab = f.getUTCDate().toString().padStart(2, "0") + "/" + (f.getUTCMonth() + 1).toString().padStart(2, "0");
+        document.getElementById("listaDetallada").innerHTML = listaFinal
+          .map((x) => {
+            let ing = parseFloat(
+                String(x.d[2]).replace(/\./g, "").replace(",", "."),
+              ),
+              egr = parseFloat(
+                String(x.d[3]).replace(/\./g, "").replace(",", "."),
+              ),
+              monto = ing || egr,
+              vSuma = ing ? monto : -monto;
+            const f = new Date(x.d[0]),
+              fLab =
+                f.getUTCDate().toString().padStart(2, "0") +
+                "/" +
+                (f.getUTCMonth() + 1).toString().padStart(2, "0");
+            return `
+            <div class="mov-fila-clickable d-flex align-items-center mb-2" id="fila-${x.id}">
+              <div class="check-container"><input type="checkbox" class="form-check-input" id="chk-${x.id}" value="${vSuma}" onchange="sumarMov(this, '${x.id}')"></div>
+              <div class="p-2 flex-grow-1" onclick="toggleFila('${x.id}')">
+                <div class="small"><strong>${x.d[1]} (${fLab})</strong></div>
+                <div style="font-size:0.65rem" class="text-muted">${x.h} | ${x.d[4] || "S/C"}</div>
+                <div class="${ing ? "v-ing" : "v-egr"}">$${fmt.format(monto)}</div>
+              </div>
+              <div class="pe-2 d-flex gap-2 align-items-center">
+                <i class="bi bi-pencil-square text-primary" style="font-size:1.1rem" onclick="abrirEditor('${x.h}', ${x.id}, '${x.d[0]}', '${x.d[1]}', ${monto}, '${ing ? "Ingreso" : "Egreso"}', '${x.d[4]}')"></i>
+                <i class="bi bi-trash3 text-danger" style="font-size:1.1rem" onclick="eliminarMov('${x.h}', ${x.id}, '${x.d[1]}')"></i>
+              </div>
+            </div>`;
+          })
+          .join("");
+      }
 
-     return `
-  <div class="mov-fila-clickable d-flex align-items-center mb-2" id="fila-${x.id}">
-    <div class="check-container">
-      <input type="checkbox" class="form-check-input" id="chk-${x.id}" value="${valorSuma}" onchange="sumarMov(this, '${x.id}')">
-    </div>
-    
-    <div class="p-2 flex-grow-1" onclick="toggleFila('${x.id}')">
-      <div class="small"><strong>${x.d[1]} (${fLab})</strong></div>
-      <div style="font-size:0.7rem" class="text-muted">${x.h} | ${x.d[4] || "S/C"}</div>
-      <div class="${ing > 0 ? 'v-ing' : 'v-egr'}">$${fmt.format(monto)}</div>
-    </div>
+      function sumarMov(cb, id) {
+        const val = parseFloat(cb.value);
+        sumaAcumulada += cb.checked ? val : -val;
+        document
+          .getElementById("fila-" + id)
+          .classList.toggle("selected", cb.checked);
+        document.getElementById("totalSeleccionado").innerText =
+          fmt.format(sumaAcumulada);
+        document.getElementById("floatSuma").style.display =
+          Math.abs(sumaAcumulada) > 0.01 ? "block" : "none";
+      }
 
-    <div class="pe-2 d-flex align-items-center gap-2">
-      <button class="btn btn-sm text-primary p-2" 
-              onclick="abrirEditor('${x.h}', ${x.id}, '${x.d[0]}', '${x.d[1]}', ${monto}, '${ing > 0 ? 'Ingreso' : 'Egreso'}', '${x.d[4]}')"
-              title="Editar">
-        <i class="bi bi-pencil-square" style="font-size: 1.1rem;"></i>
-      </button>
-      
-      <button class="btn btn-sm text-danger p-2" 
-              onclick="eliminarMov('${x.h}', ${x.id}, '${x.d[1]}')"
-              title="Borrar">
-        <i class="bi bi-trash3" style="font-size: 1.1rem;"></i>
-      </button>
-    </div>
-  </div>`;
-    }).join("");
-  }
-async function eliminarMov(hoja, id, concepto) {
-  if (!confirm(`¿Eliminar "${concepto}"?`)) return;
-  
-  const fila = document.getElementById(`fila-${id}`);
-  if (fila) fila.style.opacity = "0.3";
+      function toggleFila(id) {
+        document.getElementById("chk-" + id).click();
+      }
+      function abrirEditor(h, id, f, c, m, t, cat) {
+        document.getElementById("editHoja").value = h;
+        document.getElementById("editIdx").value = id;
+        document.getElementById("editFecha").value = new Date(f)
+          .toISOString()
+          .split("T")[0];
+        document.getElementById("editConcepto").value = c;
+        document.getElementById("editMonto").value = fmt.format(m);
+        document.getElementById("editTipo").value = t;
+        document.getElementById("editCat").value = cat;
+        modEdit.show();
+      }
 
-  try {
-    // Usamos URLSearchParams para que los parámetros viajen correctamente en el POST
-    const params = new URLSearchParams();
-    params.append("action", "delete_movimiento");
-    params.append("hoja", hoja);
-    params.append("id", id);
-
-    await fetch(scriptURL, { 
-      method: "POST", 
-      mode: 'no-cors', // Importante para evitar bloqueos de Google Apps Script
-      body: params 
-    });
-
-    // Como usamos no-cors, no podemos leer la respuesta, 
-    // pero esperamos un segundo y recargamos la lista.
-    setTimeout(cargar, 500); 
-  } catch (e) {
-    alert("Error al eliminar");
-    if (fila) fila.style.opacity = "1";
-  }
-}
-  function sumarMov(cb, id) {
-    const val = parseFloat(cb.value);
-    sumaAcumulada += cb.checked ? val : -val;
-    document.getElementById("fila-" + id).classList.toggle("selected", cb.checked);
-    document.getElementById("totalSeleccionado").innerText = fmt.format(sumaAcumulada);
-    document.getElementById("floatSuma").style.display = Math.abs(sumaAcumulada) > 0.01 ? "block" : "none";
-  }
-
-  function toggleFila(id, valor) {
-    const chk = document.getElementById("chk-" + id);
-    if (chk) chk.click();
-  }
-
-  function abrirEditor(h, id, f, c, m, t, cat) {
-    document.getElementById("editHoja").value = h;
-    document.getElementById("editIdx").value = id;
-    document.getElementById("editFecha").value = new Date(f).toISOString().split("T")[0];
-    document.getElementById("editConcepto").value = c;
-    document.getElementById("editMonto").value = fmt.format(m);
-    document.getElementById("editTipo").value = t;
-    document.getElementById("editCat").value = cat;
-    modEdit.show();
-  }
-
-  async function enviarEdicion(e) {
-    e.preventDefault();
-    const fd = new FormData(e.target);
-    fd.append("action", "editar_movimiento");
-    await fetch(scriptURL, { method: "POST", body: fd });
-    modEdit.hide();
-    cargar();
-  }
-
-  window.onload = cargar;
-</script>
+      async function enviarEdicion(e) {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        fd.append("action", "editar_movimiento");
+        await fetch(scriptURL, { method: "POST", body: fd });
+        modEdit.hide();
+        cargar();
+      }
+      window.onload = cargar;
+    </script>
   </body>
 </html>
