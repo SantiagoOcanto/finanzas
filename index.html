@@ -74,21 +74,52 @@
         color: var(--accent-pink);
         border-bottom: 3px solid var(--accent-pink);
       }
-      .header-btns {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 5px;
-        margin-bottom: 10px;
+
+      /* CABECERA ARMÓNICA EN UNA LÍNEA */
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 12px;
       }
+
+      .search-mini {
+        position: relative;
+        width: 100px; /* Tamaño controlado */
+      }
+      .search-mini input {
+        height: 28px;
+        font-size: 0.65rem;
+        padding-right: 22px;
+        margin-bottom: 0 !important;
+        border-radius: 8px;
+        border: 1px solid #eee;
+      }
+      .search-mini i {
+        position: absolute;
+        right: 7px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.65rem;
+        color: var(--accent-pink);
+      }
+
+      .btn-group-right {
+        display: flex;
+        gap: 4px;
+        margin-left: auto; /* Empuja a la derecha */
+      }
+
       .btn-fino {
         font-size: 0.6rem;
         font-weight: 800;
-        padding: 6px 2px;
+        padding: 5px 6px;
         border-radius: 8px;
         text-transform: uppercase;
         border: 1px solid #eee;
         background: white;
         color: #888;
+        white-space: nowrap;
       }
       .btn-fino.active {
         background: var(--accent-pink);
@@ -100,6 +131,7 @@
         color: #4a5a61;
         border: none;
       }
+
       .cat-pill {
         border-radius: 6px;
         padding: 4px 8px;
@@ -131,6 +163,7 @@
         color: #1b5e20;
         font-weight: bold;
       }
+
       .btn-ajustes {
         position: fixed;
         bottom: 20px;
@@ -264,14 +297,14 @@
 
     <div id="cont4" style="display: none">
       <div class="card-custom">
-        <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="header-actions">
           <div class="dropdown">
             <button
               class="btn btn-outline-secondary btn-sm dropdown-toggle"
               type="button"
               id="btnMeses"
               data-bs-toggle="dropdown"
-              style="font-size: 0.65rem"
+              style="font-size: 0.65rem; height: 28px; padding: 2px 8px"
             >
               Meses
             </button>
@@ -281,7 +314,19 @@
               style="min-width: 180px"
             ></ul>
           </div>
-          <div class="header-btns m-0">
+
+          <div class="search-mini">
+            <input
+              type="text"
+              id="inputBusqueda"
+              class="form-control"
+              placeholder="Buscar..."
+              onkeyup="renderReporte()"
+            />
+            <i class="bi bi-search"></i>
+          </div>
+
+          <div class="btn-group-right">
             <button class="btn-fino blue" onclick="seleccionarTodo()">
               Todo
             </button>
@@ -301,6 +346,7 @@
             </button>
           </div>
         </div>
+
         <div id="gridCategorias" class="d-flex flex-wrap gap-1 mb-3"></div>
         <div id="listaDetallada"></div>
         <div id="wrapperMas"></div>
@@ -515,9 +561,20 @@
         let filtrados = todos.filter((x) =>
           mesesSeleccionados.includes(new Date(x.d[0]).getUTCMonth()),
         );
+
+        // Filtro de Búsqueda
+        const query = document
+          .getElementById("inputBusqueda")
+          .value.toLowerCase();
+        if (query)
+          filtrados = filtrados.filter(
+            (x) =>
+              x.d[1].toLowerCase().includes(query) ||
+              (x.d[4] || "").toLowerCase().includes(query),
+          );
+
         let catsP = {};
         filtrados.forEach((x) => (catsP[x.d[4] || "S/C"] = true));
-
         document.getElementById("gridCategorias").innerHTML = Object.keys(catsP)
           .map(
             (c) => `
@@ -530,7 +587,6 @@
           filtrados = filtrados.filter((x) =>
             filtrosCategorias.includes(x.d[4] || "S/C"),
           );
-
         if (criterioOrden === "fecha")
           filtrados.sort((a, b) => new Date(b.d[0]) - new Date(a.d[0]));
         else filtrados.sort((a, b) => b.id - a.id);
@@ -566,11 +622,9 @@
           .join("");
 
         const wrapperMas = document.getElementById("wrapperMas");
-        if (totalItems > 10 && !mostrandoTodo) {
+        if (totalItems > 10 && !mostrandoTodo)
           wrapperMas.innerHTML = `<button class="btn-mas" onclick="verTodo()">Mostrar más (${totalItems - 10})</button>`;
-        } else {
-          wrapperMas.innerHTML = "";
-        }
+        else wrapperMas.innerHTML = "";
       }
 
       function verTodo() {
@@ -588,7 +642,6 @@
           : [...filtrosCategorias, c];
         renderReporte();
       }
-
       async function eliminarMov(hoja, id) {
         if (!confirm("¿Borrar movimiento?")) return;
         await fetch(
@@ -597,26 +650,21 @@
         );
         cargar();
       }
-
       function abrirAjustes() {
         const h = document.getElementById("selectorHoja").value;
         const lista = document.getElementById("listaCategoriasAjustes");
         lista.innerHTML =
           categoriasExtra[h]
             .map(
-              (c) => `
-          <div class="d-flex justify-content-between align-items-center p-2 mb-2 border-bottom">
-            <span class="small fw-bold">${c}</span>
-            <i class="bi bi-trash text-danger" style="cursor:pointer" onclick="borrarCatCompleta('${h}', '${c}')"></i>
-          </div>`,
+              (c) =>
+                `<div class="d-flex justify-content-between align-items-center p-2 mb-2 border-bottom"><span class="small fw-bold">${c}</span><i class="bi bi-trash text-danger" style="cursor:pointer" onclick="borrarCatCompleta('${h}', '${c}')"></i></div>`,
             )
             .join("") ||
           "<p class='text-center small py-3 text-muted'>No hay categorías personalizadas.</p>";
         modAjustes.show();
       }
-
       async function borrarCatCompleta(h, c) {
-        if (!confirm(`¿Borrar "${c}" y todos sus registros?`)) return;
+        if (!confirm(`¿Borrar "${c}"?`)) return;
         await fetch(
           `${scriptURL}?action=eliminar_categoria&hoja=${h}&categoria=${encodeURIComponent(c)}`,
           { method: "GET" },
@@ -624,7 +672,6 @@
         modAjustes.hide();
         cargar();
       }
-
       async function prepararEnvio(e) {
         e.preventDefault();
         const btn = document.getElementById("btnMain");
@@ -640,7 +687,6 @@
         verTab(4);
         btn.disabled = false;
       }
-
       document.addEventListener("input", (e) => {
         if (e.target.classList.contains("montoMask")) {
           let v = e.target.value.replace(/\D/g, "");
@@ -648,7 +694,6 @@
           e.target.value = v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
       });
-
       window.onload = cargar;
     </script>
   </body>
