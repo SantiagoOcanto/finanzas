@@ -431,27 +431,31 @@
   }
 
   // Nueva función para eliminar movimientos
-  async function eliminarMov(hoja, id, concepto) {
-    if (!confirm(`¿Estás seguro de eliminar "${concepto}"?`)) return;
+ async function eliminarMov(hoja, id, concepto) {
+  if (!confirm(`¿Estás seguro de eliminar "${concepto}"?`)) return;
+  
+  const fila = document.getElementById(`fila-${id}`);
+  if (fila) fila.style.opacity = "0.3";
+
+  // Construimos la URL con los parámetros para borrar
+  const urlBorrar = `${scriptURL}?action=delete_movimiento&hoja=${hoja}&id=${id}`;
+
+  try {
+    // Usamos mode: 'no-cors' para evitar errores de bloqueo del navegador
+    await fetch(urlBorrar, { method: "GET", mode: 'no-cors' });
     
-    // Mostramos un indicador visual simple de carga
-    const fila = document.getElementById(`fila-${id}`);
-    if (fila) fila.style.opacity = "0.3";
-
-    try {
-      const fd = new FormData();
-      fd.append("action", "delete_movimiento");
-      fd.append("hoja", hoja);
-      fd.append("id", id);
-
-      await fetch(scriptURL, { method: "POST", body: fd });
-      await cargar(); // Recargar datos
-    } catch (e) {
-      alert("Error al eliminar");
-      if (fila) fila.style.opacity = "1";
-    }
+    // Esperamos un momento para que Google procese y recargamos
+    setTimeout(() => {
+      cargar();
+      alert("Movimiento eliminado");
+    }, 600);
+    
+  } catch (e) {
+    console.error("Error:", e);
+    alert("No se pudo eliminar");
+    if (fila) fila.style.opacity = "1";
   }
-
+}
   function renderReporte() {
     const mes = parseInt(document.getElementById("selMes").value);
     sumaAcumulada = 0;
