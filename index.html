@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
-    <title>Naza Web</title>
+    <title>Naza App</title>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
@@ -23,7 +23,6 @@
         --text: #5d1029;
         --pastel-blue: #aec6cf;
       }
-
       body {
         background-color: var(--soft-pink);
         color: var(--text);
@@ -31,43 +30,20 @@
         padding: 10px;
         padding-bottom: 80px;
       }
-
-      /* --- BOTONES DE REPORTE --- */
-      .btn-group-vertical-custom {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-        width: 105px;
+      .card-custom {
+        background: white;
+        border-radius: 20px;
+        padding: 15px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-bottom: 12px;
       }
-
-      .btn-fino {
-        font-size: 0.58rem !important;
-        font-weight: 700;
-        padding: 4px 2px !important;
-        border-radius: 6px !important;
-        text-transform: uppercase;
-        transition: all 0.2s;
-        line-height: 1.2;
-        width: 100%;
-        border: 1px solid transparent;
+      .form-control,
+      .form-select {
+        border-radius: 12px;
+        border: 1px solid var(--main-pink);
+        margin-bottom: 8px;
+        font-size: 0.9rem;
       }
-
-      .btn-all {
-        background-color: var(--pastel-blue);
-        color: #4a5a61;
-        border: none;
-      }
-      .btn-pink-fino {
-        background-color: var(--accent-pink);
-        color: white;
-        border: none;
-      }
-      .btn-outline-fino {
-        background-color: white;
-        color: #888;
-        border: 1px solid #eee;
-      }
-
       .btn-pink {
         background: var(--accent-pink);
         color: white;
@@ -77,64 +53,8 @@
         font-weight: 800;
         width: 100%;
         text-transform: uppercase;
-        letter-spacing: 1px;
         box-shadow: 0 4px 10px rgba(240, 98, 146, 0.3);
-        transition: all 0.3s ease;
       }
-
-      /* ESTILO PARA EL DROPDOWN DE MESES */
-      .dropdown-menu {
-        border: none;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        border-radius: 15px;
-      }
-      .form-check-input:checked {
-        background-color: var(--accent-pink);
-        border-color: var(--accent-pink);
-      }
-
-      .cat-pill {
-        border-radius: 4px;
-        padding: 1px 6px;
-        text-align: center;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        line-height: 1;
-        font-size: 0.65rem;
-        transition: all 0.2s;
-        border: 1px solid #eee;
-        min-height: 18px;
-        background: white;
-      }
-
-      .mov-fila-clickable {
-        background: white;
-        border-radius: 12px;
-        border: 2px solid #f0f0f0;
-        transition: all 0.2s ease;
-      }
-      .mov-fila-clickable.selected {
-        border-color: var(--accent-pink);
-        background-color: #fff9fa;
-      }
-
-      .card-custom {
-        background: white;
-        border-radius: 20px;
-        padding: 15px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        margin-bottom: 12px;
-      }
-
-      .form-control,
-      .form-select {
-        border-radius: 12px;
-        border: 1px solid var(--main-pink);
-        margin-bottom: 8px;
-      }
-
       .tab-nav {
         display: flex;
         background: white;
@@ -154,27 +74,105 @@
         color: var(--accent-pink);
         border-bottom: 3px solid var(--accent-pink);
       }
-
-      .v-ing {
-        color: #1b5e20;
+      .header-btns {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 5px;
+        margin-bottom: 10px;
+      }
+      .btn-fino {
+        font-size: 0.6rem;
+        font-weight: 800;
+        padding: 6px 2px;
+        border-radius: 8px;
+        text-transform: uppercase;
+        border: 1px solid #eee;
+        background: white;
+        color: #888;
+      }
+      .btn-fino.active {
+        background: var(--accent-pink);
+        color: white;
+        border-color: var(--accent-pink);
+      }
+      .btn-fino.blue {
+        background: var(--pastel-blue);
+        color: #4a5a61;
+        border: none;
+      }
+      .cat-pill {
+        border-radius: 6px;
+        padding: 4px 8px;
+        font-size: 0.6rem;
+        border: 1px solid #eee;
+        background: white;
+        cursor: pointer;
         font-weight: bold;
+      }
+      .mov-fila {
+        background: white;
+        border-radius: 12px;
+        border: 2px solid #f0f0f0;
+        margin-bottom: 8px;
+        padding: 8px 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .mov-fila.selected {
+        border-color: var(--accent-pink);
+        background: #fff9fa;
       }
       .v-egr {
         color: #b71c1c;
         font-weight: bold;
       }
-
-      #floatSuma {
+      .v-ing {
+        color: #1b5e20;
+        font-weight: bold;
+      }
+      .btn-ajustes {
         position: fixed;
         bottom: 20px;
         right: 20px;
+        background: white;
+        color: var(--accent-pink);
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--main-pink);
+        z-index: 1000;
+      }
+      #floatSuma {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
         background: var(--accent-pink);
         color: white;
-        padding: 12px 20px;
-        border-radius: 50px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        z-index: 1000;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 0.8rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         display: none;
+        z-index: 1001;
+      }
+      .btn-mas {
+        background: white;
+        color: var(--accent-pink);
+        border: 1px solid var(--main-pink);
+        border-radius: 10px;
+        padding: 8px;
+        font-size: 0.7rem;
+        font-weight: bold;
+        width: 100%;
+        margin-top: 10px;
+        text-transform: uppercase;
       }
     </style>
   </head>
@@ -183,16 +181,16 @@
 
     <div class="tab-nav">
       <button id="t1" class="active" onclick="verTab(1)">NUEVO</button>
-      <button id="t4" onclick="verTab(4)">REPORTE</button>
+      <button id="t4" onclick="verTab(4)">MOVIMIENTOS</button>
     </div>
 
     <div id="cont1">
       <div class="card-custom">
         <form id="formUnico" onsubmit="prepararEnvio(event)">
-          <div class="row g-2 mb-2">
+          <div class="row g-2">
             <div class="col-7">
-              <label class="small fw-bold">Plata ($):</label>
-              <input
+              <label class="small fw-bold">Plata ($):</label
+              ><input
                 type="text"
                 class="form-control montoMask"
                 name="monto"
@@ -201,33 +199,24 @@
               />
             </div>
             <div class="col-5">
-              <label class="small fw-bold">Tipo:</label>
-              <select name="tipo" id="mainTipo" class="form-select">
+              <label class="small fw-bold">Tipo:</label
+              ><select name="tipo" class="form-select">
                 <option value="Egreso">Salida (-)</option>
                 <option value="Ingreso">Entrada (+)</option>
               </select>
             </div>
           </div>
-          <label class="small fw-bold">Fecha:</label>
-          <input
-            type="date"
-            name="fecha_manual"
-            id="fechaMain"
-            class="form-control mb-3"
-            required
-          />
-          <label class="small fw-bold">¿Qué es?</label>
-          <input
+          <label class="small fw-bold">¿Qué es? (Opcional):</label
+          ><input
             type="text"
             name="concepto"
-            class="form-control mb-3"
+            class="form-control"
             placeholder="Ej: Supermercado"
-            required
           />
-          <label class="small fw-bold">Categoría:</label>
-          <select
+          <label class="small fw-bold">Categoría:</label
+          ><select
             id="catDinamica"
-            class="form-select mb-2"
+            class="form-select"
             onchange="checkManual(this.value)"
           ></select>
           <div id="wrapperManual" style="display: none">
@@ -235,16 +224,14 @@
               type="text"
               id="catManual"
               name="categoria"
-              class="form-control mb-3"
-              placeholder="Nueva categoría..."
-              style="border: 2px solid var(--accent-pink)"
+              class="form-control"
+              placeholder="Nombre nueva categoría..."
             />
           </div>
-          <hr />
-          <div class="row g-2">
+          <div class="row g-2 mt-1">
             <div class="col-6">
-              <label class="small fw-bold">Hoja:</label>
-              <select
+              <label class="small fw-bold">Hoja:</label
+              ><select
                 name="hoja"
                 id="selectorHoja"
                 class="form-select"
@@ -255,13 +242,19 @@
               </select>
             </div>
             <div class="col-6">
-              <label class="small fw-bold">Método:</label>
-              <select name="metodo" class="form-select">
+              <label class="small fw-bold">Método:</label
+              ><select name="metodo" class="form-select">
                 <option value="Digital">Digital</option>
                 <option value="Efectivo">Efectivo</option>
               </select>
             </div>
           </div>
+          <input
+            type="date"
+            name="fecha_manual"
+            id="fechaMain"
+            class="d-none"
+          />
           <button type="submit" id="btnMain" class="btn-pink mt-3">
             GUARDAR REGISTRO
           </button>
@@ -271,44 +264,36 @@
 
     <div id="cont4" style="display: none">
       <div class="card-custom">
-        <div class="d-flex justify-content-between align-items-start mb-2">
+        <div class="d-flex justify-content-between align-items-center mb-3">
           <div class="dropdown">
             <button
-              class="btn btn-outline-fino dropdown-toggle"
+              class="btn btn-outline-secondary btn-sm dropdown-toggle"
               type="button"
               id="btnMeses"
               data-bs-toggle="dropdown"
-              aria-expanded="false"
-              style="
-                width: auto;
-                min-width: 120px;
-                font-size: 0.65rem;
-                background: white;
-                border-radius: 8px;
-              "
+              style="font-size: 0.65rem"
             >
               Meses
             </button>
             <ul
               class="dropdown-menu p-2"
               id="contenedorMeses"
-              style="min-width: 160px"
+              style="min-width: 180px"
             ></ul>
           </div>
-
-          <div class="btn-group-vertical-custom">
-            <button class="btn-fino btn-all" onclick="seleccionarTodo()">
-              Seleccionar Todo
+          <div class="header-btns m-0">
+            <button class="btn-fino blue" onclick="seleccionarTodo()">
+              Todo
             </button>
             <button
-              class="btn-fino btn-pink-fino"
+              class="btn-fino active"
               id="btnOrdenCarga"
               onclick="cambiarOrden('carga')"
             >
               Carga
             </button>
             <button
-              class="btn-fino btn-outline-fino"
+              class="btn-fino"
               id="btnOrdenFecha"
               onclick="cambiarOrden('fecha')"
             >
@@ -316,77 +301,28 @@
             </button>
           </div>
         </div>
-
-        <div
-          id="gridCategorias"
-          style="display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px"
-        ></div>
-
+        <div id="gridCategorias" class="d-flex flex-wrap gap-1 mb-3"></div>
         <div id="listaDetallada"></div>
-        <div id="wrapperVerMas" class="text-center my-3" style="display: none">
-          <button
-            class="btn btn-sm fw-bold"
-            style="
-              color: var(--accent-pink);
-              background: white;
-              border: 1px solid var(--accent-pink);
-              border-radius: 10px;
-            "
-            onclick="mostrarTodos()"
-          >
-            Ver todos
-          </button>
-        </div>
+        <div id="wrapperMas"></div>
       </div>
     </div>
 
-    <div class="modal fade" id="modalEdit" tabindex="-1">
+    <button class="btn-ajustes" onclick="abrirAjustes()">
+      <i class="bi bi-gear-fill"></i>
+    </button>
+
+    <div class="modal fade" id="modalAjustes" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
-        <div
-          class="modal-content"
-          style="border-radius: 20px; padding: 15px; border: none"
-        >
-          <form id="formEdit" onsubmit="enviarEdicion(event)">
-            <input type="hidden" name="rowIdx" id="editIdx" />
-            <input type="hidden" name="hojaOrig" id="editHoja" />
-            <input
-              type="date"
-              name="fecha"
-              id="editFecha"
-              class="form-control mb-2"
-              required
-            />
-            <input
-              type="text"
-              name="concepto"
-              id="editConcepto"
-              class="form-control mb-2"
-              required
-            />
-            <div class="row g-2 mb-2">
-              <div class="col-6">
-                <input
-                  type="text"
-                  name="monto"
-                  id="editMonto"
-                  class="form-control montoMask"
-                />
-              </div>
-              <div class="col-6">
-                <select name="tipo" id="editTipo" class="form-select">
-                  <option value="Ingreso">Entrada (+)</option>
-                  <option value="Egreso">Salida (-)</option>
-                </select>
-              </div>
-            </div>
-            <input
-              type="text"
-              name="categoria"
-              id="editCat"
-              class="form-control mb-3"
-            />
-            <button type="submit" class="btn-pink">GUARDAR CAMBIOS</button>
-          </form>
+        <div class="modal-content" style="border-radius: 20px">
+          <div class="modal-header border-0">
+            <h6 class="fw-bold m-0">AJUSTES CATEGORÍAS</h6>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body pt-0" id="listaCategoriasAjustes"></div>
         </div>
       </div>
     </div>
@@ -394,130 +330,102 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
       const scriptURL =
-        "https://script.google.com/macros/s/AKfycbzWuiMzgMmE2rl9eM29YyvPsXWbJ95w4W4f7pzEGvHo2pj7nFnThk8C3owH0kSMpaW_/exec";
+        "https://script.google.com/macros/s/AKfycbwQBntv5Z07I_wwv_fwtak8ujKS8SzMeuJyr9iO6VuYDYJldDo9QlN8LMn_kI9FjV08/exec";
       let db = { personal: [], trabajos: [] },
         categoriasExtra = { Personal: [], Trabajos: [] };
       let mesesSeleccionados = [new Date().getMonth()];
-      let filtroCategoria = null,
+      let filtrosCategorias = [],
         criterioOrden = "carga",
-        mostrandoTodo = false,
-        sumaAcumulada = 0;
-      const fmt = new Intl.NumberFormat("es-AR", { minimumFractionDigits: 2 });
-      const modEdit = new bootstrap.Modal(document.getElementById("modalEdit"));
-      const CATS = {
+        sumaAcumulada = 0,
+        mostrandoTodo = false;
+
+      const CATS_BASE = {
         Personal: ["Compras", "Servicios", "Salud", "Transporte"],
         Trabajos: ["Sueldo", "Insumos", "Viáticos", "Herramientas"],
       };
+
+      const modAjustes = new bootstrap.Modal(
+        document.getElementById("modalAjustes"),
+      );
 
       function verTab(n) {
         document.getElementById("cont1").style.display =
           n === 1 ? "block" : "none";
         document.getElementById("cont4").style.display =
           n === 4 ? "block" : "none";
-        document.getElementById("t1").className = n === 1 ? "active" : "";
-        document.getElementById("t4").className = n === 4 ? "active" : "";
-        if (n === 4) {
-          mostrandoTodo = false;
-          filtroCategoria = null;
-          renderReporte();
-        }
+        document.getElementById("t1").classList.toggle("active", n === 1);
+        document.getElementById("t4").classList.toggle("active", n === 4);
       }
 
-      function cambiarOrden(nuevo) {
-        criterioOrden = nuevo;
-        document.getElementById("btnOrdenCarga").className =
-          nuevo === "carga"
-            ? "btn-fino btn-pink-fino"
-            : "btn-fino btn-outline-fino";
-        document.getElementById("btnOrdenFecha").className =
-          nuevo === "fecha"
-            ? "btn-fino btn-pink-fino"
-            : "btn-fino btn-outline-fino";
+      function cambiarOrden(o) {
+        criterioOrden = o;
+        document
+          .getElementById("btnOrdenCarga")
+          .classList.toggle("active", o === "carga");
+        document
+          .getElementById("btnOrdenFecha")
+          .classList.toggle("active", o === "fecha");
         renderReporte();
       }
 
       function seleccionarTodo() {
-        const checks = document.querySelectorAll(
-          "#listaDetallada .form-check-input",
-        );
-        const todosMarcados = Array.from(checks).every((c) => c.checked);
-        checks.forEach((c) => {
-          if (c.checked === todosMarcados) c.click();
+        const checks = document.querySelectorAll(".chk-mov");
+        const filas = document.querySelectorAll(".mov-fila");
+        const algunMarcado = Array.from(checks).some((c) => c.checked);
+        sumaAcumulada = 0;
+        checks.forEach((c, idx) => {
+          if (algunMarcado) {
+            c.checked = false;
+            filas[idx].classList.remove("selected");
+          } else {
+            c.checked = true;
+            filas[idx].classList.add("selected");
+            sumaAcumulada += parseFloat(c.value);
+          }
         });
+        actualizarUI_Suma();
       }
 
-      function filtrarPorCategoria(cat) {
-        filtroCategoria = filtroCategoria === cat ? null : cat;
-        renderReporte();
-      }
-
-      function mostrarTodos() {
-        mostrandoTodo = true;
-        renderReporte();
-      }
-
-      document.addEventListener("input", (e) => {
-        if (e.target.classList.contains("montoMask")) {
-          let v = e.target.value.replace(/\D/g, "");
-          v = (v / 100).toFixed(2).replace(".", ",");
-          e.target.value = v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      function sumarSeleccion(cb, h, id) {
+        const val = parseFloat(cb.value);
+        if (cb.checked) {
+          sumaAcumulada += val;
+          document.getElementById(`fila-${h}-${id}`).classList.add("selected");
+        } else {
+          sumaAcumulada -= val;
+          document
+            .getElementById(`fila-${h}-${id}`)
+            .classList.remove("selected");
         }
-      });
+        actualizarUI_Suma();
+      }
 
-      async function cargar() {
-        document.getElementById("fechaMain").value = new Date()
-          .toISOString()
-          .split("T")[0];
-        try {
-          const r = await fetch(`${scriptURL}?t=${Date.now()}`);
-          db = await r.json();
-          extraerCategoriasNuevas();
-          llenarMeses();
-          actualizarCategorias();
-          if (document.getElementById("cont4").style.display === "block")
-            renderReporte();
-        } catch (e) {
-          console.error(e);
+      function actualizarUI_Suma() {
+        const floatSuma = document.getElementById("floatSuma");
+        document.getElementById("totalSeleccionado").innerText =
+          sumaAcumulada.toLocaleString("es-AR", { minimumFractionDigits: 2 });
+        if (Math.abs(sumaAcumulada) < 0.01) {
+          sumaAcumulada = 0;
+          floatSuma.style.display = "none";
+        } else {
+          floatSuma.style.display = "block";
         }
       }
 
-      function extraerCategoriasNuevas() {
-        categoriasExtra = { Personal: [], Trabajos: [] };
-        ["personal", "trabajos"].forEach((key) => {
-          if (db[key])
-            db[key].forEach((m) => {
-              const cat = m[4],
-                hKey = key.charAt(0).toUpperCase() + key.slice(1);
-              if (
-                cat &&
-                !CATS[hKey].includes(cat) &&
-                !categoriasExtra[hKey].includes(cat)
-              )
-                categoriasExtra[hKey].push(cat);
-            });
-        });
-      }
-
-      function actualizarCategorias() {
-        const h = document.getElementById("selectorHoja").value,
-          sel = document.getElementById("catDinamica");
-        const todas = [...new Set([...CATS[h], ...categoriasExtra[h]])];
-        sel.innerHTML =
-          `<option value="" disabled selected>Seleccioná...</option>` +
-          todas.map((c) => `<option value="${c}">${c}</option>`).join("") +
-          `<option value="OTRA" style="font-weight:bold; color:var(--accent-pink);">+ NUEVA</option>`;
-      }
-
-      function checkManual(v) {
-        document.getElementById("wrapperManual").style.display =
-          v === "OTRA" ? "block" : "none";
-        document.getElementById("catManual").value = v === "OTRA" ? "" : v;
-        if (v === "OTRA") document.getElementById("catManual").focus();
+      function toggleMes(idx) {
+        event.stopPropagation();
+        if (mesesSeleccionados.includes(idx)) {
+          if (mesesSeleccionados.length > 1)
+            mesesSeleccionados = mesesSeleccionados.filter((m) => m !== idx);
+        } else {
+          mesesSeleccionados.push(idx);
+        }
+        llenarMeses();
+        renderReporte();
       }
 
       function llenarMeses() {
         const div = document.getElementById("contenedorMeses");
-        const btn = document.getElementById("btnMeses");
         const nombres = [
           "Ene",
           "Feb",
@@ -532,38 +440,61 @@
           "Nov",
           "Dic",
         ];
-
-        div.innerHTML = nombres
-          .map((nombre, i) => {
-            const activo = mesesSeleccionados.includes(i);
-            return `
-            <li class="px-3 py-1" onclick="event.stopPropagation()">
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="${i}" id="m-${i}" ${activo ? "checked" : ""} onchange="toggleMes(${i})">
-                <label class="form-check-label small fw-bold" style="cursor:pointer" for="m-${i}">${nombre.toUpperCase()}</label>
-              </div>
-            </li>`;
-          })
-          .join("");
-
-        if (mesesSeleccionados.length === 0) btn.innerText = "Elegir Mes";
-        else if (mesesSeleccionados.length === 12)
-          btn.innerText = "Todo el año";
-        else
-          btn.innerText = mesesSeleccionados
-            .sort((a, b) => a - b)
-            .map((m) => nombres[m])
-            .join(", ");
+        div.innerHTML =
+          `<div class="row g-0">` +
+          nombres
+            .map(
+              (n, i) => `
+          <div class="col-6 px-2 py-1">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="m-${i}" ${mesesSeleccionados.includes(i) ? "checked" : ""} onchange="toggleMes(${i})">
+              <label class="form-check-label" style="font-size:0.7rem" for="m-${i}">${n.toUpperCase()}</label>
+            </div>
+          </div>`,
+            )
+            .join("") +
+          `</div>`;
+        document.getElementById("btnMeses").innerText =
+          mesesSeleccionados.length === 12
+            ? "Todo el año"
+            : mesesSeleccionados.map((m) => nombres[m]).join(", ");
       }
 
-      function toggleMes(mesIdx) {
-        if (mesesSeleccionados.includes(mesIdx)) {
-          if (mesesSeleccionados.length > 1)
-            mesesSeleccionados = mesesSeleccionados.filter((m) => m !== mesIdx);
-          else document.getElementById(`m-${mesIdx}`).checked = true;
-        } else {
-          mesesSeleccionados.push(mesIdx);
-        }
+      function actualizarCategorias() {
+        const h = document.getElementById("selectorHoja").value;
+        const sel = document.getElementById("catDinamica");
+        const todas = [...new Set([...CATS_BASE[h], ...categoriasExtra[h]])];
+        sel.innerHTML =
+          `<option value="" disabled selected>Elegir...</option>` +
+          todas.map((c) => `<option value="${c}">${c}</option>`).join("") +
+          `<option value="OTRA">+ NUEVA</option>`;
+      }
+
+      function checkManual(v) {
+        document.getElementById("wrapperManual").style.display =
+          v === "OTRA" ? "block" : "none";
+      }
+
+      async function cargar() {
+        document.getElementById("fechaMain").value = new Date()
+          .toISOString()
+          .split("T")[0];
+        const r = await fetch(`${scriptURL}?t=${Date.now()}`);
+        db = await r.json();
+        categoriasExtra = { Personal: [], Trabajos: [] };
+        ["personal", "trabajos"].forEach((key) => {
+          const h = key === "personal" ? "Personal" : "Trabajos";
+          if (db[key])
+            db[key].forEach((m) => {
+              if (
+                m[4] &&
+                !CATS_BASE[h].includes(m[4]) &&
+                !categoriasExtra[h].includes(m[4])
+              )
+                categoriasExtra[h].push(m[4]);
+            });
+        });
+        actualizarCategorias();
         llenarMeses();
         renderReporte();
       }
@@ -584,85 +515,114 @@
         let filtrados = todos.filter((x) =>
           mesesSeleccionados.includes(new Date(x.d[0]).getUTCMonth()),
         );
+        let catsP = {};
+        filtrados.forEach((x) => (catsP[x.d[4] || "S/C"] = true));
 
-        let grupos = {};
-        filtrados.forEach((x) => {
-          grupos[x.d[4] || "Otros"] = true;
-        });
-
-        const gridCat = document.getElementById("gridCategorias");
-        gridCat.innerHTML = Object.keys(grupos)
-          .map((c) => {
-            const activo = filtroCategoria === c;
-            return `<div onclick="filtrarPorCategoria('${c}')" class="cat-pill" style="border-color: ${activo ? "var(--accent-pink)" : "#eee"}; background: ${activo ? "#fce4ec" : "white"}; color: ${activo ? "var(--accent-pink)" : "#888"};"><span style="text-transform: uppercase; font-weight: bold;">${c}</span></div>`;
-          })
+        document.getElementById("gridCategorias").innerHTML = Object.keys(catsP)
+          .map(
+            (c) => `
+          <div onclick="filtrarPorCategoria('${c}')" class="cat-pill" style="${filtrosCategorias.includes(c) ? "background:var(--main-pink); border-color:var(--accent-pink); color:var(--accent-pink);" : ""}">${c.toUpperCase()}</div>
+        `,
+          )
           .join("");
 
-        if (filtroCategoria)
-          filtrados = filtrados.filter(
-            (x) => (x.d[4] || "Otros") === filtroCategoria,
+        if (filtrosCategorias.length > 0)
+          filtrados = filtrados.filter((x) =>
+            filtrosCategorias.includes(x.d[4] || "S/C"),
           );
+
         if (criterioOrden === "fecha")
           filtrados.sort((a, b) => new Date(b.d[0]) - new Date(a.d[0]));
         else filtrados.sort((a, b) => b.id - a.id);
 
-        const listaFinal = filtroCategoria
-          ? filtrados
-          : mostrandoTodo
-            ? filtrados
-            : filtrados.slice(0, 10);
-        document.getElementById("wrapperVerMas").style.display =
-          !mostrandoTodo && filtrados.length > 10 && !filtroCategoria
-            ? "block"
-            : "none";
+        const totalItems = filtrados.length;
+        const paraMostrar = mostrandoTodo ? filtrados : filtrados.slice(0, 10);
 
-        document.getElementById("listaDetallada").innerHTML = listaFinal
+        document.getElementById("listaDetallada").innerHTML = paraMostrar
           .map((x) => {
-            let ing = parseFloat(
-                String(x.d[2]).replace(/\./g, "").replace(",", "."),
-              ),
-              egr = parseFloat(
-                String(x.d[3]).replace(/\./g, "").replace(",", "."),
-              ),
-              monto = ing || egr,
-              vSuma = ing ? monto : -monto;
-            const f = new Date(x.d[0]),
-              fLab =
-                f.getUTCDate().toString().padStart(2, "0") +
-                "/" +
-                (f.getUTCMonth() + 1).toString().padStart(2, "0");
-            return `<div class="mov-fila-clickable d-flex align-items-center mb-2" id="fila-${x.id}"><div class="px-2"><input type="checkbox" class="form-check-input" id="chk-${x.id}" value="${vSuma}" onchange="sumarMov(this, '${x.id}')"></div><div class="p-2 flex-grow-1" onclick="toggleFila('${x.id}')"><div class="small"><strong>${x.d[1]} (${fLab})</strong></div><div style="font-size:0.65rem" class="text-muted">${x.h} | ${x.d[4] || "S/C"}</div><div class="${ing ? "v-ing" : "v-egr"}">$${fmt.format(monto)}</div></div><div class="pe-2 d-flex gap-2 align-items-center"><i class="bi bi-pencil-square text-primary" style="font-size:1.1rem" onclick="abrirEditor('${x.h}', ${x.id}, '${x.d[0]}', '${x.d[1]}', ${monto}, '${ing ? "Ingreso" : "Egreso"}', '${x.d[4]}')"></i><i class="bi bi-trash3 text-danger" style="font-size:1.1rem" onclick="eliminarMov('${x.h}', ${x.id}, '${x.d[1]}')"></i></div></div>`;
+            const ing = parseFloat(x.d[2]) || 0,
+              egr = parseFloat(x.d[3]) || 0;
+            const monto = ing || egr;
+            const valorSuma = ing ? monto : -monto;
+            const f = new Date(x.d[0]);
+            const fLab =
+              f.getUTCDate().toString().padStart(2, "0") +
+              "/" +
+              (f.getUTCMonth() + 1).toString().padStart(2, "0");
+            return `<div class="mov-fila" id="fila-${x.h}-${x.id}">
+            <div class="d-flex align-items-center gap-2" onclick="toggleCheck('${x.h}', ${x.id})">
+              <input type="checkbox" class="form-check-input chk-mov" value="${valorSuma}" onchange="sumarSeleccion(this, '${x.h}', ${x.id})" onclick="event.stopPropagation()">
+              <div>
+                <div class="small fw-bold">${x.d[1]} <span class="text-muted fw-normal">(${fLab})</span></div>
+                <div style="font-size:0.6rem; color:#888">${x.h} | ${x.d[4]}</div>
+              </div>
+            </div>
+            <div class="text-end">
+              <div class="${ing > 0 ? "v-ing" : "v-egr"}">$${monto.toLocaleString("es-AR")}</div>
+              <i class="bi bi-trash3 text-danger" style="font-size:0.8rem; cursor:pointer" onclick="event.stopPropagation(); eliminarMov('${x.h}', ${x.id})"></i>
+            </div>
+          </div>`;
           })
           .join("");
+
+        const wrapperMas = document.getElementById("wrapperMas");
+        if (totalItems > 10 && !mostrandoTodo) {
+          wrapperMas.innerHTML = `<button class="btn-mas" onclick="verTodo()">Mostrar más (${totalItems - 10})</button>`;
+        } else {
+          wrapperMas.innerHTML = "";
+        }
       }
 
-      function sumarMov(cb, id) {
-        const val = parseFloat(cb.value);
-        sumaAcumulada += cb.checked ? val : -val;
-        document
-          .getElementById("fila-" + id)
-          .classList.toggle("selected", cb.checked);
-        document.getElementById("totalSeleccionado").innerText =
-          fmt.format(sumaAcumulada);
-        document.getElementById("floatSuma").style.display =
-          Math.abs(sumaAcumulada) > 0.01 ? "block" : "none";
+      function verTodo() {
+        mostrandoTodo = true;
+        renderReporte();
+      }
+      function toggleCheck(h, id) {
+        const c = document.querySelector(`#fila-${h}-${id} .chk-mov`);
+        c.checked = !c.checked;
+        sumarSeleccion(c, h, id);
+      }
+      function filtrarPorCategoria(c) {
+        filtrosCategorias = filtrosCategorias.includes(c)
+          ? filtrosCategorias.filter((f) => f !== c)
+          : [...filtrosCategorias, c];
+        renderReporte();
       }
 
-      function toggleFila(id) {
-        document.getElementById("chk-" + id).click();
+      async function eliminarMov(hoja, id) {
+        if (!confirm("¿Borrar movimiento?")) return;
+        await fetch(
+          `${scriptURL}?action=delete_movimiento&hoja=${hoja}&id=${id}`,
+          { method: "GET" },
+        );
+        cargar();
       }
 
-      function abrirEditor(h, id, f, c, m, t, cat) {
-        document.getElementById("editHoja").value = h;
-        document.getElementById("editIdx").value = id;
-        document.getElementById("editFecha").value = new Date(f)
-          .toISOString()
-          .split("T")[0];
-        document.getElementById("editConcepto").value = c;
-        document.getElementById("editMonto").value = fmt.format(m);
-        document.getElementById("editTipo").value = t;
-        document.getElementById("editCat").value = cat;
-        modEdit.show();
+      function abrirAjustes() {
+        const h = document.getElementById("selectorHoja").value;
+        const lista = document.getElementById("listaCategoriasAjustes");
+        lista.innerHTML =
+          categoriasExtra[h]
+            .map(
+              (c) => `
+          <div class="d-flex justify-content-between align-items-center p-2 mb-2 border-bottom">
+            <span class="small fw-bold">${c}</span>
+            <i class="bi bi-trash text-danger" style="cursor:pointer" onclick="borrarCatCompleta('${h}', '${c}')"></i>
+          </div>`,
+            )
+            .join("") ||
+          "<p class='text-center small py-3 text-muted'>No hay categorías personalizadas.</p>";
+        modAjustes.show();
+      }
+
+      async function borrarCatCompleta(h, c) {
+        if (!confirm(`¿Borrar "${c}" y todos sus registros?`)) return;
+        await fetch(
+          `${scriptURL}?action=eliminar_categoria&hoja=${h}&categoria=${encodeURIComponent(c)}`,
+          { method: "GET" },
+        );
+        modAjustes.hide();
+        cargar();
       }
 
       async function prepararEnvio(e) {
@@ -670,40 +630,24 @@
         const btn = document.getElementById("btnMain");
         btn.disabled = true;
         const fd = new FormData(e.target);
-        fd.set("categoria", document.getElementById("catManual").value);
+        if (fd.get("categoria") === "OTRA")
+          fd.set("categoria", document.getElementById("catManual").value);
         fd.append("action", "add_movimiento");
-        try {
-          await fetch(scriptURL, { method: "POST", body: fd });
-          e.target.reset();
-          cargar();
-          alert("¡Guardado!");
-        } catch (err) {
-          alert("Error");
-        }
+        await fetch(scriptURL, { method: "POST", body: fd });
+        e.target.reset();
+        mostrandoTodo = false;
+        cargar();
+        verTab(4);
         btn.disabled = false;
       }
 
-      async function eliminarMov(hoja, id, concepto) {
-        if (!confirm(`¿Eliminar "${concepto}"?`)) return;
-        try {
-          await fetch(
-            `${scriptURL}?action=delete_movimiento&hoja=${hoja}&id=${id}`,
-            { method: "GET", mode: "no-cors" },
-          );
-          setTimeout(cargar, 600);
-        } catch (e) {
-          alert("Error");
+      document.addEventListener("input", (e) => {
+        if (e.target.classList.contains("montoMask")) {
+          let v = e.target.value.replace(/\D/g, "");
+          v = (v / 100).toFixed(2).replace(".", ",");
+          e.target.value = v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
-      }
-
-      async function enviarEdicion(e) {
-        e.preventDefault();
-        const fd = new FormData(e.target);
-        fd.append("action", "editar_movimiento");
-        await fetch(scriptURL, { method: "POST", body: fd });
-        modEdit.hide();
-        cargar();
-      }
+      });
 
       window.onload = cargar;
     </script>
