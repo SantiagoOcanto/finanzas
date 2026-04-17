@@ -20,9 +20,10 @@
         --soft-pink: #fff5f7;
         --main-pink: #fce4ec;
         --accent-pink: #f06292;
-        --cyan-accent: #00bcd4;
         --text: #5d1029;
+        --pastel-blue: #aec6cf;
       }
+
       body {
         background-color: var(--soft-pink);
         color: var(--text);
@@ -30,24 +31,94 @@
         padding: 10px;
         padding-bottom: 80px;
       }
+
+      /* --- BOTONES DE REPORTE (COLUMNA UNIFICADA) --- */
+      .btn-group-vertical-custom {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        width: 105px; /* Ancho fijo para que los 3 sean IGUALES */
+      }
+
+      /* Clase BASE para los 3 botones del reporte */
+      .btn-fino {
+        font-size: 0.58rem !important;
+        font-weight: 700;
+        padding: 4px 2px !important;
+        border-radius: 6px !important;
+        text-transform: uppercase;
+        transition: all 0.2s;
+        line-height: 1.2;
+        width: 100%;
+        border: 1px solid transparent;
+      }
+
+      .btn-all {
+        background-color: var(--pastel-blue);
+        color: #4a5a61;
+        border: none;
+      }
+      .btn-pink-fino {
+        background-color: var(--accent-pink);
+        color: white;
+        border: none;
+      }
+      .btn-outline-fino {
+        background-color: white;
+        color: #888;
+        border: 1px solid #eee;
+      }
+
+      /* --- BOTÓN GUARDAR (ESTÉTICA INICIAL) --- */
+      .btn-pink {
+        background: var(--accent-pink);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        padding: 14px;
+        font-weight: 800; /* Texto fuerte */
+        width: 100%;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 4px 10px rgba(240, 98, 146, 0.3);
+        transition: all 0.3s ease;
+      }
+
+      .btn-pink:active {
+        transform: scale(0.97);
+        box-shadow: 0 2px 5px rgba(240, 98, 146, 0.2);
+      }
+
+      /* --- CATEGORÍAS (SÚPER FINAS) --- */
+      .cat-pill {
+        border-radius: 4px;
+        padding: 2px 0;
+        text-align: center;
+        cursor: pointer;
+        display: contents;
+        align-items: center;
+        justify-content: center;
+        line-height: 1.5;
+        font-size: 0.55rem;
+        transition: all 0.2s;
+        border: 1px solid #eee;
+        min-height: 18px;
+        background: white;
+      }
+
+      /* --- RESTO DE LA APP --- */
       .mov-fila-clickable {
         background: white;
         border-radius: 12px;
         border: 2px solid #f0f0f0;
         transition: all 0.2s ease;
+        margin-bottom: 8px;
       }
       .mov-fila-clickable.selected {
         border-color: var(--accent-pink);
         background-color: #fff9fa;
       }
-      .check-container {
-        padding: 10px;
-        border-right: 1px solid #f0f0f0;
-        background: #fafafa;
-        display: flex;
-        align-items: center;
-        border-radius: 10px 0 0 10px;
-      }
+
       .card-custom {
         background: white;
         border-radius: 20px;
@@ -55,46 +126,14 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         margin-bottom: 12px;
       }
-      .btn-pink {
-        background: var(--accent-pink);
-        color: white;
-        border: none;
-        border-radius: 12px;
-        padding: 12px;
-        font-weight: bold;
-        width: 100%;
-      }
 
-      /* Botón Seleccionar Todo más fino */
-      .btn-select-all {
-        background: transparent;
-        color: var(--cyan-accent);
-        border: 1px solid var(--cyan-accent);
-        border-radius: 25px;
-        padding: 1px 6px;
-        font-size: 0.45rem;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        transition: all 0.2s;
-        text-transform: uppercase;
-      }
-      .btn-select-all:active {
-        background: var(--cyan-accent);
-        color: white;
-        transform: scale(0.95);
-      }
-
-      .btn-xs {
-        padding: 2px 8px;
-        font-size: 0.65rem;
-        border-radius: 6px;
-      }
       .form-control,
       .form-select {
         border-radius: 12px;
         border: 1px solid var(--main-pink);
         margin-bottom: 8px;
       }
+
       .tab-nav {
         display: flex;
         background: white;
@@ -114,6 +153,7 @@
         color: var(--accent-pink);
         border-bottom: 3px solid var(--accent-pink);
       }
+
       .v-ing {
         color: #1b5e20;
         font-weight: bold;
@@ -122,8 +162,8 @@
         color: #b71c1c;
         font-weight: bold;
       }
+
       #floatSuma {
-        display: none;
         position: fixed;
         bottom: 20px;
         right: 20px;
@@ -133,21 +173,7 @@
         border-radius: 50px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         z-index: 1000;
-      }
-
-      .cat-pill {
-        border-radius: 4px;
-        padding: 2.5px 0px; /* Cero espacio arriba y abajo */
-        text-align: center;
-        cursor: pointer;
-        display: contents;
-        align-items: center;
-        justify-content: center;
-        /* Altura mínima muy pequeña */
-        line-height: 1.5; /* Pegamos el texto a los bordes */
-        font-size: 0.55rem;
-        transition: all 0.2s;
-        border: 1px solid #eee; /* Borde fino */
+        display: none;
       }
     </style>
   </head>
@@ -251,24 +277,33 @@
             style="width: auto; height: 32px; min-width: 90px"
             onchange="renderReporte()"
           ></select>
-          <div class="d-flex gap-1 align-items-center">
-            <button class="btn-select-all" onclick="seleccionarTodo()">
-              Seleccionar Todo
-            </button>
-            <button
-              class="btn btn-xs btn-pink fw-bold"
-              id="btnOrdenCarga"
-              onclick="cambiarOrden('carga')"
-            >
-              CARGA
-            </button>
-            <button
-              class="btn btn-xs btn-outline-secondary fw-bold"
-              id="btnOrdenFecha"
-              onclick="cambiarOrden('fecha')"
-            >
-              FECHA
-            </button>
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <select
+              id="selMes"
+              class="form-select form-select-sm m-0"
+              style="width: auto; height: 32px; min-width: 90px"
+              onchange="renderReporte()"
+            ></select>
+
+            <div class="btn-group-vertical-custom">
+              <button class="btn-fino btn-all" onclick="seleccionarTodo()">
+                Seleccionar Todo
+              </button>
+              <button
+                class="btn-fino btn-pink-fino"
+                id="btnOrdenCarga"
+                onclick="cambiarOrden('carga')"
+              >
+                Carga
+              </button>
+              <button
+                class="btn-fino btn-outline-fino"
+                id="btnOrdenFecha"
+                onclick="cambiarOrden('fecha')"
+              >
+                Fecha
+              </button>
+            </div>
           </div>
         </div>
 
@@ -384,17 +419,18 @@
 
       function cambiarOrden(nuevo) {
         criterioOrden = nuevo;
-        document.getElementById("btnOrdenCarga").className =
-          nuevo === "carga"
-            ? "btn btn-xs btn-pink fw-bold"
-            : "btn btn-xs btn-outline-secondary fw-bold";
-        document.getElementById("btnOrdenFecha").className =
-          nuevo === "fecha"
-            ? "btn btn-xs btn-pink fw-bold"
-            : "btn btn-xs btn-outline-secondary fw-bold";
+        const bCarga = document.getElementById("btnOrdenCarga");
+        const bFecha = document.getElementById("btnOrdenFecha");
+
+        if (nuevo === "carga") {
+          bCarga.className = "btn-fino btn-pink-fino";
+          bFecha.className = "btn-fino btn-outline-fino";
+        } else {
+          bCarga.className = "btn-fino btn-outline-fino";
+          bFecha.className = "btn-fino btn-pink-fino";
+        }
         renderReporte();
       }
-
       function seleccionarTodo() {
         const checks = document.querySelectorAll(
           "#listaDetallada .form-check-input",
