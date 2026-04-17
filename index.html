@@ -25,8 +25,6 @@
         padding: 10px;
         padding-bottom: 80px;
       }
-
-      /* TARJETAS DE CATEGORÍA (RESUMEN) */
       .cat-card {
         background: #fff;
         border-radius: 15px;
@@ -37,44 +35,16 @@
         align-items: center;
         justify-content: space-between;
       }
-      .cat-icon {
-        width: 35px;
-        height: 35px;
-        background: var(--main-pink);
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-        margin-right: 12px;
-      }
-      .cat-name {
-        font-size: 0.85rem;
-        font-weight: 700;
-        text-transform: uppercase;
-      }
-      .cat-amount {
-        font-size: 1.1rem;
-        font-weight: 800;
-      }
-
-      /* FILAS DETALLE CLICKEABLES */
       .mov-fila-clickable {
         background: white;
         border-radius: 12px;
         border: 2px solid #f0f0f0;
         transition: all 0.2s ease;
         cursor: pointer;
-        overflow: hidden;
-      }
-      .mov-fila-clickable:active {
-        transform: scale(0.98);
-        background-color: var(--soft-pink);
       }
       .mov-fila-clickable.selected {
         border-color: var(--accent-pink);
         background-color: #fff9fa;
-        box-shadow: 0 2px 8px rgba(240, 98, 146, 0.2);
       }
       .check-container {
         padding: 10px;
@@ -82,10 +52,7 @@
         background: #fafafa;
         display: flex;
         align-items: center;
-        justify-content: center;
       }
-
-      /* GENERAL */
       .card-custom {
         background: white;
         border-radius: 20px;
@@ -120,22 +87,21 @@
         border: none;
         background: none;
         padding: 12px;
-        font-size: 0.8rem;
         font-weight: 800;
         color: #bfa5ae;
       }
       .tab-nav button.active {
         color: var(--accent-pink);
         border-bottom: 3px solid var(--accent-pink);
-        background: #fffafb;
       }
       .v-ing {
         color: #1b5e20;
+        font-weight: bold;
       }
       .v-egr {
         color: #b71c1c;
+        font-weight: bold;
       }
-
       #floatSuma {
         display: none;
         position: fixed;
@@ -145,7 +111,6 @@
         color: white;
         padding: 12px 20px;
         border-radius: 50px;
-        font-weight: bold;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         z-index: 1000;
       }
@@ -162,6 +127,26 @@
     <div id="cont1">
       <div class="card-custom">
         <form id="formUnico" onsubmit="prepararEnvio(event)">
+          <div class="row g-2 mb-2">
+            <div class="col-7">
+              <label class="small fw-bold">Plata ($):</label>
+              <input
+                type="text"
+                class="form-control montoMask"
+                name="monto"
+                placeholder="0,00"
+                required
+              />
+            </div>
+            <div class="col-5">
+              <label class="small fw-bold">Tipo:</label>
+              <select name="tipo" id="mainTipo" class="form-select">
+                <option value="Egreso">Salida (-)</option>
+                <option value="Ingreso">Entrada (+)</option>
+              </select>
+            </div>
+          </div>
+
           <label class="small fw-bold">Fecha:</label>
           <input
             type="date"
@@ -175,52 +160,31 @@
           <input
             type="text"
             name="concepto"
-            class="form-control"
+            class="form-control mb-3"
             placeholder="Ej: Supermercado"
             required
           />
 
-          <div class="row g-2">
-            <div class="col-7">
-              <label class="small fw-bold">Plata ($):</label>
-              <input
-                type="text"
-                class="form-control montoMask"
-                name="monto"
-                placeholder="0,00"
-                required
-              />
-            </div>
-            <div class="col-5">
-              <label class="small fw-bold">Tipo:</label>
-              <select name="tipo" class="form-select">
-                <option value="Egreso">Salida (-)</option>
-                <option value="Ingreso">Entrada (+)</option>
-              </select>
-            </div>
-          </div>
+          <label class="small fw-bold">Categoría:</label>
+          <select
+            id="catDinamica"
+            class="form-select mb-2"
+            onchange="checkManual(this.value)"
+          ></select>
 
-          <label class="small fw-bold mt-2">Categoría:</label>
-          <div class="row g-2">
-            <div class="col-6">
-              <select
-                id="catDinamica"
-                class="form-select"
-                onchange="checkManual(this.value)"
-              ></select>
-            </div>
-            <div class="col-6">
-              <input
-                type="text"
-                id="catManual"
-                name="categoria"
-                class="form-control"
-                placeholder="Otra..."
-              />
-            </div>
+          <div id="wrapperManual" style="display: none">
+            <input
+              type="text"
+              id="catManual"
+              name="categoria"
+              class="form-control mb-3"
+              placeholder="Nombre de categoría nueva..."
+              style="border: 2px solid var(--accent-pink)"
+            />
           </div>
 
           <hr />
+
           <div class="row g-2">
             <div class="col-6">
               <label class="small fw-bold">Guardar en:</label>
@@ -242,6 +206,7 @@
               </select>
             </div>
           </div>
+
           <button type="submit" id="btnMain" class="btn-pink mt-3">
             GUARDAR REGISTRO
           </button>
@@ -251,43 +216,91 @@
 
     <div id="cont4" style="display: none">
       <div class="card-custom">
+        <div class="d-flex gap-2 mb-3">
+          <button
+            type="button"
+            class="btn btn-sm btn-pink w-100 fw-bold"
+            id="btnOrdenCarga"
+            onclick="cambiarOrden('carga')"
+          >
+            ORDEN CARGA
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-secondary w-100 fw-bold"
+            id="btnOrdenFecha"
+            onclick="cambiarOrden('fecha')"
+          >
+            ORDEN FECHA
+          </button>
+        </div>
+
         <select
           id="selMes"
           class="form-select mb-3"
           onchange="renderReporte()"
         ></select>
-        <div id="resAgrupado"></div>
-        <hr />
-        <div class="small fw-bold mb-2" style="color: var(--accent-pink)">
-          DETALLE (Toca para sumar o editar)
-        </div>
+
         <div id="listaDetallada"></div>
+
+        <div id="wrapperVerMas" class="text-center my-3" style="display: none">
+          <button
+            class="btn btn-sm fw-bold"
+            style="
+              color: var(--accent-pink);
+              background: white;
+              border: 1px solid var(--accent-pink);
+              border-radius: 10px;
+            "
+            onclick="mostrarTodos()"
+          >
+            Ver todos los movimientos
+          </button>
+        </div>
+
+        <hr />
+
+        <button
+          class="btn btn-sm w-100 mb-3 fw-bold"
+          onclick="toggleResumen()"
+          style="
+            background: #fdf0f4;
+            color: var(--accent-pink);
+            border: 1px dashed var(--accent-pink);
+            border-radius: 10px;
+          "
+        >
+          <span id="txtResumen">VER RESUMEN POR CATEGORÍA</span>
+        </button>
+
+        <div id="resAgrupado" class="row g-2" style="display: none"></div>
       </div>
     </div>
-
     <div class="modal fade" id="modalEdit" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="border-radius: 20px; padding: 15px">
-          <h6 class="fw-bold">Editar Movimiento</h6>
           <form id="formEdit" onsubmit="enviarEdicion(event)">
             <input type="hidden" name="rowIdx" id="editIdx" />
             <input type="hidden" name="hojaOrig" id="editHoja" />
+            <label class="small fw-bold">Fecha:</label>
             <input
               type="date"
               name="fecha"
               id="editFecha"
-              class="form-control"
+              class="form-control mb-2"
               required
             />
+            <label class="small fw-bold">Concepto:</label>
             <input
               type="text"
               name="concepto"
               id="editConcepto"
-              class="form-control"
+              class="form-control mb-2"
               required
             />
-            <div class="row g-2">
+            <div class="row g-2 mb-2">
               <div class="col-6">
+                <label class="small fw-bold">Monto:</label>
                 <input
                   type="text"
                   name="monto"
@@ -296,19 +309,21 @@
                 />
               </div>
               <div class="col-6">
+                <label class="small fw-bold">Tipo:</label>
                 <select name="tipo" id="editTipo" class="form-select">
                   <option value="Ingreso">Entrada (+)</option>
                   <option value="Egreso">Salida (-)</option>
                 </select>
               </div>
             </div>
+            <label class="small fw-bold">Categoría:</label>
             <input
               type="text"
               name="categoria"
               id="editCat"
-              class="form-control"
+              class="form-control mb-3"
             />
-            <button type="submit" class="btn-pink mt-2">GUARDAR CAMBIOS</button>
+            <button type="submit" class="btn-pink">GUARDAR CAMBIOS</button>
           </form>
         </div>
       </div>
@@ -318,10 +333,32 @@
     <script>
       const scriptURL =
         "https://script.google.com/macros/s/AKfycbzWuiMzgMmE2rl9eM29YyvPsXWbJ95w4W4f7pzEGvHo2pj7nFnThk8C3owH0kSMpaW_/exec";
+
+      let mostrandoTodo = false;
+      let resumenVisible = false; // Nueva variable para controlar el resumen
       let db = { personal: [], trabajos: [] };
+      let categoriasExtra = { Personal: [], Trabajos: [] };
       let sumaAcumulada = 0;
+      let criterioOrden = "carga";
       const fmt = new Intl.NumberFormat("es-AR", { minimumFractionDigits: 2 });
       const modEdit = new bootstrap.Modal(document.getElementById("modalEdit"));
+
+      // Función para mostrar/ocultar el resumen por categoría
+      function toggleResumen() {
+        resumenVisible = !resumenVisible;
+        const div = document.getElementById("resAgrupado");
+        const txt = document.getElementById("txtResumen");
+        if (div) div.style.display = resumenVisible ? "flex" : "none";
+        if (txt)
+          txt.innerText = resumenVisible
+            ? "OCULTAR RESUMEN"
+            : "VER RESUMEN POR CATEGORÍA";
+      }
+
+      function mostrarTodos() {
+        mostrandoTodo = true;
+        renderReporte();
+      }
 
       const CATS = {
         Personal: ["Comida", "Compras", "Servicios", "Salud", "Transporte"],
@@ -333,24 +370,49 @@
           n === 1 ? "block" : "none";
         document.getElementById("cont4").style.display =
           n === 4 ? "block" : "none";
-        document.getElementById("t1").className = n === 1 ? "active" : "";
-        document.getElementById("t4").className = n === 4 ? "active" : "";
-        if (n === 4) renderReporte();
+        document.getElementById("t1").classList.toggle("active", n === 1);
+        document.getElementById("t4").classList.toggle("active", n === 4);
+        if (n === 4) {
+          mostrandoTodo = false;
+          renderReporte();
+        }
+      }
+
+      function cambiarOrden(nuevo) {
+        criterioOrden = nuevo;
+        document.getElementById("btnOrdenCarga").className =
+          nuevo === "carga"
+            ? "btn btn-sm btn-pink w-100 fw-bold"
+            : "btn btn-sm btn-outline-secondary w-100 fw-bold";
+        document.getElementById("btnOrdenFecha").className =
+          nuevo === "fecha"
+            ? "btn btn-sm btn-pink w-100 fw-bold"
+            : "btn btn-sm btn-outline-secondary w-100 fw-bold";
+        renderReporte();
       }
 
       function actualizarCategorias() {
         const h = document.getElementById("selectorHoja").value;
         const sel = document.getElementById("catDinamica");
+        const todas = [...new Set([...CATS[h], ...categoriasExtra[h]])];
         sel.innerHTML =
-          CATS[h].map((c) => `<option value="${c}">${c}</option>`).join("") +
-          `<option value="OTRA">-- OTRA --</option>`;
+          `<option value="" disabled selected>Seleccioná...</option>` +
+          todas.map((c) => `<option value="${c}">${c}</option>`).join("") +
+          `<option value="OTRA" style="font-weight:bold; color:var(--accent-pink);">+ AGREGAR NUEVA</option>`;
         checkManual(sel.value);
       }
 
       function checkManual(v) {
-        const i = document.getElementById("catManual");
-        i.value = v === "OTRA" ? "" : v;
-        i.readOnly = v !== "OTRA";
+        const wrapper = document.getElementById("wrapperManual");
+        const input = document.getElementById("catManual");
+        if (v === "OTRA") {
+          wrapper.style.display = "block";
+          input.value = "";
+          input.focus();
+        } else {
+          wrapper.style.display = "none";
+          input.value = v;
+        }
       }
 
       document.addEventListener("input", (e) => {
@@ -361,6 +423,24 @@
         }
       });
 
+      async function prepararEnvio(e) {
+        e.preventDefault();
+        const btn = document.getElementById("btnMain");
+        btn.disabled = true;
+        const fd = new FormData(e.target);
+        fd.set("categoria", document.getElementById("catManual").value);
+        fd.append("action", "add_movimiento");
+        try {
+          await fetch(scriptURL, { method: "POST", body: fd });
+          alert("¡Guardado!");
+          e.target.reset();
+          await cargar();
+        } catch (err) {
+          alert("Error al guardar");
+        }
+        btn.disabled = false;
+      }
+
       async function cargar() {
         document.getElementById("fechaMain").value = new Date()
           .toISOString()
@@ -368,10 +448,33 @@
         try {
           const r = await fetch(`${scriptURL}?t=${Date.now()}`);
           db = await r.json();
+          extraerCategoriasNuevas();
           llenarMeses();
+          actualizarCategorias();
+          if (document.getElementById("cont4").style.display === "block")
+            renderReporte();
         } catch (e) {
           console.error(e);
         }
+      }
+
+      function extraerCategoriasNuevas() {
+        categoriasExtra = { Personal: [], Trabajos: [] };
+        ["personal", "trabajos"].forEach((key) => {
+          if (db[key]) {
+            db[key].forEach((m) => {
+              const cat = m[4];
+              const hojaKey = key.charAt(0).toUpperCase() + key.slice(1);
+              if (
+                cat &&
+                !CATS[hojaKey].includes(cat) &&
+                !categoriasExtra[hojaKey].includes(cat)
+              ) {
+                categoriasExtra[hojaKey].push(cat);
+              }
+            });
+          }
+        });
       }
 
       function llenarMeses() {
@@ -414,11 +517,58 @@
             todos.push({ d: m, id: i + 2, h: "Trabajos" }),
           );
 
+        // Filtrar por mes (usando UTC para evitar saltos de día)
         let filtrados = todos.filter(
-          (x) => new Date(x.d[0]).getMonth() === mes,
+          (x) => new Date(x.d[0]).getUTCMonth() === mes,
         );
 
-        // Agrupación Resumen
+        // Ordenar
+        if (criterioOrden === "fecha") {
+          filtrados.sort((a, b) => new Date(b.d[0]) - new Date(a.d[0]));
+        } else {
+          filtrados.sort((a, b) => b.id - a.id);
+        }
+
+        const totalMovs = filtrados.length;
+        const aMostrar = mostrandoTodo ? filtrados : filtrados.slice(0, 10);
+        const btnVerMas = document.getElementById("wrapperVerMas");
+        if (btnVerMas)
+          btnVerMas.style.display =
+            !mostrandoTodo && totalMovs > 10 ? "block" : "none";
+
+        // 1. Lista Detallada
+        document.getElementById("listaDetallada").innerHTML = aMostrar
+          .map((x) => {
+            let ing =
+              parseFloat(String(x.d[2]).replace(/\./g, "").replace(",", ".")) ||
+              0;
+            let egr =
+              parseFloat(String(x.d[3]).replace(/\./g, "").replace(",", ".")) ||
+              0;
+            let monto = ing > 0 ? ing : egr;
+            let valorSuma = ing > 0 ? monto : -monto;
+            const f = new Date(x.d[0]);
+            const fLab =
+              f.getUTCDate().toString().padStart(2, "0") +
+              "/" +
+              (f.getUTCMonth() + 1).toString().padStart(2, "0");
+
+            return `
+        <div class="mov-fila-clickable d-flex align-items-center mb-2" id="fila-${x.id}">
+          <div class="check-container">
+            <input type="checkbox" class="form-check-input" id="chk-${x.id}" value="${valorSuma}" onchange="sumarMov(this, '${x.id}')">
+          </div>
+          <div class="p-2 flex-grow-1" onclick="toggleFila('${x.id}', ${valorSuma})">
+            <div><strong style="color:var(--text)">${x.d[1]} (${fLab})</strong></div>
+            <small class="text-muted" style="font-size:0.7rem">${x.h} | ${x.d[4] || "Sin cat."}</small><br>
+            <span class="${ing > 0 ? "v-ing" : "v-egr"}" style="font-size:0.9rem">$${fmt.format(monto)}</span>
+          </div>
+          <button class="btn btn-sm text-pink me-2" onclick="abrirEditor('${x.h}', ${x.id}, '${x.d[0]}', '${x.d[1]}', ${monto}, '${ing > 0 ? "Ingreso" : "Egreso"}', '${x.d[4]}')">EDITAR</button>
+        </div>`;
+          })
+          .join("");
+
+        // 2. Resumen Agrupado
         let grupos = {};
         filtrados.forEach((x) => {
           let cat = x.d[4] || "Otros";
@@ -432,101 +582,33 @@
           grupos[cat] += ing - egr;
         });
 
-        const getIcon = (c) => {
-          const cL = c.toLowerCase();
-          if (cL.includes("comida")) return "🍕";
-          if (cL.includes("compra")) return "🛍️";
-          if (cL.includes("servici")) return "⚡";
-          if (cL.includes("salud")) return "💊";
-          if (cL.includes("sueldo")) return "💰";
-          if (cL.includes("herram")) return "🔧";
-          return "📊";
-        };
-
         document.getElementById("resAgrupado").innerHTML = Object.keys(grupos)
           .map(
             (c) => `
-          <div class="cat-card">
-            <div class="d-flex align-items-center">
-              <div class="cat-icon">${getIcon(c)}</div>
-              <div class="cat-info"><span class="cat-name">${c}</span></div>
-            </div>
-            <div class="cat-amount ${grupos[c] >= 0 ? "v-ing" : "v-egr"}">$${fmt.format(Math.abs(grupos[c]))}</div>
-          </div>`,
+      <div class="col-6 mb-2">
+        <div style="background: white; border-radius: 12px; padding: 10px; border: 1px solid var(--main-pink); height: 100%;">
+          <div style="font-size: 0.7rem; color: #888; text-transform: uppercase; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${c}</div>
+          <div style="font-size: 0.9rem;" class="${grupos[c] >= 0 ? "v-ing" : "v-egr"}">$${fmt.format(Math.abs(grupos[c]))}</div>
+        </div>
+      </div>`,
           )
           .join("");
-
-        // Detalle Clickeable
-        document.getElementById("listaDetallada").innerHTML = filtrados
-          .map((x) => {
-            let ing =
-              parseFloat(String(x.d[2]).replace(/\./g, "").replace(",", ".")) ||
-              0;
-            let egr =
-              parseFloat(String(x.d[3]).replace(/\./g, "").replace(",", ".")) ||
-              0;
-            let monto = ing > 0 ? ing : egr;
-            let valSuma = ing > 0 ? monto : -monto;
-
-            return `
-          <div class="mov-fila-clickable d-flex align-items-center mb-2" id="fila-${x.id}">
-            <div class="check-container" onclick="toggleFila('${x.id}', ${valSuma})">
-              <input type="checkbox" class="form-check-input" id="chk-${x.id}" value="${valSuma}" onchange="event.stopPropagation(); sumarManual(this, '${x.id}')">
-            </div>
-            <div style="flex-grow:1; padding: 10px;" onclick="toggleFila('${x.id}', ${valSuma})">
-              <div class="fw-bold" style="font-size:0.85rem">${x.d[1]} <small class="text-muted">(${x.h})</small></div>
-              <div class="${ing > 0 ? "v-ing" : "v-egr"}" style="font-size:0.95rem">$${fmt.format(monto)}</div>
-            </div>
-            <div style="padding-right:10px">
-              <button class="btn btn-sm btn-outline-secondary" style="font-size:0.7rem; font-weight:bold" 
-                onclick="event.stopPropagation(); abrirEditor('${x.h}', ${x.id}, '${x.d[0]}', '${x.d[1]}', ${monto}, '${ing > 0 ? "Ingreso" : "Egreso"}', '${x.d[4]}')">EDITAR</button>
-            </div>
-          </div>`;
-          })
-          .join("");
       }
 
-      function toggleFila(id, valor) {
-        const cb = document.getElementById("chk-" + id);
-        cb.checked = !cb.checked;
-        actualizarSumaVisual(id, cb.checked, valor);
-      }
-
-      function sumarManual(cb, id) {
-        actualizarSumaVisual(id, cb.checked, parseFloat(cb.value));
-      }
-
-      function actualizarSumaVisual(id, isChecked, valor) {
-        const fila = document.getElementById("fila-" + id);
-        if (isChecked) {
-          sumaAcumulada += valor;
-          fila.classList.add("selected");
-        } else {
-          sumaAcumulada -= valor;
-          fila.classList.remove("selected");
-        }
+      function sumarMov(cb, id) {
+        const val = parseFloat(cb.value);
+        sumaAcumulada += cb.checked ? val : -val;
+        document
+          .getElementById("fila-" + id)
+          .classList.toggle("selected", cb.checked);
         document.getElementById("totalSeleccionado").innerText =
           fmt.format(sumaAcumulada);
         document.getElementById("floatSuma").style.display =
           Math.abs(sumaAcumulada) > 0.01 ? "block" : "none";
       }
 
-      async function prepararEnvio(e) {
-        e.preventDefault();
-        const btn = document.getElementById("btnMain");
-        btn.disabled = true;
-        const fd = new FormData(e.target);
-        fd.append("action", "add_movimiento");
-        try {
-          await fetch(scriptURL, { method: "POST", body: fd });
-          alert("¡Guardado!");
-          e.target.reset();
-          actualizarCategorias();
-          cargar();
-        } catch (err) {
-          alert("Error");
-        }
-        btn.disabled = false;
+      function toggleFila(id, valor) {
+        document.getElementById("chk-" + id).click();
       }
 
       function abrirEditor(h, id, f, c, m, t, cat) {
@@ -551,10 +633,7 @@
         cargar();
       }
 
-      window.onload = () => {
-        actualizarCategorias();
-        cargar();
-      };
+      window.onload = cargar;
     </script>
   </body>
 </html>
