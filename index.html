@@ -53,8 +53,8 @@
         font-weight: 800;
         width: 100%;
         text-transform: uppercase;
-        box-shadow: 0 4px 10px rgba(240, 98, 146, 0.3);
       }
+
       .tab-nav {
         display: flex;
         background: white;
@@ -75,45 +75,45 @@
         border-bottom: 3px solid var(--accent-pink);
       }
 
-      /* CABECERA ARMÓNICA EN UNA LÍNEA */
       .header-actions {
         display: flex;
         align-items: center;
-        gap: 6px;
-        margin-bottom: 12px;
+        margin-bottom: 15px;
+        gap: 5px;
       }
-
+      .dropdown-meses-container {
+        margin-right: auto;
+      }
       .search-mini {
         position: relative;
-        width: 100px; /* Tamaño controlado */
+        width: 300px;
       }
       .search-mini input {
-        height: 28px;
-        font-size: 0.65rem;
-        padding-right: 22px;
+        height: 32px;
+        font-size: 0.75rem;
+        padding-right: 25px;
         margin-bottom: 0 !important;
-        border-radius: 8px;
+        border-radius: 10px;
         border: 1px solid #eee;
       }
       .search-mini i {
         position: absolute;
-        right: 7px;
+        right: 8px;
         top: 50%;
         transform: translateY(-50%);
-        font-size: 0.65rem;
+        font-size: 0.75rem;
         color: var(--accent-pink);
       }
-
       .btn-group-right {
         display: flex;
         gap: 4px;
-        margin-left: auto; /* Empuja a la derecha */
+        margin-left: auto;
       }
 
       .btn-fino {
         font-size: 0.6rem;
         font-weight: 800;
-        padding: 5px 6px;
+        padding: 6px 7px;
         border-radius: 8px;
         text-transform: uppercase;
         border: 1px solid #eee;
@@ -133,9 +133,9 @@
       }
 
       .cat-pill {
-        border-radius: 6px;
-        padding: 4px 8px;
-        font-size: 0.6rem;
+        border-radius: 8px;
+        padding: 4px 10px;
+        font-size: 0.65rem;
         border: 1px solid #eee;
         background: white;
         cursor: pointer;
@@ -146,7 +146,7 @@
         border-radius: 12px;
         border: 2px solid #f0f0f0;
         margin-bottom: 8px;
-        padding: 8px 12px;
+        padding: 10px 12px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -164,6 +164,12 @@
         font-weight: bold;
       }
 
+      .iconos-accion {
+        display: flex;
+        gap: 12px;
+        margin-top: 6px;
+        justify-content: flex-end;
+      }
       .btn-ajustes {
         position: fixed;
         bottom: 20px;
@@ -190,22 +196,10 @@
         padding: 8px 15px;
         border-radius: 20px;
         font-weight: bold;
-        font-size: 0.8rem;
+        font-size: 0.85rem;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         display: none;
         z-index: 1001;
-      }
-      .btn-mas {
-        background: white;
-        color: var(--accent-pink);
-        border: 1px solid var(--main-pink);
-        border-radius: 10px;
-        padding: 8px;
-        font-size: 0.7rem;
-        font-weight: bold;
-        width: 100%;
-        margin-top: 10px;
-        text-transform: uppercase;
       }
     </style>
   </head>
@@ -219,7 +213,7 @@
 
     <div id="cont1">
       <div class="card-custom">
-        <form id="formUnico" onsubmit="prepararEnvio(event)">
+        <form id="formNuevo" onsubmit="prepararEnvio(event, 'nuevo')">
           <div class="row g-2">
             <div class="col-7">
               <label class="small fw-bold">Plata ($):</label
@@ -239,7 +233,7 @@
               </select>
             </div>
           </div>
-          <label class="small fw-bold">¿Qué es? (Opcional):</label
+          <label class="small fw-bold">¿Qué es?:</label
           ><input
             type="text"
             name="concepto"
@@ -248,15 +242,15 @@
           />
           <label class="small fw-bold">Categoría:</label
           ><select
-            id="catDinamica"
+            id="catDinamicaNuevo"
+            name="cat_select"
             class="form-select"
-            onchange="checkManual(this.value)"
+            onchange="checkManual(this, 'wrapperManualNuevo')"
           ></select>
-          <div id="wrapperManual" style="display: none">
+          <div id="wrapperManualNuevo" style="display: none">
             <input
               type="text"
-              id="catManual"
-              name="categoria"
+              name="categoria_nueva"
               class="form-control"
               placeholder="Nombre nueva categoría..."
             />
@@ -266,9 +260,9 @@
               <label class="small fw-bold">Hoja:</label
               ><select
                 name="hoja"
-                id="selectorHoja"
+                id="hojaMain"
                 class="form-select"
-                onchange="actualizarCategorias()"
+                onchange="actualizarCategoriasDinamicas()"
               >
                 <option value="Personal">Personal</option>
                 <option value="Trabajos">Trabajos</option>
@@ -282,15 +276,7 @@
               </select>
             </div>
           </div>
-          <input
-            type="date"
-            name="fecha_manual"
-            id="fechaMain"
-            class="d-none"
-          />
-          <button type="submit" id="btnMain" class="btn-pink mt-3">
-            GUARDAR REGISTRO
-          </button>
+          <button type="submit" class="btn-pink mt-3">GUARDAR REGISTRO</button>
         </form>
       </div>
     </div>
@@ -298,13 +284,13 @@
     <div id="cont4" style="display: none">
       <div class="card-custom">
         <div class="header-actions">
-          <div class="dropdown">
+          <div class="dropdown-meses-container">
             <button
               class="btn btn-outline-secondary btn-sm dropdown-toggle"
               type="button"
               id="btnMeses"
               data-bs-toggle="dropdown"
-              style="font-size: 0.65rem; height: 28px; padding: 2px 8px"
+              style="font-size: 0.65rem; height: 32px"
             >
               Meses
             </button>
@@ -314,7 +300,6 @@
               style="min-width: 180px"
             ></ul>
           </div>
-
           <div class="search-mini">
             <input
               type="text"
@@ -325,7 +310,6 @@
             />
             <i class="bi bi-search"></i>
           </div>
-
           <div class="btn-group-right">
             <button class="btn-fino blue" onclick="seleccionarTodo()">
               Todo
@@ -346,21 +330,83 @@
             </button>
           </div>
         </div>
-
         <div id="gridCategorias" class="d-flex flex-wrap gap-1 mb-3"></div>
         <div id="listaDetallada"></div>
-        <div id="wrapperMas"></div>
       </div>
     </div>
 
-    <button class="btn-ajustes" onclick="abrirAjustes()">
-      <i class="bi bi-gear-fill"></i>
-    </button>
+    <div class="modal fade" id="modalEditar" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 20px">
+          <div class="modal-header border-0 pb-0">
+            <h6 class="fw-bold m-0">EDITAR MOVIMIENTO</h6>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="formEditar" onsubmit="prepararEnvio(event, 'editar')">
+              <input type="hidden" name="id" id="editId" />
+              <input type="hidden" name="hoja" id="editHoja" />
+              <div class="row g-2">
+                <div class="col-7">
+                  <label class="small fw-bold">Plata ($):</label
+                  ><input
+                    type="text"
+                    class="form-control montoMask"
+                    name="monto"
+                    id="editMonto"
+                    required
+                  />
+                </div>
+                <div class="col-5">
+                  <label class="small fw-bold">Tipo:</label
+                  ><select name="tipo" id="editTipo" class="form-select">
+                    <option value="Egreso">Salida (-)</option>
+                    <option value="Ingreso">Entrada (+)</option>
+                  </select>
+                </div>
+              </div>
+              <label class="small fw-bold">Concepto:</label
+              ><input
+                type="text"
+                name="concepto"
+                id="editConcepto"
+                class="form-control"
+              />
+              <label class="small fw-bold">Categoría:</label
+              ><select
+                id="catDinamicaEdit"
+                name="cat_select"
+                class="form-select"
+                onchange="checkManual(this, 'wrapperManualEdit')"
+              ></select>
+              <div id="wrapperManualEdit" style="display: none">
+                <input
+                  type="text"
+                  name="categoria_nueva"
+                  id="editCatManual"
+                  class="form-control"
+                />
+              </div>
+              <label class="small fw-bold">Método:</label
+              ><select name="metodo" id="editMetodo" class="form-select">
+                <option value="Digital">Digital</option>
+                <option value="Efectivo">Efectivo</option>
+              </select>
+              <button type="submit" class="btn-pink mt-3">ACTUALIZAR</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="modal fade" id="modalAjustes" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="border-radius: 20px">
-          <div class="modal-header border-0">
+          <div class="modal-header border-0 pb-0">
             <h6 class="fw-bold m-0">AJUSTES CATEGORÍAS</h6>
             <button
               type="button"
@@ -368,10 +414,14 @@
               data-bs-dismiss="modal"
             ></button>
           </div>
-          <div class="modal-body pt-0" id="listaCategoriasAjustes"></div>
+          <div class="modal-body" id="listaCategoriasAjustes"></div>
         </div>
       </div>
     </div>
+
+    <button class="btn-ajustes" onclick="abrirAjustes()">
+      <i class="bi bi-gear-fill"></i>
+    </button>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -379,18 +429,19 @@
         "https://script.google.com/macros/s/AKfycbwQBntv5Z07I_wwv_fwtak8ujKS8SzMeuJyr9iO6VuYDYJldDo9QlN8LMn_kI9FjV08/exec";
       let db = { personal: [], trabajos: [] },
         categoriasExtra = { Personal: [], Trabajos: [] };
-      let mesesSeleccionados = [new Date().getMonth()];
-      let filtrosCategorias = [],
+      let mesesSeleccionados = [new Date().getMonth()],
+        filtrosCategorias = [],
         criterioOrden = "carga",
-        sumaAcumulada = 0,
-        mostrandoTodo = false;
-
+        sumaAcumulada = 0;
       const CATS_BASE = {
         Personal: ["Compras", "Servicios", "Salud", "Transporte"],
         Trabajos: ["Sueldo", "Insumos", "Viáticos", "Herramientas"],
       };
 
-      const modAjustes = new bootstrap.Modal(
+      const modalEdit = new bootstrap.Modal(
+        document.getElementById("modalEditar"),
+      );
+      const modalAjustes = new bootstrap.Modal(
         document.getElementById("modalAjustes"),
       );
 
@@ -403,76 +454,176 @@
         document.getElementById("t4").classList.toggle("active", n === 4);
       }
 
-      function cambiarOrden(o) {
-        criterioOrden = o;
-        document
-          .getElementById("btnOrdenCarga")
-          .classList.toggle("active", o === "carga");
-        document
-          .getElementById("btnOrdenFecha")
-          .classList.toggle("active", o === "fecha");
-        renderReporte();
+      function abrirEditor(hoja, id, concepto, monto, tipo, cat, metodo) {
+        document.getElementById("editId").value = id;
+        document.getElementById("editHoja").value = hoja;
+        document.getElementById("editConcepto").value = concepto;
+        let montoLimpio = parseFloat(monto).toFixed(2).replace(".", "");
+        const inputM = document.getElementById("editMonto");
+        inputM.value = montoLimpio;
+        inputM.dispatchEvent(new Event("input", { bubbles: true }));
+        document.getElementById("editTipo").value = tipo;
+        document.getElementById("editMetodo").value = metodo;
+        const sel = document.getElementById("catDinamicaEdit");
+        actualizarCategoriasDinamicas(hoja, sel);
+        if ([...sel.options].some((o) => o.value === cat)) {
+          sel.value = cat;
+          checkManual(sel, "wrapperManualEdit");
+        } else {
+          sel.value = "OTRA";
+          checkManual(sel, "wrapperManualEdit");
+          document.getElementById("editCatManual").value = cat;
+        }
+        modalEdit.show();
       }
 
-      function seleccionarTodo() {
-        const checks = document.querySelectorAll(".chk-mov");
-        const filas = document.querySelectorAll(".mov-fila");
-        const algunMarcado = Array.from(checks).some((c) => c.checked);
-        sumaAcumulada = 0;
-        checks.forEach((c, idx) => {
-          if (algunMarcado) {
-            c.checked = false;
-            filas[idx].classList.remove("selected");
-          } else {
-            c.checked = true;
-            filas[idx].classList.add("selected");
-            sumaAcumulada += parseFloat(c.value);
-          }
+      function abrirAjustes() {
+        const h = document.getElementById("hojaMain").value;
+        const lista = document.getElementById("listaCategoriasAjustes");
+        lista.innerHTML =
+          categoriasExtra[h]
+            .map(
+              (c) => `
+          <div class="d-flex justify-content-between align-items-center p-2 border-bottom">
+            <span class="small fw-bold">${c}</span>
+            <i class="bi bi-trash text-danger" style="cursor:pointer" onclick="borrarCatCompleta('${h}', '${c}')"></i>
+          </div>
+        `,
+            )
+            .join("") ||
+          "<p class='text-center small py-3 text-muted'>No hay categorías nuevas en esta hoja.</p>";
+        modalAjustes.show();
+      }
+
+      async function borrarCatCompleta(h, c) {
+        if (!confirm(`¿Borrar categoría "${c}"?`)) return;
+        await fetch(
+          `${scriptURL}?action=eliminar_categoria&hoja=${h}&categoria=${encodeURIComponent(c)}`,
+        );
+        modalAjustes.hide();
+        cargar();
+      }
+
+      async function prepararEnvio(e, modo) {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        if (fd.get("cat_select") === "OTRA")
+          fd.set("categoria", fd.get("categoria_nueva"));
+        else fd.set("categoria", fd.get("cat_select"));
+        fd.append(
+          "action",
+          modo === "editar" ? "edit_movimiento" : "add_movimiento",
+        );
+        await fetch(scriptURL, { method: "POST", body: fd });
+        if (modo === "editar") modalEdit.hide();
+        e.target.reset();
+        cargar();
+      }
+
+      function renderReporte() {
+        let todos = [];
+        if (db.personal)
+          db.personal.forEach((m, i) =>
+            todos.push({ d: m, id: i + 2, h: "Personal" }),
+          );
+        if (db.trabajos)
+          db.trabajos.forEach((m, i) =>
+            todos.push({ d: m, id: i + 2, h: "Trabajos" }),
+          );
+        let filtrados = todos.filter((x) =>
+          mesesSeleccionados.includes(new Date(x.d[0]).getUTCMonth()),
+        );
+        const query = document
+          .getElementById("inputBusqueda")
+          .value.toLowerCase();
+        if (query)
+          filtrados = filtrados.filter(
+            (x) =>
+              x.d[1].toLowerCase().includes(query) ||
+              (x.d[4] || "").toLowerCase().includes(query),
+          );
+        if (filtrosCategorias.length > 0)
+          filtrados = filtrados.filter((x) =>
+            filtrosCategorias.includes(x.d[4] || "S/C"),
+          );
+        filtrados.sort((a, b) =>
+          criterioOrden === "fecha"
+            ? new Date(b.d[0]) - new Date(a.d[0])
+            : b.id - a.id,
+        );
+        document.getElementById("listaDetallada").innerHTML = filtrados
+          .map((x) => {
+            const ing = parseFloat(x.d[2]) || 0,
+              monto = ing || parseFloat(x.d[3]);
+            const f = new Date(x.d[0]),
+              fLab =
+                f.getUTCDate().toString().padStart(2, "0") +
+                "/" +
+                (f.getUTCMonth() + 1).toString().padStart(2, "0");
+            return `<div class="mov-fila" id="fila-${x.h}-${x.id}">
+            <div class="d-flex align-items-center gap-2" onclick="toggleCheck('${x.h}', ${x.id})">
+              <input type="checkbox" class="form-check-input chk-mov" value="${ing ? monto : -monto}" onchange="sumarSeleccion(this, '${x.h}', ${x.id})" onclick="event.stopPropagation()">
+              <div><div class="small fw-bold">${x.d[1]} <span class="text-muted fw-normal">(${fLab})</span></div><div style="font-size:0.6rem; color:#888">${x.h} | ${x.d[4]}</div></div>
+            </div>
+            <div class="text-end"><div class="${ing > 0 ? "v-ing" : "v-egr"}">$${monto.toLocaleString("es-AR")}</div>
+              <div class="iconos-accion">
+                <i class="bi bi-pencil-square text-muted" style="cursor:pointer" onclick="event.stopPropagation(); abrirEditor('${x.h}', ${x.id}, '${x.d[1]}', ${monto}, '${ing ? "Ingreso" : "Egreso"}', '${x.d[4]}', '${x.d[5]}')"></i>
+                <i class="bi bi-trash3 text-danger" style="cursor:pointer" onclick="event.stopPropagation(); eliminarMov('${x.h}', ${x.id})"></i>
+              </div>
+            </div></div>`;
+          })
+          .join("");
+      }
+
+      function actualizarCategoriasDinamicas(hojaForzada, comboForzado) {
+        const h = hojaForzada || document.getElementById("hojaMain").value;
+        const sel = comboForzado || document.getElementById("catDinamicaNuevo");
+        const todas = [...new Set([...CATS_BASE[h], ...categoriasExtra[h]])];
+        sel.innerHTML =
+          `<option value="" disabled selected>Elegir...</option>` +
+          todas.map((c) => `<option value="${c}">${c}</option>`).join("") +
+          `<option value="OTRA">+ NUEVA</option>`;
+      }
+
+      function checkManual(el, wrapperId) {
+        document.getElementById(wrapperId).style.display =
+          el.value === "OTRA" ? "block" : "none";
+      }
+      async function cargar() {
+        const r = await fetch(`${scriptURL}?t=${Date.now()}`);
+        db = await r.json();
+        categoriasExtra = { Personal: [], Trabajos: [] };
+        ["personal", "trabajos"].forEach((k) => {
+          const h = k === "personal" ? "Personal" : "Trabajos";
+          if (db[k])
+            db[k].forEach((m) => {
+              if (
+                m[4] &&
+                !CATS_BASE[h].includes(m[4]) &&
+                !categoriasExtra[h].includes(m[4])
+              )
+                categoriasExtra[h].push(m[4]);
+            });
         });
-        actualizarUI_Suma();
-      }
-
-      function sumarSeleccion(cb, h, id) {
-        const val = parseFloat(cb.value);
-        if (cb.checked) {
-          sumaAcumulada += val;
-          document.getElementById(`fila-${h}-${id}`).classList.add("selected");
-        } else {
-          sumaAcumulada -= val;
-          document
-            .getElementById(`fila-${h}-${id}`)
-            .classList.remove("selected");
-        }
-        actualizarUI_Suma();
-      }
-
-      function actualizarUI_Suma() {
-        const floatSuma = document.getElementById("floatSuma");
-        document.getElementById("totalSeleccionado").innerText =
-          sumaAcumulada.toLocaleString("es-AR", { minimumFractionDigits: 2 });
-        if (Math.abs(sumaAcumulada) < 0.01) {
-          sumaAcumulada = 0;
-          floatSuma.style.display = "none";
-        } else {
-          floatSuma.style.display = "block";
-        }
-      }
-
-      function toggleMes(idx) {
-        event.stopPropagation();
-        if (mesesSeleccionados.includes(idx)) {
-          if (mesesSeleccionados.length > 1)
-            mesesSeleccionados = mesesSeleccionados.filter((m) => m !== idx);
-        } else {
-          mesesSeleccionados.push(idx);
-        }
+        actualizarCategoriasDinamicas();
         llenarMeses();
         renderReporte();
       }
-
+      function sumarSeleccion(cb, h, id) {
+        sumaAcumulada += parseFloat(cb.value) * (cb.checked ? 1 : -1);
+        document
+          .getElementById(`fila-${h}-${id}`)
+          .classList.toggle("selected", cb.checked);
+        actualizarUI_Suma();
+      }
+      function actualizarUI_Suma() {
+        document.getElementById("totalSeleccionado").innerText =
+          sumaAcumulada.toLocaleString("es-AR", { minimumFractionDigits: 2 });
+        document.getElementById("floatSuma").style.display =
+          Math.abs(sumaAcumulada) < 0.01 ? "none" : "block";
+      }
       function llenarMeses() {
-        const div = document.getElementById("contenedorMeses");
-        const nombres = [
+        const n = [
           "Ene",
           "Feb",
           "Mar",
@@ -486,150 +637,37 @@
           "Nov",
           "Dic",
         ];
-        div.innerHTML =
-          `<div class="row g-0">` +
-          nombres
-            .map(
-              (n, i) => `
-          <div class="col-6 px-2 py-1">
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" id="m-${i}" ${mesesSeleccionados.includes(i) ? "checked" : ""} onchange="toggleMes(${i})">
-              <label class="form-check-label" style="font-size:0.7rem" for="m-${i}">${n.toUpperCase()}</label>
-            </div>
-          </div>`,
-            )
-            .join("") +
-          `</div>`;
-        document.getElementById("btnMeses").innerText =
-          mesesSeleccionados.length === 12
-            ? "Todo el año"
-            : mesesSeleccionados.map((m) => nombres[m]).join(", ");
-      }
-
-      function actualizarCategorias() {
-        const h = document.getElementById("selectorHoja").value;
-        const sel = document.getElementById("catDinamica");
-        const todas = [...new Set([...CATS_BASE[h], ...categoriasExtra[h]])];
-        sel.innerHTML =
-          `<option value="" disabled selected>Elegir...</option>` +
-          todas.map((c) => `<option value="${c}">${c}</option>`).join("") +
-          `<option value="OTRA">+ NUEVA</option>`;
-      }
-
-      function checkManual(v) {
-        document.getElementById("wrapperManual").style.display =
-          v === "OTRA" ? "block" : "none";
-      }
-
-      async function cargar() {
-        document.getElementById("fechaMain").value = new Date()
-          .toISOString()
-          .split("T")[0];
-        const r = await fetch(`${scriptURL}?t=${Date.now()}`);
-        db = await r.json();
-        categoriasExtra = { Personal: [], Trabajos: [] };
-        ["personal", "trabajos"].forEach((key) => {
-          const h = key === "personal" ? "Personal" : "Trabajos";
-          if (db[key])
-            db[key].forEach((m) => {
-              if (
-                m[4] &&
-                !CATS_BASE[h].includes(m[4]) &&
-                !categoriasExtra[h].includes(m[4])
-              )
-                categoriasExtra[h].push(m[4]);
-            });
-        });
-        actualizarCategorias();
-        llenarMeses();
-        renderReporte();
-      }
-
-      function renderReporte() {
-        sumaAcumulada = 0;
-        document.getElementById("floatSuma").style.display = "none";
-        let todos = [];
-        if (db.personal)
-          db.personal.forEach((m, i) =>
-            todos.push({ d: m, id: i + 2, h: "Personal" }),
-          );
-        if (db.trabajos)
-          db.trabajos.forEach((m, i) =>
-            todos.push({ d: m, id: i + 2, h: "Trabajos" }),
-          );
-
-        let filtrados = todos.filter((x) =>
-          mesesSeleccionados.includes(new Date(x.d[0]).getUTCMonth()),
-        );
-
-        // Filtro de Búsqueda
-        const query = document
-          .getElementById("inputBusqueda")
-          .value.toLowerCase();
-        if (query)
-          filtrados = filtrados.filter(
-            (x) =>
-              x.d[1].toLowerCase().includes(query) ||
-              (x.d[4] || "").toLowerCase().includes(query),
-          );
-
-        let catsP = {};
-        filtrados.forEach((x) => (catsP[x.d[4] || "S/C"] = true));
-        document.getElementById("gridCategorias").innerHTML = Object.keys(catsP)
+        document.getElementById("contenedorMeses").innerHTML = n
           .map(
-            (c) => `
-          <div onclick="filtrarPorCategoria('${c}')" class="cat-pill" style="${filtrosCategorias.includes(c) ? "background:var(--main-pink); border-color:var(--accent-pink); color:var(--accent-pink);" : ""}">${c.toUpperCase()}</div>
-        `,
+            (m, i) =>
+              `<div class="px-2 small"><input type="checkbox" onchange="toggleMes(${i})" ${mesesSeleccionados.includes(i) ? "checked" : ""}> ${m}</div>`,
           )
           .join("");
-
-        if (filtrosCategorias.length > 0)
-          filtrados = filtrados.filter((x) =>
-            filtrosCategorias.includes(x.d[4] || "S/C"),
-          );
-        if (criterioOrden === "fecha")
-          filtrados.sort((a, b) => new Date(b.d[0]) - new Date(a.d[0]));
-        else filtrados.sort((a, b) => b.id - a.id);
-
-        const totalItems = filtrados.length;
-        const paraMostrar = mostrandoTodo ? filtrados : filtrados.slice(0, 10);
-
-        document.getElementById("listaDetallada").innerHTML = paraMostrar
-          .map((x) => {
-            const ing = parseFloat(x.d[2]) || 0,
-              egr = parseFloat(x.d[3]) || 0;
-            const monto = ing || egr;
-            const valorSuma = ing ? monto : -monto;
-            const f = new Date(x.d[0]);
-            const fLab =
-              f.getUTCDate().toString().padStart(2, "0") +
-              "/" +
-              (f.getUTCMonth() + 1).toString().padStart(2, "0");
-            return `<div class="mov-fila" id="fila-${x.h}-${x.id}">
-            <div class="d-flex align-items-center gap-2" onclick="toggleCheck('${x.h}', ${x.id})">
-              <input type="checkbox" class="form-check-input chk-mov" value="${valorSuma}" onchange="sumarSeleccion(this, '${x.h}', ${x.id})" onclick="event.stopPropagation()">
-              <div>
-                <div class="small fw-bold">${x.d[1]} <span class="text-muted fw-normal">(${fLab})</span></div>
-                <div style="font-size:0.6rem; color:#888">${x.h} | ${x.d[4]}</div>
-              </div>
-            </div>
-            <div class="text-end">
-              <div class="${ing > 0 ? "v-ing" : "v-egr"}">$${monto.toLocaleString("es-AR")}</div>
-              <i class="bi bi-trash3 text-danger" style="font-size:0.8rem; cursor:pointer" onclick="event.stopPropagation(); eliminarMov('${x.h}', ${x.id})"></i>
-            </div>
-          </div>`;
-          })
-          .join("");
-
-        const wrapperMas = document.getElementById("wrapperMas");
-        if (totalItems > 10 && !mostrandoTodo)
-          wrapperMas.innerHTML = `<button class="btn-mas" onclick="verTodo()">Mostrar más (${totalItems - 10})</button>`;
-        else wrapperMas.innerHTML = "";
       }
-
-      function verTodo() {
-        mostrandoTodo = true;
+      function toggleMes(i) {
+        mesesSeleccionados.includes(i)
+          ? mesesSeleccionados.length > 1 &&
+            (mesesSeleccionados = mesesSeleccionados.filter((m) => m !== i))
+          : mesesSeleccionados.push(i);
         renderReporte();
+      }
+      function cambiarOrden(o) {
+        criterioOrden = o;
+        document
+          .getElementById("btnOrdenCarga")
+          .classList.toggle("active", o === "carga");
+        document
+          .getElementById("btnOrdenFecha")
+          .classList.toggle("active", o === "fecha");
+        renderReporte();
+      }
+      async function eliminarMov(h, id) {
+        if (confirm("¿Borrar?")) {
+          await fetch(
+            `${scriptURL}?action=delete_movimiento&hoja=${h}&id=${id}`,
+          );
+          cargar();
+        }
       }
       function toggleCheck(h, id) {
         const c = document.querySelector(`#fila-${h}-${id} .chk-mov`);
@@ -642,50 +680,16 @@
           : [...filtrosCategorias, c];
         renderReporte();
       }
-      async function eliminarMov(hoja, id) {
-        if (!confirm("¿Borrar movimiento?")) return;
-        await fetch(
-          `${scriptURL}?action=delete_movimiento&hoja=${hoja}&id=${id}`,
-          { method: "GET" },
-        );
-        cargar();
-      }
-      function abrirAjustes() {
-        const h = document.getElementById("selectorHoja").value;
-        const lista = document.getElementById("listaCategoriasAjustes");
-        lista.innerHTML =
-          categoriasExtra[h]
-            .map(
-              (c) =>
-                `<div class="d-flex justify-content-between align-items-center p-2 mb-2 border-bottom"><span class="small fw-bold">${c}</span><i class="bi bi-trash text-danger" style="cursor:pointer" onclick="borrarCatCompleta('${h}', '${c}')"></i></div>`,
-            )
-            .join("") ||
-          "<p class='text-center small py-3 text-muted'>No hay categorías personalizadas.</p>";
-        modAjustes.show();
-      }
-      async function borrarCatCompleta(h, c) {
-        if (!confirm(`¿Borrar "${c}"?`)) return;
-        await fetch(
-          `${scriptURL}?action=eliminar_categoria&hoja=${h}&categoria=${encodeURIComponent(c)}`,
-          { method: "GET" },
-        );
-        modAjustes.hide();
-        cargar();
-      }
-      async function prepararEnvio(e) {
-        e.preventDefault();
-        const btn = document.getElementById("btnMain");
-        btn.disabled = true;
-        const fd = new FormData(e.target);
-        if (fd.get("categoria") === "OTRA")
-          fd.set("categoria", document.getElementById("catManual").value);
-        fd.append("action", "add_movimiento");
-        await fetch(scriptURL, { method: "POST", body: fd });
-        e.target.reset();
-        mostrandoTodo = false;
-        cargar();
-        verTab(4);
-        btn.disabled = false;
+      function seleccionarTodo() {
+        const checks = document.querySelectorAll(".chk-mov");
+        const m = Array.from(checks).some((c) => c.checked);
+        sumaAcumulada = 0;
+        checks.forEach((c) => {
+          c.checked = !m;
+          if (c.checked) sumaAcumulada += parseFloat(c.value);
+          c.closest(".mov-fila").classList.toggle("selected", c.checked);
+        });
+        actualizarUI_Suma();
       }
       document.addEventListener("input", (e) => {
         if (e.target.classList.contains("montoMask")) {
