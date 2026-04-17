@@ -32,15 +32,14 @@
         padding-bottom: 80px;
       }
 
-      /* --- BOTONES DE REPORTE (COLUMNA UNIFICADA) --- */
+      /* --- BOTONES DE REPORTE --- */
       .btn-group-vertical-custom {
         display: flex;
         flex-direction: column;
         gap: 2px;
-        width: 105px; /* Ancho fijo para que los 3 sean IGUALES */
+        width: 105px;
       }
 
-      /* Clase BASE para los 3 botones del reporte */
       .btn-fino {
         font-size: 0.58rem !important;
         font-weight: 700;
@@ -69,14 +68,13 @@
         border: 1px solid #eee;
       }
 
-      /* --- BOTÓN GUARDAR (ESTÉTICA INICIAL) --- */
       .btn-pink {
         background: var(--accent-pink);
         color: white;
         border: none;
         border-radius: 15px;
         padding: 14px;
-        font-weight: 800; /* Texto fuerte */
+        font-weight: 800;
         width: 100%;
         text-transform: uppercase;
         letter-spacing: 1px;
@@ -84,14 +82,20 @@
         transition: all 0.3s ease;
       }
 
-      .btn-pink:active {
-        transform: scale(0.97);
-        box-shadow: 0 2px 5px rgba(240, 98, 146, 0.2);
+      /* ESTILO PARA EL DROPDOWN DE MESES */
+      .dropdown-menu {
+        border: none;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+      }
+      .form-check-input:checked {
+        background-color: var(--accent-pink);
+        border-color: var(--accent-pink);
       }
 
       .cat-pill {
         border-radius: 4px;
-        padding: 1px 6px; /* Ajustamos para que sean estéticas pero bajas */
+        padding: 1px 6px;
         text-align: center;
         cursor: pointer;
         display: flex;
@@ -101,17 +105,15 @@
         font-size: 0.65rem;
         transition: all 0.2s;
         border: 1px solid #eee;
-        min-height: 18px; /* Altura mínima bien bajita */
+        min-height: 18px;
         background: white;
-        margin: 0; /* Eliminamos márgenes que puedan estar sobrando */
       }
-      /* --- RESTO DE LA APP --- */
+
       .mov-fila-clickable {
         background: white;
         border-radius: 12px;
         border: 2px solid #f0f0f0;
         transition: all 0.2s ease;
-        margin-bottom: 8px;
       }
       .mov-fila-clickable.selected {
         border-color: var(--accent-pink);
@@ -270,12 +272,29 @@
     <div id="cont4" style="display: none">
       <div class="card-custom">
         <div class="d-flex justify-content-between align-items-start mb-2">
-          <select
-            id="selMes"
-            class="form-select form-select-sm m-0"
-            style="width: auto; min-width: 100px"
-            onchange="renderReporte()"
-          ></select>
+          <div class="dropdown">
+            <button
+              class="btn btn-outline-fino dropdown-toggle"
+              type="button"
+              id="btnMeses"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              style="
+                width: auto;
+                min-width: 120px;
+                font-size: 0.65rem;
+                background: white;
+                border-radius: 8px;
+              "
+            >
+              Meses
+            </button>
+            <ul
+              class="dropdown-menu p-2"
+              id="contenedorMeses"
+              style="min-width: 160px"
+            ></ul>
+          </div>
 
           <div class="btn-group-vertical-custom">
             <button class="btn-fino btn-all" onclick="seleccionarTodo()">
@@ -378,6 +397,7 @@
         "https://script.google.com/macros/s/AKfycbzWuiMzgMmE2rl9eM29YyvPsXWbJ95w4W4f7pzEGvHo2pj7nFnThk8C3owH0kSMpaW_/exec";
       let db = { personal: [], trabajos: [] },
         categoriasExtra = { Personal: [], Trabajos: [] };
+      let mesesSeleccionados = [new Date().getMonth()];
       let filtroCategoria = null,
         criterioOrden = "carga",
         mostrandoTodo = false,
@@ -405,18 +425,17 @@
 
       function cambiarOrden(nuevo) {
         criterioOrden = nuevo;
-        const bCarga = document.getElementById("btnOrdenCarga");
-        const bFecha = document.getElementById("btnOrdenFecha");
-
-        if (nuevo === "carga") {
-          bCarga.className = "btn-fino btn-pink-fino";
-          bFecha.className = "btn-fino btn-outline-fino";
-        } else {
-          bCarga.className = "btn-fino btn-outline-fino";
-          bFecha.className = "btn-fino btn-pink-fino";
-        }
+        document.getElementById("btnOrdenCarga").className =
+          nuevo === "carga"
+            ? "btn-fino btn-pink-fino"
+            : "btn-fino btn-outline-fino";
+        document.getElementById("btnOrdenFecha").className =
+          nuevo === "fecha"
+            ? "btn-fino btn-pink-fino"
+            : "btn-fino btn-outline-fino";
         renderReporte();
       }
+
       function seleccionarTodo() {
         const checks = document.querySelectorAll(
           "#listaDetallada .form-check-input",
@@ -431,6 +450,7 @@
         filtroCategoria = filtroCategoria === cat ? null : cat;
         renderReporte();
       }
+
       function mostrarTodos() {
         mostrandoTodo = true;
         renderReporte();
@@ -489,71 +509,66 @@
       }
 
       function checkManual(v) {
-        const w = document.getElementById("wrapperManual"),
-          i = document.getElementById("catManual");
-        w.style.display = v === "OTRA" ? "block" : "none";
-        i.value = v === "OTRA" ? "" : v;
-        if (v === "OTRA") i.focus();
+        document.getElementById("wrapperManual").style.display =
+          v === "OTRA" ? "block" : "none";
+        document.getElementById("catManual").value = v === "OTRA" ? "" : v;
+        if (v === "OTRA") document.getElementById("catManual").focus();
       }
 
       function llenarMeses() {
-        const sel = document.getElementById("selMes");
-        const meses = [
-          "Enero",
-          "Febrero",
-          "Marzo",
-          "Abril",
-          "Mayo",
-          "Junio",
-          "Julio",
-          "Agosto",
-          "Septiembre",
-          "Octubre",
-          "Noviembre",
-          "Diciembre",
+        const div = document.getElementById("contenedorMeses");
+        const btn = document.getElementById("btnMeses");
+        const nombres = [
+          "Ene",
+          "Feb",
+          "Mar",
+          "Abr",
+          "May",
+          "Jun",
+          "Jul",
+          "Ago",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dic",
         ];
-        if (sel.options.length === 0)
-          sel.innerHTML = meses
-            .map(
-              (m, i) =>
-                `<option value="${i}" ${i === new Date().getMonth() ? "selected" : ""}>${m}</option>`,
-            )
-            .join("");
+
+        div.innerHTML = nombres
+          .map((nombre, i) => {
+            const activo = mesesSeleccionados.includes(i);
+            return `
+            <li class="px-3 py-1" onclick="event.stopPropagation()">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="${i}" id="m-${i}" ${activo ? "checked" : ""} onchange="toggleMes(${i})">
+                <label class="form-check-label small fw-bold" style="cursor:pointer" for="m-${i}">${nombre.toUpperCase()}</label>
+              </div>
+            </li>`;
+          })
+          .join("");
+
+        if (mesesSeleccionados.length === 0) btn.innerText = "Elegir Mes";
+        else if (mesesSeleccionados.length === 12)
+          btn.innerText = "Todo el año";
+        else
+          btn.innerText = mesesSeleccionados
+            .sort((a, b) => a - b)
+            .map((m) => nombres[m])
+            .join(", ");
       }
 
-      async function prepararEnvio(e) {
-        e.preventDefault();
-        const btn = document.getElementById("btnMain");
-        btn.disabled = true;
-        const fd = new FormData(e.target);
-        fd.set("categoria", document.getElementById("catManual").value);
-        fd.append("action", "add_movimiento");
-        try {
-          await fetch(scriptURL, { method: "POST", body: fd });
-          e.target.reset();
-          cargar();
-          alert("¡Guardado!");
-        } catch (err) {
-          alert("Error");
+      function toggleMes(mesIdx) {
+        if (mesesSeleccionados.includes(mesIdx)) {
+          if (mesesSeleccionados.length > 1)
+            mesesSeleccionados = mesesSeleccionados.filter((m) => m !== mesIdx);
+          else document.getElementById(`m-${mesIdx}`).checked = true;
+        } else {
+          mesesSeleccionados.push(mesIdx);
         }
-        btn.disabled = false;
-      }
-
-      async function eliminarMov(hoja, id, concepto) {
-        if (!confirm(`¿Eliminar "${concepto}"?`)) return;
-        try {
-          await fetch(
-            `${scriptURL}?action=delete_movimiento&hoja=${hoja}&id=${id}`,
-            { method: "GET", mode: "no-cors" },
-          );
-          setTimeout(cargar, 600);
-        } catch (e) {
-          alert("Error");
-        }
+        llenarMeses();
+        renderReporte();
       }
 
       function renderReporte() {
-        const mes = parseInt(document.getElementById("selMes").value);
         sumaAcumulada = 0;
         document.getElementById("floatSuma").style.display = "none";
         let todos = [];
@@ -565,31 +580,21 @@
           db.trabajos.forEach((m, i) =>
             todos.push({ d: m, id: i + 2, h: "Trabajos" }),
           );
-        let filtrados = todos.filter(
-          (x) => new Date(x.d[0]).getUTCMonth() === mes,
+
+        let filtrados = todos.filter((x) =>
+          mesesSeleccionados.includes(new Date(x.d[0]).getUTCMonth()),
         );
 
         let grupos = {};
         filtrados.forEach((x) => {
-          let cat = x.d[4] || "Otros";
-          grupos[cat] = true;
+          grupos[x.d[4] || "Otros"] = true;
         });
 
         const gridCat = document.getElementById("gridCategorias");
-        gridCat.style.display = "flex";
-        gridCat.style.flexWrap = "wrap"; // Esto hace que se pongan una al lado de la otra
-        gridCat.style.gap = "4px";
-
         gridCat.innerHTML = Object.keys(grupos)
           .map((c) => {
             const activo = filtroCategoria === c;
-            return `
-    <div onclick="filtrarPorCategoria('${c}')" class="cat-pill" 
-         style="border-color: ${activo ? "var(--accent-pink)" : "#eee"}; 
-                background: ${activo ? "#fce4ec" : "white"}; 
-                color: ${activo ? "var(--accent-pink)" : "#888"};">
-      <span style="text-transform: uppercase; font-weight: bold;">${c}</span>
-    </div>`;
+            return `<div onclick="filtrarPorCategoria('${c}')" class="cat-pill" style="border-color: ${activo ? "var(--accent-pink)" : "#eee"}; background: ${activo ? "#fce4ec" : "white"}; color: ${activo ? "var(--accent-pink)" : "#888"};"><span style="text-transform: uppercase; font-weight: bold;">${c}</span></div>`;
           })
           .join("");
 
@@ -626,19 +631,7 @@
                 f.getUTCDate().toString().padStart(2, "0") +
                 "/" +
                 (f.getUTCMonth() + 1).toString().padStart(2, "0");
-            return `
-            <div class="mov-fila-clickable d-flex align-items-center mb-2" id="fila-${x.id}">
-              <div class="check-container"><input type="checkbox" class="form-check-input" id="chk-${x.id}" value="${vSuma}" onchange="sumarMov(this, '${x.id}')"></div>
-              <div class="p-2 flex-grow-1" onclick="toggleFila('${x.id}')">
-                <div class="small"><strong>${x.d[1]} (${fLab})</strong></div>
-                <div style="font-size:0.65rem" class="text-muted">${x.h} | ${x.d[4] || "S/C"}</div>
-                <div class="${ing ? "v-ing" : "v-egr"}">$${fmt.format(monto)}</div>
-              </div>
-              <div class="pe-2 d-flex gap-2 align-items-center">
-                <i class="bi bi-pencil-square text-primary" style="font-size:1.1rem" onclick="abrirEditor('${x.h}', ${x.id}, '${x.d[0]}', '${x.d[1]}', ${monto}, '${ing ? "Ingreso" : "Egreso"}', '${x.d[4]}')"></i>
-                <i class="bi bi-trash3 text-danger" style="font-size:1.1rem" onclick="eliminarMov('${x.h}', ${x.id}, '${x.d[1]}')"></i>
-              </div>
-            </div>`;
+            return `<div class="mov-fila-clickable d-flex align-items-center mb-2" id="fila-${x.id}"><div class="px-2"><input type="checkbox" class="form-check-input" id="chk-${x.id}" value="${vSuma}" onchange="sumarMov(this, '${x.id}')"></div><div class="p-2 flex-grow-1" onclick="toggleFila('${x.id}')"><div class="small"><strong>${x.d[1]} (${fLab})</strong></div><div style="font-size:0.65rem" class="text-muted">${x.h} | ${x.d[4] || "S/C"}</div><div class="${ing ? "v-ing" : "v-egr"}">$${fmt.format(monto)}</div></div><div class="pe-2 d-flex gap-2 align-items-center"><i class="bi bi-pencil-square text-primary" style="font-size:1.1rem" onclick="abrirEditor('${x.h}', ${x.id}, '${x.d[0]}', '${x.d[1]}', ${monto}, '${ing ? "Ingreso" : "Egreso"}', '${x.d[4]}')"></i><i class="bi bi-trash3 text-danger" style="font-size:1.1rem" onclick="eliminarMov('${x.h}', ${x.id}, '${x.d[1]}')"></i></div></div>`;
           })
           .join("");
       }
@@ -658,6 +651,7 @@
       function toggleFila(id) {
         document.getElementById("chk-" + id).click();
       }
+
       function abrirEditor(h, id, f, c, m, t, cat) {
         document.getElementById("editHoja").value = h;
         document.getElementById("editIdx").value = id;
@@ -671,6 +665,37 @@
         modEdit.show();
       }
 
+      async function prepararEnvio(e) {
+        e.preventDefault();
+        const btn = document.getElementById("btnMain");
+        btn.disabled = true;
+        const fd = new FormData(e.target);
+        fd.set("categoria", document.getElementById("catManual").value);
+        fd.append("action", "add_movimiento");
+        try {
+          await fetch(scriptURL, { method: "POST", body: fd });
+          e.target.reset();
+          cargar();
+          alert("¡Guardado!");
+        } catch (err) {
+          alert("Error");
+        }
+        btn.disabled = false;
+      }
+
+      async function eliminarMov(hoja, id, concepto) {
+        if (!confirm(`¿Eliminar "${concepto}"?`)) return;
+        try {
+          await fetch(
+            `${scriptURL}?action=delete_movimiento&hoja=${hoja}&id=${id}`,
+            { method: "GET", mode: "no-cors" },
+          );
+          setTimeout(cargar, 600);
+        } catch (e) {
+          alert("Error");
+        }
+      }
+
       async function enviarEdicion(e) {
         e.preventDefault();
         const fd = new FormData(e.target);
@@ -679,6 +704,7 @@
         modEdit.hide();
         cargar();
       }
+
       window.onload = cargar;
     </script>
   </body>
