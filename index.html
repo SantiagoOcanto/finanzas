@@ -20,6 +20,7 @@
         --soft-pink: #fff5f7;
         --main-pink: #fce4ec;
         --accent-pink: #f06292;
+        --cyan-accent: #00bcd4;
         --text: #5d1029;
       }
       body {
@@ -63,6 +64,26 @@
         font-weight: bold;
         width: 100%;
       }
+
+      /* Botón Seleccionar Todo más fino */
+      .btn-select-all {
+        background: transparent;
+        color: var(--cyan-accent);
+        border: 1px solid var(--cyan-accent);
+        border-radius: 25px;
+        padding: 1px 6px;
+        font-size: 0.45rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.2s;
+        text-transform: uppercase;
+      }
+      .btn-select-all:active {
+        background: var(--cyan-accent);
+        color: white;
+        transform: scale(0.95);
+      }
+
       .btn-xs {
         padding: 2px 8px;
         font-size: 0.65rem;
@@ -112,6 +133,21 @@
         border-radius: 50px;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         z-index: 1000;
+      }
+
+      .cat-pill {
+        border-radius: 4px;
+        padding: 2.5px 0px; /* Cero espacio arriba y abajo */
+        text-align: center;
+        cursor: pointer;
+        display: contents;
+        align-items: center;
+        justify-content: center;
+        /* Altura mínima muy pequeña */
+        line-height: 1.5; /* Pegamos el texto a los bordes */
+        font-size: 0.55rem;
+        transition: all 0.2s;
+        border: 1px solid #eee; /* Borde fino */
       }
     </style>
   </head>
@@ -212,15 +248,12 @@
           <select
             id="selMes"
             class="form-select form-select-sm m-0"
-            style="width: auto; height: 32px; min-width: 100px"
+            style="width: auto; height: 32px; min-width: 90px"
             onchange="renderReporte()"
           ></select>
           <div class="d-flex gap-1 align-items-center">
-            <button
-              class="btn btn-xs btn-outline-primary fw-bold"
-              onclick="seleccionarTodo()"
-            >
-              TODO
+            <button class="btn-select-all" onclick="seleccionarTodo()">
+              Seleccionar Todo
             </button>
             <button
               class="btn btn-xs btn-pink fw-bold"
@@ -243,8 +276,8 @@
           id="gridCategorias"
           style="
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
             margin-bottom: 15px;
           "
         ></div>
@@ -517,7 +550,7 @@
         let grupos = {};
         filtrados.forEach((x) => {
           let cat = x.d[4] || "Otros";
-          if (!grupos[cat]) grupos[cat] = true;
+          grupos[cat] = true;
         });
 
         const gridCat = document.getElementById("gridCategorias");
@@ -525,8 +558,8 @@
           .map((c) => {
             const activo = filtroCategoria === c;
             return `
-            <div onclick="filtrarPorCategoria('${c}')" style="border: ${activo ? "2px solid var(--accent-pink)" : "1px solid #eee"}; background: ${activo ? "#fce4ec" : "white"}; border-radius: 12px; padding: 10px 4px; text-align: center; cursor: pointer; display: flex; flex-direction: column; justify-content: center; min-height: 45px;">
-              <div style="font-size: 0.6rem; text-transform: uppercase; color: ${activo ? "var(--accent-pink)" : "#888"}; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${c}</div>
+            <div onclick="filtrarPorCategoria('${c}')" class="cat-pill" style="border: ${activo ? "2px solid var(--accent-pink)" : "1px solid #eee"}; background: ${activo ? "#fce4ec" : "white"};">
+              <div style="font-size: 0.55rem; text-transform: uppercase; color: ${activo ? "var(--accent-pink)" : "#888"}; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${c}</div>
             </div>`;
           })
           .join("");
