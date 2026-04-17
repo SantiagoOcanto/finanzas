@@ -113,14 +113,6 @@
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         z-index: 1000;
       }
-      /* Estilo para ocultar montos */
-      .monto-oculto {
-        filter: blur(5px);
-        transition: filter 0.3s;
-      }
-      .monto-visible {
-        filter: blur(0);
-      }
     </style>
   </head>
   <body>
@@ -223,13 +215,13 @@
             style="width: auto; height: 32px; min-width: 100px"
             onchange="renderReporte()"
           ></select>
-          <div class="d-flex gap-2 align-items-center">
-            <i
-              id="btnToggleOjo"
-              class="bi bi-eye-slash text-muted"
-              style="font-size: 1.2rem; cursor: pointer"
-              onclick="toggleVisibilidadMontos()"
-            ></i>
+          <div class="d-flex gap-1 align-items-center">
+            <button
+              class="btn btn-xs btn-outline-primary fw-bold"
+              onclick="seleccionarTodo()"
+            >
+              TODO
+            </button>
             <button
               class="btn btn-xs btn-pink fw-bold"
               id="btnOrdenCarga"
@@ -335,8 +327,7 @@
       let filtroCategoria = null,
         criterioOrden = "carga",
         mostrandoTodo = false,
-        sumaAcumulada = 0,
-        montosVisibles = false;
+        sumaAcumulada = 0;
       const fmt = new Intl.NumberFormat("es-AR", { minimumFractionDigits: 2 });
       const modEdit = new bootstrap.Modal(document.getElementById("modalEdit"));
       const CATS = {
@@ -358,15 +349,6 @@
         }
       }
 
-      function toggleVisibilidadMontos() {
-        montosVisibles = !montosVisibles;
-        const btn = document.getElementById("btnToggleOjo");
-        btn.className = montosVisibles
-          ? "bi bi-eye text-primary"
-          : "bi bi-eye-slash text-muted";
-        renderReporte();
-      }
-
       function cambiarOrden(nuevo) {
         criterioOrden = nuevo;
         document.getElementById("btnOrdenCarga").className =
@@ -378,6 +360,16 @@
             ? "btn btn-xs btn-pink fw-bold"
             : "btn btn-xs btn-outline-secondary fw-bold";
         renderReporte();
+      }
+
+      function seleccionarTodo() {
+        const checks = document.querySelectorAll(
+          "#listaDetallada .form-check-input",
+        );
+        const todosMarcados = Array.from(checks).every((c) => c.checked);
+        checks.forEach((c) => {
+          if (c.checked === todosMarcados) c.click();
+        });
       }
 
       function filtrarPorCategoria(cat) {
@@ -524,26 +516,17 @@
 
         let grupos = {};
         filtrados.forEach((x) => {
-          let cat = x.d[4] || "Otros",
-            ing =
-              parseFloat(String(x.d[2]).replace(/\./g, "").replace(",", ".")) ||
-              0,
-            egr =
-              parseFloat(String(x.d[3]).replace(/\./g, "").replace(",", ".")) ||
-              0;
-          if (!grupos[cat]) grupos[cat] = 0;
-          grupos[cat] += ing - egr;
+          let cat = x.d[4] || "Otros";
+          if (!grupos[cat]) grupos[cat] = true;
         });
 
         const gridCat = document.getElementById("gridCategorias");
         gridCat.innerHTML = Object.keys(grupos)
           .map((c) => {
-            const valor = `$${fmt.format(Math.abs(grupos[c]))}`,
-              activo = filtroCategoria === c;
+            const activo = filtroCategoria === c;
             return `
-            <div onclick="filtrarPorCategoria('${c}')" style="border: ${activo ? "2px solid var(--accent-pink)" : "1px solid #eee"}; background: ${activo ? "#fce4ec" : "white"}; border-radius: 12px; padding: 8px 4px; text-align: center; cursor: pointer; display: flex; flex-direction: column; justify-content: center; min-height: 55px;">
-              <div style="font-size: 0.55rem; text-transform: uppercase; color: #888; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${c}</div>
-              <div style="font-size: 0.75rem;" class="${grupos[c] >= 0 ? "v-ing" : "v-egr"} fw-bold ${montosVisibles ? "monto-visible" : "monto-oculto"}">${valor}</div>
+            <div onclick="filtrarPorCategoria('${c}')" style="border: ${activo ? "2px solid var(--accent-pink)" : "1px solid #eee"}; background: ${activo ? "#fce4ec" : "white"}; border-radius: 12px; padding: 10px 4px; text-align: center; cursor: pointer; display: flex; flex-direction: column; justify-content: center; min-height: 45px;">
+              <div style="font-size: 0.6rem; text-transform: uppercase; color: ${activo ? "var(--accent-pink)" : "#888"}; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${c}</div>
             </div>`;
           })
           .join("");
