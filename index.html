@@ -44,16 +44,6 @@
         margin-bottom: 8px;
         font-size: 0.9rem;
       }
-      .btn-pink {
-        background: var(--accent-pink);
-        color: white;
-        border: none;
-        border-radius: 15px;
-        padding: 14px;
-        font-weight: 800;
-        width: 100%;
-        text-transform: uppercase;
-      }
 
       .tab-nav {
         display: flex;
@@ -75,51 +65,26 @@
         border-bottom: 3px solid var(--accent-pink);
       }
 
-      .header-actions {
-        display: flex;
-        align-items: center;
-        margin-bottom: 15px;
-        gap: 5px;
-      }
-      .dropdown-meses-container {
-        margin-right: auto;
-      }
-      .search-mini {
-        position: relative;
-        width: 300px;
-      }
-      .search-mini input {
-        height: 32px;
-        font-size: 0.75rem;
-        padding-right: 25px;
-        margin-bottom: 0 !important;
-        border-radius: 10px;
-        border: 1px solid #eee;
-      }
-      .search-mini i {
-        position: absolute;
-        right: 8px;
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 0.75rem;
-        color: var(--accent-pink);
-      }
-      .btn-group-right {
-        display: flex;
-        gap: 4px;
-        margin-left: auto;
+      .btn-pink {
+        background: var(--accent-pink);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        padding: 14px;
+        font-weight: 800;
+        width: 100%;
       }
 
       .btn-fino {
-        font-size: 0.6rem;
-        font-weight: 800;
-        padding: 6px 7px;
-        border-radius: 8px;
-        text-transform: uppercase;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 5px 0;
+        border-radius: 10px;
         border: 1px solid #eee;
         background: white;
         color: #888;
-        white-space: nowrap;
+        width: 65px;
+        text-align: center;
       }
       .btn-fino.active {
         background: var(--accent-pink);
@@ -132,24 +97,63 @@
         border: none;
       }
 
-      .cat-pill {
-        border-radius: 8px;
-        padding: 4px 10px;
-        font-size: 0.65rem;
-        border: 1px solid #eee;
-        background: white;
-        cursor: pointer;
-        font-weight: bold;
+      .cats-scroll,
+      .meses-grid {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        scrollbar-width: none;
       }
+      .cats-scroll::-webkit-scrollbar,
+      .meses-grid::-webkit-scrollbar {
+        display: none;
+      }
+
+      .pill-cat {
+        background: white;
+        border: 1px solid #eee;
+        border-radius: 10px;
+        padding: 5px 12px;
+        font-size: 0.7rem;
+        font-weight: bold;
+        white-space: nowrap;
+        cursor: pointer;
+      }
+      .pill-cat.active {
+        background: var(--text);
+        color: white;
+      }
+
+      .search-wrapper {
+        position: relative;
+        flex: 1;
+        max-width: 200px;
+        margin: 0 auto;
+      }
+      .search-wrapper i {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #ccc;
+        font-size: 0.8rem;
+      }
+      .search-wrapper input {
+        padding-left: 30px !important;
+        margin-bottom: 0 !important;
+      }
+
       .mov-fila {
         background: white;
         border-radius: 12px;
         border: 2px solid #f0f0f0;
         margin-bottom: 8px;
-        padding: 10px 12px;
+        padding: 10px;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        cursor: pointer;
       }
       .mov-fila.selected {
         border-color: var(--accent-pink);
@@ -164,11 +168,17 @@
         font-weight: bold;
       }
 
-      .iconos-accion {
-        display: flex;
-        gap: 12px;
-        margin-top: 6px;
-        justify-content: flex-end;
+      #floatSuma {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        background: var(--accent-pink);
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-weight: bold;
+        display: none;
+        z-index: 1001;
       }
       .btn-ajustes {
         position: fixed;
@@ -182,24 +192,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.3rem;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        border: 1px solid var(--main-pink);
         z-index: 1000;
-      }
-      #floatSuma {
-        position: fixed;
-        bottom: 80px;
-        right: 20px;
-        background: var(--accent-pink);
-        color: white;
-        padding: 8px 15px;
-        border-radius: 20px;
-        font-weight: bold;
-        font-size: 0.85rem;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        display: none;
-        z-index: 1001;
+        border: 1px solid var(--main-pink);
       }
     </style>
   </head>
@@ -233,26 +228,36 @@
               </select>
             </div>
           </div>
-          <label class="small fw-bold">¿Qué es?:</label
-          ><input
+          <label class="small fw-bold">Fecha y Hora:</label>
+          <input
+            type="datetime-local"
+            name="fecha_manual"
+            id="fechaNuevo"
+            class="form-control"
+            required
+          />
+          <label class="small fw-bold">¿Qué es?:</label>
+          <input
             type="text"
             name="concepto"
             class="form-control"
-            placeholder="Ej: Supermercado"
+            placeholder="Ej: Alquiler"
           />
-          <label class="small fw-bold">Categoría:</label
-          ><select
+
+          <label class="small fw-bold">Categoría:</label>
+          <select
             id="catDinamicaNuevo"
             name="cat_select"
             class="form-select"
             onchange="checkManual(this, 'wrapperManualNuevo')"
+            required
           ></select>
           <div id="wrapperManualNuevo" style="display: none">
             <input
               type="text"
               name="categoria_nueva"
               class="form-control"
-              placeholder="Nombre nueva categoría..."
+              placeholder="Nombre categoría..."
             />
           </div>
           <div class="row g-2 mt-1">
@@ -283,54 +288,43 @@
 
     <div id="cont4" style="display: none">
       <div class="card-custom">
-        <div class="header-actions">
-          <div class="dropdown-meses-container">
-            <button
-              class="btn btn-outline-secondary btn-sm dropdown-toggle"
-              type="button"
-              id="btnMeses"
-              data-bs-toggle="dropdown"
-              style="font-size: 0.65rem; height: 32px"
-            >
-              Meses
-            </button>
-            <ul
-              class="dropdown-menu p-2"
-              id="contenedorMeses"
-              style="min-width: 180px"
-            ></ul>
-          </div>
-          <div class="search-mini">
+        <div class="meses-grid mb-2" id="contenedorMeses"></div>
+
+        <div class="d-flex justify-content-center mb-3">
+          <div class="search-wrapper">
+            <i class="bi bi-search"></i>
             <input
               type="text"
               id="inputBusqueda"
-              class="form-control"
+              class="form-control form-control-sm"
               placeholder="Buscar..."
               onkeyup="renderReporte()"
             />
-            <i class="bi bi-search"></i>
-          </div>
-          <div class="btn-group-right">
-            <button class="btn-fino blue" onclick="seleccionarTodo()">
-              Todo
-            </button>
-            <button
-              class="btn-fino active"
-              id="btnOrdenCarga"
-              onclick="cambiarOrden('carga')"
-            >
-              Carga
-            </button>
-            <button
-              class="btn-fino"
-              id="btnOrdenFecha"
-              onclick="cambiarOrden('fecha')"
-            >
-              Fecha
-            </button>
           </div>
         </div>
-        <div id="gridCategorias" class="d-flex flex-wrap gap-1 mb-3"></div>
+
+        <div class="cats-scroll mb-2" id="contenedorCategoriasFiltro"></div>
+
+        <div class="d-flex justify-content-end align-items-center gap-1 mb-3">
+          <button class="btn-fino blue" onclick="seleccionarTodo()">
+            Todo
+          </button>
+          <button
+            class="btn-fino active"
+            id="btnOrdenCarga"
+            onclick="cambiarOrden('carga')"
+          >
+            Carga
+          </button>
+          <button
+            class="btn-fino"
+            id="btnOrdenFecha"
+            onclick="cambiarOrden('fecha')"
+          >
+            Fecha
+          </button>
+        </div>
+
         <div id="listaDetallada"></div>
       </div>
     </div>
@@ -338,22 +332,24 @@
     <div class="modal fade" id="modalEditar" tabindex="-1">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content" style="border-radius: 20px">
-          <div class="modal-header border-0 pb-0">
-            <h6 class="fw-bold m-0">EDITAR MOVIMIENTO</h6>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-            ></button>
-          </div>
           <div class="modal-body">
+            <h6 class="fw-bold mb-3">EDITAR MOVIMIENTO</h6>
             <form id="formEditar" onsubmit="prepararEnvio(event, 'editar')">
-              <input type="hidden" name="id" id="editId" />
-              <input type="hidden" name="hoja" id="editHoja" />
+              <input type="hidden" name="id" id="editId" /><input
+                type="hidden"
+                name="hoja"
+                id="editHoja"
+              />
+              <input
+                type="datetime-local"
+                name="fecha_manual"
+                id="editFecha"
+                class="form-control mb-2"
+                required
+              />
               <div class="row g-2">
                 <div class="col-7">
-                  <label class="small fw-bold">Plata ($):</label
-                  ><input
+                  <input
                     type="text"
                     class="form-control montoMask"
                     name="monto"
@@ -362,25 +358,22 @@
                   />
                 </div>
                 <div class="col-5">
-                  <label class="small fw-bold">Tipo:</label
-                  ><select name="tipo" id="editTipo" class="form-select">
+                  <select name="tipo" id="editTipo" class="form-select">
                     <option value="Egreso">Salida (-)</option>
                     <option value="Ingreso">Entrada (+)</option>
                   </select>
                 </div>
               </div>
-              <label class="small fw-bold">Concepto:</label
-              ><input
+              <input
                 type="text"
                 name="concepto"
                 id="editConcepto"
-                class="form-control"
+                class="form-control mb-2"
               />
-              <label class="small fw-bold">Categoría:</label
-              ><select
+              <select
                 id="catDinamicaEdit"
                 name="cat_select"
-                class="form-select"
+                class="form-select mb-2"
                 onchange="checkManual(this, 'wrapperManualEdit')"
               ></select>
               <div id="wrapperManualEdit" style="display: none">
@@ -388,33 +381,16 @@
                   type="text"
                   name="categoria_nueva"
                   id="editCatManual"
-                  class="form-control"
+                  class="form-control mb-2"
                 />
               </div>
-              <label class="small fw-bold">Método:</label
-              ><select name="metodo" id="editMetodo" class="form-select">
+              <select name="metodo" id="editMetodo" class="form-select mb-3">
                 <option value="Digital">Digital</option>
                 <option value="Efectivo">Efectivo</option>
               </select>
-              <button type="submit" class="btn-pink mt-3">ACTUALIZAR</button>
+              <button type="submit" class="btn-pink">ACTUALIZAR</button>
             </form>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal fade" id="modalAjustes" tabindex="-1">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="border-radius: 20px">
-          <div class="modal-header border-0 pb-0">
-            <h6 class="fw-bold m-0">AJUSTES CATEGORÍAS</h6>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-            ></button>
-          </div>
-          <div class="modal-body" id="listaCategoriasAjustes"></div>
         </div>
       </div>
     </div>
@@ -422,17 +398,41 @@
     <button class="btn-ajustes" onclick="abrirAjustes()">
       <i class="bi bi-gear-fill"></i>
     </button>
-
+    <div class="modal fade" id="modalCategorias" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 20px">
+          <div class="modal-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h6 class="fw-bold mb-0">GESTIONAR CATEGORÍAS</h6>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+              ></button>
+            </div>
+            <p class="small text-muted">
+              Solo puedes eliminar categorías creadas manualmente que no tengan
+              movimientos asociados (o se ocultarán de los filtros).
+            </p>
+            <div
+              id="listaCategoriasGestion"
+              class="list-group list-group-flush"
+              style="max-height: 300px; overflow-y: auto"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
       const scriptURL =
-        "https://script.google.com/macros/s/AKfycbwQBntv5Z07I_wwv_fwtak8ujKS8SzMeuJyr9iO6VuYDYJldDo9QlN8LMn_kI9FjV08/exec";
+        "https://script.google.com/macros/s/AKfycbyZ4Vs0QpciirvTVvqqBCd5O8-kI2djFUpKIlaXuI7jl2Vy2m8mhAQQ0boPCBmH3S7L/exec";
       let db = { personal: [], trabajos: [] },
         categoriasExtra = { Personal: [], Trabajos: [] };
-      let mesesSeleccionados = [new Date().getMonth()],
-        filtrosCategorias = [],
+      let filtrosCategorias = [],
         criterioOrden = "carga",
-        sumaAcumulada = 0;
+        sumaAcumulada = 0,
+        mesesSeleccionados = [new Date().getMonth()];
       const CATS_BASE = {
         Personal: ["Compras", "Servicios", "Salud", "Transporte"],
         Trabajos: ["Sueldo", "Insumos", "Viáticos", "Herramientas"],
@@ -441,8 +441,8 @@
       const modalEdit = new bootstrap.Modal(
         document.getElementById("modalEditar"),
       );
-      const modalAjustes = new bootstrap.Modal(
-        document.getElementById("modalAjustes"),
+      const modalCats = new bootstrap.Modal(
+        document.getElementById("modalCategorias"),
       );
 
       function verTab(n) {
@@ -452,178 +452,22 @@
           n === 4 ? "block" : "none";
         document.getElementById("t1").classList.toggle("active", n === 1);
         document.getElementById("t4").classList.toggle("active", n === 4);
-      }
 
-      function abrirEditor(hoja, id, concepto, monto, tipo, cat, metodo) {
-        document.getElementById("editId").value = id;
-        document.getElementById("editHoja").value = hoja;
-        document.getElementById("editConcepto").value = concepto;
-        let montoLimpio = parseFloat(monto).toFixed(2).replace(".", "");
-        const inputM = document.getElementById("editMonto");
-        inputM.value = montoLimpio;
-        inputM.dispatchEvent(new Event("input", { bubbles: true }));
-        document.getElementById("editTipo").value = tipo;
-        document.getElementById("editMetodo").value = metodo;
-        const sel = document.getElementById("catDinamicaEdit");
-        actualizarCategoriasDinamicas(hoja, sel);
-        if ([...sel.options].some((o) => o.value === cat)) {
-          sel.value = cat;
-          checkManual(sel, "wrapperManualEdit");
-        } else {
-          sel.value = "OTRA";
-          checkManual(sel, "wrapperManualEdit");
-          document.getElementById("editCatManual").value = cat;
+        if (n === 1) {
+          // Asegura que la hora sea la actual al momento de ir a crear el registro
+          document.getElementById("fechaNuevo").value =
+            obtenerFechaHoraActual();
         }
-        modalEdit.show();
+
+        if (n === 4) {
+          renderMeses();
+          renderCategoriasFiltro();
+          renderReporte();
+        }
       }
 
-      function abrirAjustes() {
-        const h = document.getElementById("hojaMain").value;
-        const lista = document.getElementById("listaCategoriasAjustes");
-        lista.innerHTML =
-          categoriasExtra[h]
-            .map(
-              (c) => `
-          <div class="d-flex justify-content-between align-items-center p-2 border-bottom">
-            <span class="small fw-bold">${c}</span>
-            <i class="bi bi-trash text-danger" style="cursor:pointer" onclick="borrarCatCompleta('${h}', '${c}')"></i>
-          </div>
-        `,
-            )
-            .join("") ||
-          "<p class='text-center small py-3 text-muted'>No hay categorías nuevas en esta hoja.</p>";
-        modalAjustes.show();
-      }
-
-      async function borrarCatCompleta(h, c) {
-        if (!confirm(`¿Borrar categoría "${c}"?`)) return;
-        await fetch(
-          `${scriptURL}?action=eliminar_categoria&hoja=${h}&categoria=${encodeURIComponent(c)}`,
-        );
-        modalAjustes.hide();
-        cargar();
-      }
-
-      async function prepararEnvio(e, modo) {
-        e.preventDefault();
-        const fd = new FormData(e.target);
-        if (fd.get("cat_select") === "OTRA")
-          fd.set("categoria", fd.get("categoria_nueva"));
-        else fd.set("categoria", fd.get("cat_select"));
-        fd.append(
-          "action",
-          modo === "editar" ? "edit_movimiento" : "add_movimiento",
-        );
-        await fetch(scriptURL, { method: "POST", body: fd });
-        if (modo === "editar") modalEdit.hide();
-        e.target.reset();
-        cargar();
-      }
-
-      function renderReporte() {
-        let todos = [];
-        if (db.personal)
-          db.personal.forEach((m, i) =>
-            todos.push({ d: m, id: i + 2, h: "Personal" }),
-          );
-        if (db.trabajos)
-          db.trabajos.forEach((m, i) =>
-            todos.push({ d: m, id: i + 2, h: "Trabajos" }),
-          );
-        let filtrados = todos.filter((x) =>
-          mesesSeleccionados.includes(new Date(x.d[0]).getUTCMonth()),
-        );
-        const query = document
-          .getElementById("inputBusqueda")
-          .value.toLowerCase();
-        if (query)
-          filtrados = filtrados.filter(
-            (x) =>
-              x.d[1].toLowerCase().includes(query) ||
-              (x.d[4] || "").toLowerCase().includes(query),
-          );
-        if (filtrosCategorias.length > 0)
-          filtrados = filtrados.filter((x) =>
-            filtrosCategorias.includes(x.d[4] || "S/C"),
-          );
-        filtrados.sort((a, b) =>
-          criterioOrden === "fecha"
-            ? new Date(b.d[0]) - new Date(a.d[0])
-            : b.id - a.id,
-        );
-        document.getElementById("listaDetallada").innerHTML = filtrados
-          .map((x) => {
-            const ing = parseFloat(x.d[2]) || 0,
-              monto = ing || parseFloat(x.d[3]);
-            const f = new Date(x.d[0]),
-              fLab =
-                f.getUTCDate().toString().padStart(2, "0") +
-                "/" +
-                (f.getUTCMonth() + 1).toString().padStart(2, "0");
-            return `<div class="mov-fila" id="fila-${x.h}-${x.id}">
-            <div class="d-flex align-items-center gap-2" onclick="toggleCheck('${x.h}', ${x.id})">
-              <input type="checkbox" class="form-check-input chk-mov" value="${ing ? monto : -monto}" onchange="sumarSeleccion(this, '${x.h}', ${x.id})" onclick="event.stopPropagation()">
-              <div><div class="small fw-bold">${x.d[1]} <span class="text-muted fw-normal">(${fLab})</span></div><div style="font-size:0.6rem; color:#888">${x.h} | ${x.d[4]}</div></div>
-            </div>
-            <div class="text-end"><div class="${ing > 0 ? "v-ing" : "v-egr"}">$${monto.toLocaleString("es-AR")}</div>
-              <div class="iconos-accion">
-                <i class="bi bi-pencil-square text-muted" style="cursor:pointer" onclick="event.stopPropagation(); abrirEditor('${x.h}', ${x.id}, '${x.d[1]}', ${monto}, '${ing ? "Ingreso" : "Egreso"}', '${x.d[4]}', '${x.d[5]}')"></i>
-                <i class="bi bi-trash3 text-danger" style="cursor:pointer" onclick="event.stopPropagation(); eliminarMov('${x.h}', ${x.id})"></i>
-              </div>
-            </div></div>`;
-          })
-          .join("");
-      }
-
-      function actualizarCategoriasDinamicas(hojaForzada, comboForzado) {
-        const h = hojaForzada || document.getElementById("hojaMain").value;
-        const sel = comboForzado || document.getElementById("catDinamicaNuevo");
-        const todas = [...new Set([...CATS_BASE[h], ...categoriasExtra[h]])];
-        sel.innerHTML =
-          `<option value="" disabled selected>Elegir...</option>` +
-          todas.map((c) => `<option value="${c}">${c}</option>`).join("") +
-          `<option value="OTRA">+ NUEVA</option>`;
-      }
-
-      function checkManual(el, wrapperId) {
-        document.getElementById(wrapperId).style.display =
-          el.value === "OTRA" ? "block" : "none";
-      }
-      async function cargar() {
-        const r = await fetch(`${scriptURL}?t=${Date.now()}`);
-        db = await r.json();
-        categoriasExtra = { Personal: [], Trabajos: [] };
-        ["personal", "trabajos"].forEach((k) => {
-          const h = k === "personal" ? "Personal" : "Trabajos";
-          if (db[k])
-            db[k].forEach((m) => {
-              if (
-                m[4] &&
-                !CATS_BASE[h].includes(m[4]) &&
-                !categoriasExtra[h].includes(m[4])
-              )
-                categoriasExtra[h].push(m[4]);
-            });
-        });
-        actualizarCategoriasDinamicas();
-        llenarMeses();
-        renderReporte();
-      }
-      function sumarSeleccion(cb, h, id) {
-        sumaAcumulada += parseFloat(cb.value) * (cb.checked ? 1 : -1);
-        document
-          .getElementById(`fila-${h}-${id}`)
-          .classList.toggle("selected", cb.checked);
-        actualizarUI_Suma();
-      }
-      function actualizarUI_Suma() {
-        document.getElementById("totalSeleccionado").innerText =
-          sumaAcumulada.toLocaleString("es-AR", { minimumFractionDigits: 2 });
-        document.getElementById("floatSuma").style.display =
-          Math.abs(sumaAcumulada) < 0.01 ? "none" : "block";
-      }
-      function llenarMeses() {
-        const n = [
+      function renderMeses() {
+        const nombres = [
           "Ene",
           "Feb",
           "Mar",
@@ -637,20 +481,131 @@
           "Nov",
           "Dic",
         ];
-        document.getElementById("contenedorMeses").innerHTML = n
+        document.getElementById("contenedorMeses").innerHTML = nombres
           .map(
             (m, i) =>
-              `<div class="px-2 small"><input type="checkbox" onchange="toggleMes(${i})" ${mesesSeleccionados.includes(i) ? "checked" : ""}> ${m}</div>`,
+              `<div class="pill-cat ${mesesSeleccionados.includes(i) ? "active" : ""}" style="font-size: 0.65rem; padding: 4px 10px;" onclick="toggleMes(${i})">${m}</div>`,
           )
           .join("");
       }
+
       function toggleMes(i) {
-        mesesSeleccionados.includes(i)
-          ? mesesSeleccionados.length > 1 &&
-            (mesesSeleccionados = mesesSeleccionados.filter((m) => m !== i))
-          : mesesSeleccionados.push(i);
+        if (mesesSeleccionados.includes(i)) {
+          if (mesesSeleccionados.length > 1)
+            mesesSeleccionados = mesesSeleccionados.filter((m) => m !== i);
+        } else {
+          mesesSeleccionados.push(i);
+        }
+        renderMeses();
         renderReporte();
       }
+
+      function renderCategoriasFiltro() {
+        const h = document.getElementById("hojaMain").value;
+        const todas = [...new Set([...CATS_BASE[h], ...categoriasExtra[h]])];
+        document.getElementById("contenedorCategoriasFiltro").innerHTML =
+          `<div class="pill-cat ${filtrosCategorias.length === 0 ? "active" : ""}" onclick="toggleFiltroCat('TODAS')">Todas</div>` +
+          todas
+            .map(
+              (c) =>
+                `<div class="pill-cat ${filtrosCategorias.includes(c) ? "active" : ""}" onclick="toggleFiltroCat('${c}')">${c}</div>`,
+            )
+            .join("");
+      }
+
+      function toggleFiltroCat(cat) {
+        if (cat === "TODAS") filtrosCategorias = [];
+        else {
+          if (filtrosCategorias.includes(cat))
+            filtrosCategorias = filtrosCategorias.filter((c) => c !== cat);
+          else filtrosCategorias.push(cat);
+        }
+        renderCategoriasFiltro();
+        renderReporte();
+      }
+
+      function renderReporte() {
+        let todos = [];
+        ["personal", "trabajos"].forEach((h) => {
+          if (db[h])
+            db[h].forEach((m, i) =>
+              todos.push({
+                d: m,
+                id: i + 2,
+                h: h.charAt(0).toUpperCase() + h.slice(1),
+              }),
+            );
+        });
+        const query = document
+          .getElementById("inputBusqueda")
+          .value.toLowerCase();
+        let filtrados = todos.filter((x) => {
+          const f = new Date(x.d[0]);
+          const pasaMes = mesesSeleccionados.includes(f.getUTCMonth());
+          const pasaCat =
+            filtrosCategorias.length === 0 ||
+            filtrosCategorias.includes(x.d[4]);
+          const pasaBus = !query || x.d[1].toLowerCase().includes(query);
+          return pasaMes && pasaCat && pasaBus;
+        });
+        filtrados.sort((a, b) =>
+          criterioOrden === "fecha"
+            ? new Date(b.d[0]) - new Date(a.d[0])
+            : b.id - a.id,
+        );
+        document.getElementById("listaDetallada").innerHTML = filtrados
+          .map((x) => {
+            const ing = parseFloat(x.d[2]) || 0,
+              monto = ing || parseFloat(x.d[3]);
+            const f = new Date(x.d[0]),
+              fLab = `${f.getUTCDate().toString().padStart(2, "0")}/${(f.getUTCMonth() + 1).toString().padStart(2, "0")}`;
+            return `<div class="mov-fila" id="fila-${x.h}-${x.id}" onclick="toggleCheck('${x.h}', ${x.id})">
+                <div class="d-flex align-items-center gap-2">
+                  <input type="checkbox" class="form-check-input chk-mov" value="${ing ? monto : -monto}" data-h="${x.h}" data-id="${x.id}" onclick="event.stopPropagation(); sumarSeleccion(this)">
+                  <div><div class="small fw-bold">${x.d[1]} <span class="text-muted fw-normal">(${fLab})</span></div><div style="font-size:0.6rem; color:#888">${x.h} | ${x.d[4]}</div></div>
+                </div>
+                <div class="text-end"><div class="${ing > 0 ? "v-ing" : "v-egr"}">$${monto.toLocaleString("es-AR")}</div>
+                <div class="iconos-accion mt-1">
+                 <i class="bi bi-pencil-square text-muted me-2" 
+   onclick="event.stopPropagation(); abrirEditor('${x.h}', ${x.id}, '${x.d[1]}', ${monto}, '${ing ? "Ingreso" : "Egreso"}', '${x.d[4]}', '${x.d[5]}', '${x.d[6]}')"></i>
+                  <i class="bi bi-trash3 text-danger" onclick="event.stopPropagation(); eliminarMov('${x.h}', ${x.id})"></i>
+                </div></div>
+              </div>`;
+          })
+          .join("");
+      }
+
+      function toggleCheck(h, id) {
+        const fila = document.getElementById(`fila-${h}-${id}`);
+        const cb = fila.querySelector(".chk-mov");
+        cb.checked = !cb.checked;
+        sumarSeleccion(cb);
+      }
+
+      function sumarSeleccion(cb) {
+        sumaAcumulada += parseFloat(cb.value) * (cb.checked ? 1 : -1);
+        cb.closest(".mov-fila").classList.toggle("selected", cb.checked);
+        document.getElementById("totalSeleccionado").innerText =
+          sumaAcumulada.toLocaleString("es-AR", { minimumFractionDigits: 2 });
+        document.getElementById("floatSuma").style.display =
+          Math.abs(sumaAcumulada) < 0.01 ? "none" : "block";
+      }
+
+      function seleccionarTodo() {
+        const checks = document.querySelectorAll(".chk-mov");
+        const algunoSinCheck = Array.from(checks).some((c) => !c.checked);
+        sumaAcumulada = 0;
+        checks.forEach((c) => {
+          c.checked = algunoSinCheck;
+          c.closest(".mov-fila").classList.toggle("selected", c.checked);
+          if (c.checked) sumaAcumulada += parseFloat(c.value);
+        });
+        document.getElementById("totalSeleccionado").innerText =
+          sumaAcumulada.toLocaleString("es-AR", { minimumFractionDigits: 2 });
+        document.getElementById("floatSuma").style.display =
+          sumaAcumulada === 0 ? "none" : "block";
+      }
+
       function cambiarOrden(o) {
         criterioOrden = o;
         document
@@ -661,6 +616,168 @@
           .classList.toggle("active", o === "fecha");
         renderReporte();
       }
+
+      async function prepararEnvio(e, modo) {
+        e.preventDefault();
+        const form = e.target;
+        const btn = form.querySelector('button[type="submit"]');
+        const fd = new FormData(form);
+
+        const fechaInputId = modo === "editar" ? "editFecha" : "fechaNuevo";
+        const fechaInput = document.getElementById(fechaInputId);
+        let fechaValor = fechaInput ? fechaInput.value : null;
+        if (!fechaValor) {
+          alert("La fecha está vacía o inválida");
+          return;
+        }
+        // Convertir la cadena local a timestamp UTC
+        // El input datetime-local devuelve "YYYY-MM-DDTHH:mm" en hora local del navegador
+        // Creamos un objeto Date con esa cadena (se interpreta como local)
+        const fechaLocal = new Date(fechaValor);
+        if (isNaN(fechaLocal.getTime())) {
+          alert("Fecha inválida");
+          return;
+        }
+        // Validar categoría
+        const catSeleccionada = fd.get("cat_select");
+        if (!catSeleccionada) {
+          alert("Por favor, selecciona una categoría.");
+          return;
+        }
+
+        fd.set("concepto", fd.get("concepto")?.trim() || "-");
+        fd.set(
+          "categoria",
+          catSeleccionada === "OTRA"
+            ? fd.get("categoria_nueva")
+            : catSeleccionada,
+        );
+        fd.set("fecha_manual", fechaValor); // formato "YYYY-MM-DDTHH:mm"
+        fd.append(
+          "action",
+          modo === "editar" ? "edit_movimiento" : "add_movimiento",
+        );
+        const timestamp = fechaLocal.getTime();
+        fd.set("fecha_manual", timestamp.toString());
+        btn.disabled = true;
+        btn.innerText = "...";
+
+        try {
+          const resp = await fetch(scriptURL, { method: "POST", body: fd });
+          if (modo === "editar") modalEdit.hide();
+          else {
+            form.reset();
+            document.getElementById("fechaNuevo").value =
+              obtenerFechaHoraActual();
+          }
+          await cargar();
+        } catch (error) {
+          console.error("Error:", error);
+          alert("Error al guardar. Revisa la consola.");
+        } finally {
+          btn.disabled = false;
+          btn.innerText = modo === "editar" ? "ACTUALIZAR" : "GUARDAR REGISTRO";
+        }
+      }
+
+      async function cargar() {
+        const r = await fetch(`${scriptURL}?t=${Date.now()}`);
+        db = await r.json();
+        categoriasExtra = { Personal: [], Trabajos: [] };
+        ["personal", "trabajos"].forEach((k) => {
+          const hN = k === "personal" ? "Personal" : "Trabajos";
+          db[k].forEach((m) => {
+            if (
+              m[4] &&
+              !CATS_BASE[hN].includes(m[4]) &&
+              !categoriasExtra[hN].includes(m[4])
+            )
+              categoriasExtra[hN].push(m[4]);
+          });
+        });
+        actualizarCategoriasDinamicas();
+        renderReporte();
+      }
+
+      function actualizarCategoriasDinamicas(hojaForzada, comboForzado) {
+        const h = hojaForzada || document.getElementById("hojaMain").value;
+        const sel = comboForzado || document.getElementById("catDinamicaNuevo");
+        const todas = [...new Set([...CATS_BASE[h], ...categoriasExtra[h]])];
+        sel.innerHTML =
+          `<option value="" disabled selected>Elegir...</option>` +
+          todas.map((c) => `<option value="${c}">${c}</option>`).join("") +
+          `<option value="OTRA">+ NUEVA</option>`;
+      }
+
+      function checkManual(el, id) {
+        document.getElementById(id).style.display =
+          el.value === "OTRA" ? "block" : "none";
+      }
+
+      function abrirEditor(h, id, con, mon, tip, cat, met, fec) {
+        document.getElementById("editId").value = id;
+        document.getElementById("editHoja").value = h;
+        document.getElementById("editConcepto").value = con;
+
+        // Acá estaba el error, decía fecISO en lugar de fec
+        document.getElementById("editFecha").value = fec;
+
+        const inputM = document.getElementById("editMonto");
+        inputM.value = parseFloat(mon).toFixed(2).replace(".", "");
+        inputM.dispatchEvent(new Event("input", { bubbles: true }));
+        document.getElementById("editTipo").value = tip;
+        document.getElementById("editMetodo").value = met;
+
+        const sel = document.getElementById("catDinamicaEdit");
+        actualizarCategoriasDinamicas(h, sel);
+        sel.value = [...sel.options].some((o) => o.value === cat)
+          ? cat
+          : "OTRA";
+
+        if (sel.value === "OTRA") {
+          document.getElementById("editCatManual").value = cat;
+        }
+        checkManual(sel, "wrapperManualEdit");
+        modalEdit.show();
+      }
+      function abrirAjustes() {
+        const h = document.getElementById("hojaMain").value;
+        const lista = document.getElementById("listaCategoriasGestion");
+        const extras = categoriasExtra[h];
+        if (extras.length === 0) {
+          lista.innerHTML = `<div class="text-center p-3 small text-muted">No hay categorías manuales en la hoja ${h}</div>`;
+        } else {
+          lista.innerHTML = extras
+            .map(
+              (c) => `
+        <div class="list-group-item d-flex justify-content-between align-items-center border-bottom py-2 px-0">
+          <span class="small">${c}</span>
+          <i class="bi bi-trash3 text-danger" style="cursor:pointer" onclick="eliminarCategoriaGlobal('${c}')"></i>
+        </div>
+      `,
+            )
+            .join("");
+        }
+        modalCats.show();
+      }
+
+      function eliminarCategoriaGlobal(catNombre) {
+        if (
+          confirm(
+            `¿Quieres dejar de ver "${catNombre}" en los filtros?\n\nNota: Si existen movimientos con esta categoría en el Excel, volverá a aparecer al recargar.`,
+          )
+        ) {
+          const h = document.getElementById("hojaMain").value;
+          categoriasExtra[h] = categoriasExtra[h].filter(
+            (c) => c !== catNombre,
+          );
+          actualizarCategoriasDinamicas();
+          renderCategoriasFiltro();
+          renderReporte();
+          modalCats.hide();
+        }
+      }
+
       async function eliminarMov(h, id) {
         if (confirm("¿Borrar?")) {
           await fetch(
@@ -669,28 +786,7 @@
           cargar();
         }
       }
-      function toggleCheck(h, id) {
-        const c = document.querySelector(`#fila-${h}-${id} .chk-mov`);
-        c.checked = !c.checked;
-        sumarSeleccion(c, h, id);
-      }
-      function filtrarPorCategoria(c) {
-        filtrosCategorias = filtrosCategorias.includes(c)
-          ? filtrosCategorias.filter((f) => f !== c)
-          : [...filtrosCategorias, c];
-        renderReporte();
-      }
-      function seleccionarTodo() {
-        const checks = document.querySelectorAll(".chk-mov");
-        const m = Array.from(checks).some((c) => c.checked);
-        sumaAcumulada = 0;
-        checks.forEach((c) => {
-          c.checked = !m;
-          if (c.checked) sumaAcumulada += parseFloat(c.value);
-          c.closest(".mov-fila").classList.toggle("selected", c.checked);
-        });
-        actualizarUI_Suma();
-      }
+
       document.addEventListener("input", (e) => {
         if (e.target.classList.contains("montoMask")) {
           let v = e.target.value.replace(/\D/g, "");
@@ -698,7 +794,18 @@
           e.target.value = v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
       });
-      window.onload = cargar;
+
+      function obtenerFechaHoraActual() {
+        const ahora = new Date();
+        ahora.setMinutes(ahora.getMinutes() - ahora.getTimezoneOffset());
+        return ahora.toISOString().slice(0, 16);
+      }
+
+      window.onload = () => {
+        renderMeses();
+        document.getElementById("fechaNuevo").value = obtenerFechaHoraActual();
+        cargar();
+      };
     </script>
   </body>
 </html>
