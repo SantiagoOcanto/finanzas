@@ -196,6 +196,47 @@
         z-index: 1000;
         border: 1px solid var(--main-pink);
       }
+      .tarjetas-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 15px;
+  /* Habilitamos una barra de scroll sutil para saber que hay más contenido */
+  scrollbar-width: thin; 
+  scrollbar-color: var(--accent-pink) transparent;
+}
+.tarjetas-scroll::-webkit-scrollbar {
+  height: 5px; /* Barra fina abajo en dispositivos móviles/Chrome */
+  display: block;
+}
+.tarjetas-scroll::-webkit-scrollbar-thumb {
+  background-color: var(--accent-pink);
+  border-radius: 10px;
+}
+.tarjeta-mini {
+  min-width: 190px; /* Reducimos levemente el ancho para que la tercera asome en pantalla */
+  height: 120px;
+  border-radius: 16px;
+  padding: 15px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 2px solid transparent;
+}
+      .tarjeta-mini:active {
+        transform: scale(0.97);
+      }
+      .gasto-tarjeta-item {
+        background: white;
+        border-radius: 12px;
+        padding: 12px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+      }
     </style>
   </head>
   <body>
@@ -209,29 +250,20 @@
     <div id="cont1">
       <div class="card-custom">
         <form id="formNuevo" onsubmit="prepararEnvio(event, 'nuevo')">
-          <input type="hidden" name="cuotas" id="hiddenCuotas" value="1" />
-          <input
-            type="hidden"
-            name="monto_cuota"
-            id="hiddenMontoCuota"
-            value="0"
-          />
-
           <div class="row g-2">
             <div class="col-7">
-              <label class="small fw-bold">Monto Total ($):</label>
-              <input
+              <label class="small fw-bold">Monto ($):</label
+              ><input
                 type="text"
                 class="form-control montoMask"
                 name="monto"
-                id="montoPrincipal"
                 placeholder="0,00"
                 required
               />
             </div>
             <div class="col-5">
-              <label class="small fw-bold">Tipo:</label>
-              <select name="tipo" class="form-select">
+              <label class="small fw-bold">Tipo:</label
+              ><select name="tipo" class="form-select">
                 <option value="Egreso">Salida (-)</option>
                 <option value="Ingreso">Entrada (+)</option>
               </select>
@@ -271,8 +303,8 @@
           </div>
           <div class="row g-2 mt-1">
             <div class="col-6">
-              <label class="small fw-bold">Hoja:</label>
-              <select
+              <label class="small fw-bold">Hoja:</label
+              ><select
                 name="hoja"
                 id="hojaMain"
                 class="form-select"
@@ -283,16 +315,10 @@
               </select>
             </div>
             <div class="col-6">
-              <label class="small fw-bold">Método:</label>
-              <select
-                name="metodo"
-                id="metodoNuevo"
-                class="form-select"
-                onchange="verificarMetodo(this)"
-              >
+              <label class="small fw-bold">Método:</label
+              ><select name="metodo" class="form-select">
                 <option value="Digital">Digital</option>
                 <option value="Efectivo">Efectivo</option>
-                <option value="Crédito">Crédito 💳</option>
               </select>
             </div>
           </div>
@@ -316,6 +342,9 @@
               onkeyup="renderReporte()"
             />
           </div>
+          <button class="btn btn-sm d-flex align-items-center justify-content-center" style="background: var(--main-pink); color: var(--accent-pink); border-radius: 12px; height: 32px; width: 45px;" onclick="abrirGestorTarjetas()">
+            <i class="bi bi-credit-card-2-front-fill fs-5"></i>
+          </button>
         </div>
 
         <div class="cats-scroll mb-2" id="contenedorCategoriasFiltro"></div>
@@ -341,6 +370,34 @@
         </div>
 
         <div id="listaDetallada"></div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modalGestorTarjetas" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 20px; background-color: var(--soft-pink);">
+          <div class="modal-header border-0 pb-0">
+            <h6 class="fw-bold mb-0" style="color: var(--text);"><i class="bi bi-wallet2 me-2"></i>GESTOR DE TARJETAS</h6>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body pt-3">
+            
+            <div class="d-flex gap-2 mb-3">
+              <button class="btn btn-sm bg-white border w-50 fw-bold" style="color: var(--accent-pink); border-radius: 12px;" onclick="modalNuevaTarjeta.show()">+ Nueva Tarjeta</button>
+              <button class="btn btn-sm btn-pink w-50" style="border-radius: 12px;" onclick="abrirModalGastoTarjeta()">+ Gasto en Cuotas</button>
+            </div>
+
+            <div class="tarjetas-scroll" id="contenedorTarjetasMini">
+              </div>
+
+            <div class="mt-2">
+              <h6 class="fw-bold small mb-2 d-none text-muted" id="tituloGastosSeleccionada">Detalle de Cuotas Activas</h6>
+              <div id="contenedorGastosTarjeta" style="max-height: 40vh; overflow-y: auto; scrollbar-width: none;">
+                </div>
+            </div>
+
+          </div>
+        </div>
       </div>
     </div>
 
@@ -402,72 +459,9 @@
               <select name="metodo" id="editMetodo" class="form-select mb-3">
                 <option value="Digital">Digital</option>
                 <option value="Efectivo">Efectivo</option>
-                <option value="Crédito">Crédito</option>
               </select>
               <button type="submit" class="btn-pink">ACTUALIZAR</button>
             </form>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div
-      class="modal fade"
-      id="modalCredito"
-      tabindex="-1"
-      data-bs-backdrop="static"
-    >
-      <div class="modal-dialog modal-dialog-centered">
-        <div
-          class="modal-content"
-          style="border-radius: 20px; border: 2px solid var(--accent-pink)"
-        >
-          <div class="modal-body text-center">
-            <h6
-              class="fw-bold mb-3 text-uppercase"
-              style="color: var(--accent-pink)"
-            >
-              💳 Detalles del Crédito
-            </h6>
-
-            <div class="text-start mb-2">
-              <label class="small fw-bold">Cantidad de Cuotas:</label>
-              <input
-                type="number"
-                id="inputCuotasModal"
-                class="form-control text-center fw-bold"
-                min="1"
-                value="3"
-              />
-            </div>
-            <div class="text-start mb-3">
-              <label class="small fw-bold">Valor de CADA Cuota ($):</label>
-              <input
-                type="text"
-                id="inputMontoCuotaModal"
-                class="form-control montoMask text-center fw-bold text-danger"
-                placeholder="0,00"
-              />
-            </div>
-
-            <div class="d-flex gap-2 mt-4">
-              <button
-                type="button"
-                class="btn btn-light w-50"
-                style="border-radius: 12px; font-weight: 600"
-                onclick="cancelarCredito()"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                class="btn-pink w-50"
-                style="padding: 10px"
-                onclick="confirmarCredito()"
-              >
-                Confirmar
-              </button>
-            </div>
           </div>
         </div>
       </div>
@@ -501,326 +495,408 @@
         </div>
       </div>
     </div>
+    
+    <div class="modal fade" id="modalNuevaTarjeta" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 20px">
+          <div class="modal-body">
+            <h6 class="fw-bold mb-3">AGREGAR TARJETA</h6>
+            <form onsubmit="guardarTarjeta(event)">
+              <label class="small fw-bold">Banco / Emisor:</label>
+              <input type="text" id="tarjBanco" class="form-control" placeholder="Ej: Galicia" required />
+              <label class="small fw-bold mt-2">Terminación (4 dígitos):</label>
+              <input type="text" id="tarjTerminacion" class="form-control" placeholder="Ej: 4567" maxlength="4" required />
+              <label class="small fw-bold mt-2">Color Distintivo:</label>
+              <input type="color" id="tarjColor" class="form-control form-control-color w-100" value="#f06292" required />
+              <button type="submit" class="btn-pink mt-3">GUARDAR TARJETA</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modalNuevaCuota" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 20px">
+          <div class="modal-body">
+            <h6 class="fw-bold mb-3">NUEVA COMPRA EN CUOTAS</h6>
+            <form onsubmit="guardarGastoTarjeta(event)">
+              <label class="small fw-bold">Tarjeta Emisora:</label>
+              <select id="gastoTarjetaId" class="form-select" required></select>
+
+              <label class="small fw-bold">¿Qué compraste?:</label>
+              <input type="text" id="gastoConcepto" class="form-control" placeholder="Ej: Computadora" required />
+              
+              <div class="row g-2">
+                <div class="col-6">
+                  <label class="small fw-bold">Total Producto ($):</label>
+                  <input type="text" id="gastoMontoTotal" class="form-control montoMask" placeholder="0,00" required />
+                </div>
+                <div class="col-6">
+                  <label class="small fw-bold">Valor Cuota ($):</label>
+                  <input type="text" id="gastoMontoCuota" class="form-control montoMask" placeholder="0,00" required />
+                </div>
+              </div>
+
+              <div class="row g-2 mt-1">
+                <div class="col-6">
+                  <label class="small fw-bold">Total Cuotas:</label>
+                  <input type="number" id="gastoCuotasTotal" class="form-control" min="2" placeholder="Ej: 6" required />
+                </div>
+                <div class="col-6">
+                  <label class="small fw-bold">Día Vencimiento:</label>
+                  <input type="number" id="gastoVencimiento" class="form-control" min="1" max="31" placeholder="Ej: 10" required />
+                </div>
+              </div>
+
+              <div class="row g-2 mt-1">
+                <div class="col-6">
+                  <label class="small fw-bold">Hoja Destino:</label>
+                  <select id="gastoHoja" class="form-select" onchange="actualizarCategoriasGastoTarjeta()">
+                    <option value="Personal">Personal</option>
+                    <option value="Trabajos">Trabajos</option>
+                  </select>
+                </div>
+                <div class="col-6">
+                  <label class="small fw-bold">Categoría:</label>
+                  <select id="gastoCatDinamica" class="form-select" required></select>
+                </div>
+              </div>
+
+              <button type="submit" class="btn-pink mt-3">GUARDAR GASTO</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-      const scriptURL =
-        "https://script.google.com/macros/s/AKfycbwesILTktAdC5xamcz7rpbKmK5zQsf6O1Wnb7lwGMVD5Lj215P7hJ91-rRIUobQRb2b/exec";
-      let db = { personal: [], trabajos: [] },
-        categoriasExtra = { Personal: [], Trabajos: [] };
-      let filtrosCategorias = [],
-        criterioOrden = "carga",
-        sumaAcumulada = 0,
-        mesesSeleccionados = [new Date().getMonth()];
+      const scriptURL = "https://script.google.com/macros/s/AKfycbxLyYG1h1HaZWlLN5gDWK7znA91SRv7I9vUHEpqPoVVPzElD_UxvV_ZwKzFRWW0bZ92/exec";
+      let db = { personal: [], trabajos: [] }, categoriasExtra = { Personal: [], Trabajos: [] };
+      let filtrosCategorias = [], criterioOrden = "carga", sumaAcumulada = 0, mesesSeleccionados = [new Date().getMonth()];
       const CATS_BASE = {
         Personal: ["Compras", "Servicios", "Salud", "Transporte"],
         Trabajos: ["Sueldo", "Insumos", "Viáticos", "Herramientas"],
       };
 
-      const modalEdit = new bootstrap.Modal(
-        document.getElementById("modalEditar"),
-      );
-      const modalCats = new bootstrap.Modal(
-        document.getElementById("modalCategorias"),
-      );
-      const modalCred = new bootstrap.Modal(
-        document.getElementById("modalCredito"),
-      ); // Inicializar modal de crédito
+      const modalEdit = new bootstrap.Modal(document.getElementById("modalEditar"));
+      const modalCats = new bootstrap.Modal(document.getElementById("modalCategorias"));
+      const modalNuevaTarjeta = new bootstrap.Modal(document.getElementById("modalNuevaTarjeta"));
+      const modalNuevaCuota = new bootstrap.Modal(document.getElementById("modalNuevaCuota"));
+      let modalGestorTarjetas;
+
+      // === LÓGICA DE TARJETAS MODULAR ===
+      let datosTarjetas = JSON.parse(localStorage.getItem('naza_tarjetas_data')) || { tarjetas: [] };
+      let tarjetasProcesadasHtml = {};
+
+      function abrirGestorTarjetas() {
+        if (!modalGestorTarjetas) {
+          modalGestorTarjetas = new bootstrap.Modal(document.getElementById("modalGestorTarjetas"));
+        }
+        modalGestorTarjetas.show();
+        renderTarjetas(); 
+      }
+
+      function guardarTarjeta(e) {
+        e.preventDefault();
+        datosTarjetas.tarjetas.push({
+          id: Date.now(),
+          banco: document.getElementById("tarjBanco").value,
+          terminacion: document.getElementById("tarjTerminacion").value,
+          color: document.getElementById("tarjColor").value
+        });
+        localStorage.setItem('naza_tarjetas_data', JSON.stringify(datosTarjetas));
+        e.target.reset();
+        modalNuevaTarjeta.hide();
+        renderTarjetas();
+      }
+
+      function eliminarTarjeta(idTarjeta) {
+        if(confirm("¿Eliminar esta tarjeta de la app? No afectará los datos del Excel.")) {
+          datosTarjetas.tarjetas = datosTarjetas.tarjetas.filter(t => t.id !== idTarjeta);
+          localStorage.setItem('naza_tarjetas_data', JSON.stringify(datosTarjetas));
+          renderTarjetas();
+        }
+      }
+
+      function abrirModalGastoTarjeta() {
+        const select = document.getElementById("gastoTarjetaId");
+        if(datosTarjetas.tarjetas.length === 0) {
+          alert("Primero agrega una tarjeta.");
+          return;
+        }
+        select.innerHTML = datosTarjetas.tarjetas.map(t => `<option value="${t.id}">${t.banco} (*${t.terminacion})</option>`).join("");
+        actualizarCategoriasGastoTarjeta();
+        modalNuevaCuota.show();
+      }
+
+      function actualizarCategoriasGastoTarjeta() {
+        const h = document.getElementById("gastoHoja").value;
+        const sel = document.getElementById("gastoCatDinamica");
+        const todas = [...new Set([...CATS_BASE[h], ...categoriasExtra[h]])];
+        sel.innerHTML = `<option value="" disabled selected>Elegir...</option>` + todas.map((c) => `<option value="${c}">${c}</option>`).join("");
+      }
+
+      async function guardarGastoTarjeta(e) {
+        e.preventDefault();
+        const btn = e.target.querySelector('button[type="submit"]');
+        const tarjetaSelect = document.getElementById("gastoTarjetaId");
+        const tarjetaNombre = tarjetaSelect.options[tarjetaSelect.selectedIndex].text;
+        
+        const fd = new FormData();
+        fd.append("action", "add_movimiento");
+        fd.append("hoja", document.getElementById("gastoHoja").value);
+        fd.append("concepto", document.getElementById("gastoConcepto").value.trim());
+        fd.append("monto_total", document.getElementById("gastoMontoTotal").value);
+        fd.append("monto_cuota", document.getElementById("gastoMontoCuota").value);
+        fd.append("cuotas", document.getElementById("gastoCuotasTotal").value);
+        fd.append("fecha_vencimiento", document.getElementById("gastoVencimiento").value);
+        fd.append("tarjeta_nombre", tarjetaNombre);
+        fd.append("tipo", "Egreso");
+        fd.append("metodo", "Crédito");
+        fd.append("gasto_id", Date.now().toString()); 
+        fd.append("categoria", document.getElementById("gastoCatDinamica").value);
+        fd.append("fecha_manual", Date.now().toString()); 
+
+        btn.disabled = true;
+        btn.innerText = "...";
+
+        try {
+          await fetch(scriptURL, { method: "POST", body: fd });
+          e.target.reset();
+          modalNuevaCuota.hide();
+          await cargar();
+          renderTarjetas();
+        } catch (error) {
+          alert("Error de conexión.");
+        } finally {
+          btn.disabled = false;
+          btn.innerText = "GUARDAR GASTO";
+        }
+      }
+
+      function renderTarjetas() {
+        const contTarjetas = document.getElementById("contenedorTarjetasMini");
+        const contGastos = document.getElementById("contenedorGastosTarjeta");
+        const tituloGastos = document.getElementById("tituloGastosSeleccionada");
+        
+        if(datosTarjetas.tarjetas.length === 0) {
+          contTarjetas.innerHTML = `<div class="text-center small text-muted w-100 py-4">No hay tarjetas registradas.</div>`;
+          contGastos.innerHTML = "";
+          tituloGastos.classList.add("d-none");
+          return;
+        }
+
+        let todosLosMovimientos = [];
+        ["personal", "trabajos"].forEach((h) => {
+          if (db[h]) todosLosMovimientos = todosLosMovimientos.concat(db[h]);
+        });
+
+        const hoy = new Date();
+        const hoyAnioMes = hoy.getFullYear() * 12 + hoy.getMonth();
+        tarjetasProcesadasHtml = {}; 
+
+        contTarjetas.innerHTML = datosTarjetas.tarjetas.map(t => {
+          const tarjetaString = `${t.banco} (*${t.terminacion})`;
+          const movsTarjeta = todosLosMovimientos.filter(m => m[8] === tarjetaString);
+
+          let grupos = {};
+          movsTarjeta.forEach(m => {
+            const grupoId = m[13] || m[1]; 
+            if (!grupos[grupoId]) grupos[grupoId] = [];
+            grupos[grupoId].push(m);
+          });
+
+          let gastosActivosHtml = "";
+          let tieneGastos = false;
+
+          for (let grupoId in grupos) {
+            const cuotas = grupos[grupoId];
+            cuotas.sort((a, b) => (parseInt(a[10]) || 0) - (parseInt(b[10]) || 0));
+
+            const primeraCuota = cuotas[0];
+            const totalCuotas = parseInt(primeraCuota[9]) || cuotas.length;
+            const montoCuota = parseFloat(primeraCuota[3]) || 0; 
+            const montoTotalProducto = parseFloat(primeraCuota[12]) || (montoCuota * totalCuotas);
+            const conceptoBase = primeraCuota[1].replace(/\s\(Cuota\s\d+\/\d+\)/, "");
+            const diaVencimiento = primeraCuota[11] || "N/A";
+
+            let numPasadas = 0;
+            cuotas.forEach(m => {
+              const fCuota = new Date(m[0]);
+              const cuotaAnioMes = fCuota.getFullYear() * 12 + fCuota.getMonth();
+              if (cuotaAnioMes < hoyAnioMes) numPasadas++;
+            });
+
+            if (numPasadas >= totalCuotas) continue; 
+
+            tieneGastos = true;
+            const cuotaActualN = numPasadas + 1;
+            const quedaPagar = montoCuota * (totalCuotas - numPasadas);
+            const ultimaCuota = cuotas[cuotas.length - 1];
+            const fUltima = new Date(ultimaCuota[0]);
+            const nombresMeses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+            const finalizaTexto = `${nombresMeses[fUltima.getUTCMonth()]} ${fUltima.getUTCFullYear()}`;
+
+            gastosActivosHtml += `
+              <div class="gasto-tarjeta-item" style="border-left: 4px solid ${t.color};">
+                <div class="d-flex justify-content-between align-items-start">
+                  <div>
+                    <strong style="color: var(--text);">${conceptoBase}</strong>
+                    <div class="text-muted" style="font-size:0.75rem; margin-top:2px;">
+                      Cuota ${cuotaActualN} de ${totalCuotas} | Vence: Día ${diaVencimiento}
+                    </div>
+                    <div class="text-secondary" style="font-size:0.72rem;">
+                      Total: $${montoTotalProducto.toLocaleString("es-AR", {minimumFractionDigits:2})} | Cuota: $${montoCuota.toLocaleString("es-AR", {minimumFractionDigits:2})}
+                    </div>
+                  </div>
+                  <div class="text-end">
+                    <span class="badge" style="background-color: var(--accent-pink); font-size:0.68rem;">Resta $${quedaPagar.toLocaleString("es-AR", {minimumFractionDigits:2})}</span>
+                    <div class="text-muted mt-1" style="font-size:0.65rem;">Fin: ${finalizaTexto}</div>
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+
+          if (!tieneGastos) {
+            gastosActivosHtml = `<div class="small text-center text-muted p-3">No hay gastos activos para esta tarjeta.</div>`;
+          }
+
+          tarjetasProcesadasHtml[t.id] = gastosActivosHtml;
+
+          return `
+          <div class="tarjeta-mini" id="tarjeta-ui-${t.id}" style="background: linear-gradient(135deg, ${t.color} 0%, rgba(50,50,50,0.85) 100%);" onclick="mostrarGastosTarjeta(${t.id}, '${t.color}')">
+            <div class="d-flex justify-content-between">
+              <span class="fw-bold text-white shadow-sm" style="font-size: 0.9rem;">${t.banco.toUpperCase()}</span>
+              <i class="bi bi-x-circle-fill text-white-50" style="cursor:pointer; font-size: 1.1rem;" onclick="event.stopPropagation(); eliminarTarjeta(${t.id})"></i>
+            </div>
+            <div class="mt-auto">
+              <div style="font-family: monospace; letter-spacing: 2px; font-size: 1.15rem;">**** ${t.terminacion}</div>
+            </div>
+          </div>
+          `;
+        }).join("");
+
+        // Seleccionar automáticamente la primera tarjeta si existen
+        if (datosTarjetas.tarjetas.length > 0) {
+          mostrarGastosTarjeta(datosTarjetas.tarjetas[0].id, datosTarjetas.tarjetas[0].color);
+        }
+      }
+
+      function mostrarGastosTarjeta(id, color) {
+        document.querySelectorAll('.tarjeta-mini').forEach(el => {
+          el.style.border = "2px solid transparent";
+          el.style.transform = "scale(0.95)";
+          el.style.opacity = "0.7";
+        });
+        
+        const cardEl = document.getElementById(`tarjeta-ui-${id}`);
+        if(cardEl) {
+          cardEl.style.border = `2px solid var(--text)`;
+          cardEl.style.transform = "scale(1)";
+          cardEl.style.opacity = "1";
+        }
+
+        const contGastos = document.getElementById("contenedorGastosTarjeta");
+        const tituloGastos = document.getElementById("tituloGastosSeleccionada");
+        
+        tituloGastos.classList.remove("d-none");
+        contGastos.innerHTML = tarjetasProcesadasHtml[id] || "";
+      }
+
+      // ===============================================
 
       function verTab(n) {
-        document.getElementById("cont1").style.display =
-          n === 1 ? "block" : "none";
-        document.getElementById("cont4").style.display =
-          n === 4 ? "block" : "none";
+        document.getElementById("cont1").style.display = n === 1 ? "block" : "none";
+        document.getElementById("cont4").style.display = n === 4 ? "block" : "none";
         document.getElementById("t1").classList.toggle("active", n === 1);
         document.getElementById("t4").classList.toggle("active", n === 4);
-
-        if (n === 1) {
-          document.getElementById("fechaNuevo").value =
-            obtenerFechaHoraActual();
-        }
-
-        if (n === 4) {
-          renderMeses();
-          renderCategoriasFiltro();
-          renderReporte();
-        }
+        if (n === 1) document.getElementById("fechaNuevo").value = obtenerFechaHoraActual();
+        if (n === 4) { renderMeses(); renderCategoriasFiltro(); renderReporte(); }
       }
 
       function renderMeses() {
-        const nombres = [
-          "Ene",
-          "Feb",
-          "Mar",
-          "Abr",
-          "May",
-          "Jun",
-          "Jul",
-          "Ago",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dic",
-        ];
-        document.getElementById("contenedorMeses").innerHTML = nombres
-          .map(
-            (m, i) =>
-              `<div class="pill-cat ${mesesSeleccionados.includes(i) ? "active" : ""}" style="font-size: 0.65rem; padding: 4px 10px;" onclick="toggleMes(${i})">${m}</div>`,
-          )
-          .join("");
+        const nombres = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+        document.getElementById("contenedorMeses").innerHTML = nombres.map((m, i) => `<div class="pill-cat ${mesesSeleccionados.includes(i) ? "active" : ""}" style="font-size: 0.65rem; padding: 4px 10px;" onclick="toggleMes(${i})">${m}</div>`).join("");
       }
 
       function toggleMes(i) {
-        if (mesesSeleccionados.includes(i)) {
-          if (mesesSeleccionados.length > 1)
-            mesesSeleccionados = mesesSeleccionados.filter((m) => m !== i);
-        } else {
-          mesesSeleccionados.push(i);
-        }
-        renderMeses();
-        renderReporte();
+        if (mesesSeleccionados.includes(i)) { if (mesesSeleccionados.length > 1) mesesSeleccionados = mesesSeleccionados.filter((m) => m !== i); } else { mesesSeleccionados.push(i); }
+        renderMeses(); renderReporte();
       }
 
       function renderCategoriasFiltro() {
         const h = document.getElementById("hojaMain").value;
         const todas = [...new Set([...CATS_BASE[h], ...categoriasExtra[h]])];
-        document.getElementById("contenedorCategoriasFiltro").innerHTML =
-          `<div class="pill-cat ${filtrosCategorias.length === 0 ? "active" : ""}" onclick="toggleFiltroCat('TODAS')">Todas</div>` +
-          todas
-            .map(
-              (c) =>
-                `<div class="pill-cat ${filtrosCategorias.includes(c) ? "active" : ""}" onclick="toggleFiltroCat('${c}')">${c}</div>`,
-            )
-            .join("");
+        document.getElementById("contenedorCategoriasFiltro").innerHTML = `<div class="pill-cat ${filtrosCategorias.length === 0 ? "active" : ""}" onclick="toggleFiltroCat('TODAS')">Todas</div>` + todas.map((c) => `<div class="pill-cat ${filtrosCategorias.includes(c) ? "active" : ""}" onclick="toggleFiltroCat('${c}')">${c}</div>`).join("");
       }
 
       function toggleFiltroCat(cat) {
-        if (cat === "TODAS") filtrosCategorias = [];
-        else {
-          if (filtrosCategorias.includes(cat))
-            filtrosCategorias = filtrosCategorias.filter((c) => c !== cat);
-          else filtrosCategorias.push(cat);
-        }
-        renderCategoriasFiltro();
-        renderReporte();
+        if (cat === "TODAS") filtrosCategorias = []; else { if (filtrosCategorias.includes(cat)) filtrosCategorias = filtrosCategorias.filter((c) => c !== cat); else filtrosCategorias.push(cat); }
+        renderCategoriasFiltro(); renderReporte();
       }
 
       function renderReporte() {
         let todos = [];
-        ["personal", "trabajos"].forEach((h) => {
-          if (db[h])
-            db[h].forEach((m, i) =>
-              todos.push({
-                d: m,
-                id: i + 2,
-                h: h.charAt(0).toUpperCase() + h.slice(1),
-              }),
-            );
-        });
-        const query = document
-          .getElementById("inputBusqueda")
-          .value.toLowerCase();
+        ["personal", "trabajos"].forEach((h) => { if (db[h]) db[h].forEach((m, i) => todos.push({ d: m, id: i + 2, h: h.charAt(0).toUpperCase() + h.slice(1) })); });
+        const query = document.getElementById("inputBusqueda").value.toLowerCase();
         let filtrados = todos.filter((x) => {
           const f = new Date(x.d[0]);
-          const pasaMes = mesesSeleccionados.includes(f.getUTCMonth());
-          const pasaCat =
-            filtrosCategorias.length === 0 ||
-            filtrosCategorias.includes(x.d[4]);
-          const pasaBus = !query || x.d[1].toLowerCase().includes(query);
-          return pasaMes && pasaCat && pasaBus;
+          return mesesSeleccionados.includes(f.getUTCMonth()) && (filtrosCategorias.length === 0 || filtrosCategorias.includes(x.d[4])) && (!query || x.d[1].toLowerCase().includes(query));
         });
-        filtrados.sort((a, b) =>
-          criterioOrden === "fecha"
-            ? new Date(b.d[0]) - new Date(a.d[0])
-            : b.id - a.id,
-        );
-        document.getElementById("listaDetallada").innerHTML = filtrados
-          .map((x) => {
-            const ing = parseFloat(x.d[2]) || 0,
-              monto = ing || parseFloat(x.d[3]);
-            const f = new Date(x.d[0]),
-              fLab = `${f.getUTCDate().toString().padStart(2, "0")}/${(f.getUTCMonth() + 1).toString().padStart(2, "0")}`;
-            return `<div class="mov-fila" id="fila-${x.h}-${x.id}" onclick="toggleCheck('${x.h}', ${x.id})">
-                <div class="d-flex align-items-center gap-2">
-                  <input type="checkbox" class="form-check-input chk-mov" value="${ing ? monto : -monto}" data-h="${x.h}" data-id="${x.id}" onclick="event.stopPropagation(); sumarSeleccion(this)">
-                  <div><div class="small fw-bold">${x.d[1]} <span class="text-muted fw-normal">(${fLab})</span></div><div style="font-size:0.6rem; color:#888">${x.h} | ${x.d[4]}</div></div>
+        filtrados.sort((a, b) => criterioOrden === "fecha" ? new Date(b.d[0]) - new Date(a.d[0]) : b.id - a.id);
+        document.getElementById("listaDetallada").innerHTML = filtrados.map((x) => {
+          const ing = parseFloat(x.d[2]) || 0, monto = ing || parseFloat(x.d[3]);
+          const f = new Date(x.d[0]), fLab = `${f.getUTCDate().toString().padStart(2, "0")}/${(f.getUTCMonth() + 1).toString().padStart(2, "0")}`;
+          const detalleNota = x.d[7] ? `<div class="mt-1 text-muted" style="font-size: 0.7rem;"><i class="bi bi-card-text"></i> ${x.d[7]}</div>` : '';
+          const paramDetalle = (x.d[7] || "").replace(/'/g, "\\'");
+          const paramConcepto = (x.d[1] || "").replace(/'/g, "\\'");
+
+          return `<div class="mov-fila" id="fila-${x.h}-${x.id}" onclick="toggleCheck('${x.h}', ${x.id})">
+              <div class="d-flex align-items-start gap-2">
+                <input type="checkbox" class="form-check-input chk-mov mt-1" value="${ing ? monto : -monto}" data-h="${x.h}" data-id="${x.id}" onclick="event.stopPropagation(); sumarSeleccion(this)">
+                <div>
+                  <div class="small fw-bold">${x.d[1]} <span class="text-muted fw-normal">(${fLab})</span></div>
+                  <div style="font-size:0.6rem; color:#888">${x.h} | ${x.d[4]}</div>
+                  ${detalleNota}
                 </div>
-                <div class="text-end"><div class="${ing > 0 ? "v-ing" : "v-egr"}">$${monto.toLocaleString("es-AR")}</div>
+              </div>
+              <div class="text-end">
+                <div class="${ing > 0 ? "v-ing" : "v-egr"}">$${monto.toLocaleString("es-AR")}</div>
                 <div class="iconos-accion mt-1">
-                 <i class="bi bi-pencil-square text-muted me-2" 
-   onclick="event.stopPropagation(); abrirEditor('${x.h}', ${x.id}, '${x.d[1]}', ${monto}, '${ing ? "Ingreso" : "Egreso"}', '${x.d[4]}', '${x.d[5]}', '${x.d[6]}')"></i>
+                  <i class="bi bi-pencil-square text-muted me-2" onclick="event.stopPropagation(); abrirEditor('${x.h}', ${x.id}, '${paramConcepto}', ${monto}, '${ing ? "Ingreso" : "Egreso"}', '${x.d[4]}', '${x.d[5]}', '${x.d[6]}', '${paramDetalle}')"></i>
                   <i class="bi bi-trash3 text-danger" onclick="event.stopPropagation(); eliminarMov('${x.h}', ${x.id})"></i>
-                </div></div>
-              </div>`;
-          })
-          .join("");
+                </div>
+              </div>
+            </div>`;
+        }).join("");
       }
 
-      function toggleCheck(h, id) {
-        const fila = document.getElementById(`fila-${h}-${id}`);
-        const cb = fila.querySelector(".chk-mov");
-        cb.checked = !cb.checked;
-        sumarSeleccion(cb);
-      }
-
-      function sumarSeleccion(cb) {
-        sumaAcumulada += parseFloat(cb.value) * (cb.checked ? 1 : -1);
-        cb.closest(".mov-fila").classList.toggle("selected", cb.checked);
-        document.getElementById("totalSeleccionado").innerText =
-          sumaAcumulada.toLocaleString("es-AR", { minimumFractionDigits: 2 });
-        document.getElementById("floatSuma").style.display =
-          Math.abs(sumaAcumulada) < 0.01 ? "none" : "block";
-      }
-
-      function seleccionarTodo() {
-        const checks = document.querySelectorAll(".chk-mov");
-        const algunoSinCheck = Array.from(checks).some((c) => !c.checked);
-        sumaAcumulada = 0;
-        checks.forEach((c) => {
-          c.checked = algunoSinCheck;
-          c.closest(".mov-fila").classList.toggle("selected", c.checked);
-          if (c.checked) sumaAcumulada += parseFloat(c.value);
-        });
-        document.getElementById("totalSeleccionado").innerText =
-          sumaAcumulada.toLocaleString("es-AR", { minimumFractionDigits: 2 });
-        document.getElementById("floatSuma").style.display =
-          sumaAcumulada === 0 ? "none" : "block";
-      }
-
-      function cambiarOrden(o) {
-        criterioOrden = o;
-        document
-          .getElementById("btnOrdenCarga")
-          .classList.toggle("active", o === "carga");
-        document
-          .getElementById("btnOrdenFecha")
-          .classList.toggle("active", o === "fecha");
-        renderReporte();
-      }
-
-      // --- LOGICA DEL MODAL DE CREDITO ---
-      function verificarMetodo(selectObj) {
-        if (selectObj.value === "Crédito") {
-          modalCred.show();
-        } else {
-          // Si cambia a otra cosa, reseteamos los valores ocultos
-          document.getElementById("hiddenCuotas").value = "1";
-          document.getElementById("hiddenMontoCuota").value = "0";
-        }
-      }
-
-      function cancelarCredito() {
-        document.getElementById("metodoNuevo").value = "Digital"; // Fallback si cancela
-        document.getElementById("hiddenCuotas").value = "1";
-        document.getElementById("hiddenMontoCuota").value = "0";
-        modalCred.hide();
-      }
-
-      function confirmarCredito() {
-        const cuotas = document.getElementById("inputCuotasModal").value;
-        const montoCuota = document.getElementById(
-          "inputMontoCuotaModal",
-        ).value;
-
-        if (
-          !cuotas ||
-          !montoCuota ||
-          montoCuota === "0,00" ||
-          montoCuota === ""
-        ) {
-          alert("Por favor completa las cuotas y el monto de cada una.");
-          return;
-        }
-
-        // Guardamos los valores en los inputs ocultos del formulario principal
-        document.getElementById("hiddenCuotas").value = cuotas;
-        document.getElementById("hiddenMontoCuota").value = montoCuota;
-
-        // Autocalculamos el Total en el input principal para que quede a la vista
-        let valorLimpio =
-          parseFloat(montoCuota.replace(/\./g, "").replace(",", ".")) || 0;
-        let total = valorLimpio * parseInt(cuotas);
-
-        // Formatear a moneda con separador de miles
-        let totalFormat = total.toFixed(2).replace(".", ",");
-        totalFormat = totalFormat
-          .toString()
-          .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-
-        document.getElementById("montoPrincipal").value = totalFormat;
-
-        modalCred.hide();
-      }
-      // -----------------------------------
+      function toggleCheck(h, id) { const fila = document.getElementById(`fila-${h}-${id}`); const cb = fila.querySelector(".chk-mov"); cb.checked = !cb.checked; sumarSeleccion(cb); }
+      function sumarSeleccion(cb) { sumaAcumulada += parseFloat(cb.value) * (cb.checked ? 1 : -1); cb.closest(".mov-fila").classList.toggle("selected", cb.checked); document.getElementById("totalSeleccionado").innerText = sumaAcumulada.toLocaleString("es-AR", { minimumFractionDigits: 2 }); document.getElementById("floatSuma").style.display = Math.abs(sumaAcumulada) < 0.01 ? "none" : "block"; }
+      function seleccionarTodo() { const checks = document.querySelectorAll(".chk-mov"); const algunoSinCheck = Array.from(checks).some((c) => !c.checked); sumaAcumulada = 0; checks.forEach((c) => { c.checked = algunoSinCheck; c.closest(".mov-fila").classList.toggle("selected", c.checked); if (c.checked) sumaAcumulada += parseFloat(c.value); }); document.getElementById("totalSeleccionado").innerText = sumaAcumulada.toLocaleString("es-AR", { minimumFractionDigits: 2 }); document.getElementById("floatSuma").style.display = sumaAcumulada === 0 ? "none" : "block"; }
+      function cambiarOrden(o) { criterioOrden = o; document.getElementById("btnOrdenCarga").classList.toggle("active", o === "carga"); document.getElementById("btnOrdenFecha").classList.toggle("active", o === "fecha"); renderReporte(); }
 
       async function prepararEnvio(e, modo) {
         e.preventDefault();
-        const form = e.target;
-        const btn = form.querySelector('button[type="submit"]');
-        const fd = new FormData(form);
-
-        const fechaInputId = modo === "editar" ? "editFecha" : "fechaNuevo";
-        const fechaInput = document.getElementById(fechaInputId);
-        let fechaValor = fechaInput ? fechaInput.value : null;
-        if (!fechaValor) {
-          alert("La fecha está vacía o inválida");
-          return;
-        }
-
-        const fechaLocal = new Date(fechaValor);
-        if (isNaN(fechaLocal.getTime())) {
-          alert("Fecha inválida");
-          return;
-        }
-
-        const catSeleccionada = fd.get("cat_select");
-        if (!catSeleccionada) {
-          alert("Por favor, selecciona una categoría.");
-          return;
-        }
-
-        // Sincronización final antes de enviar por si el metodo no es crédito
-        if (modo === "nuevo" && fd.get("metodo") !== "Crédito") {
-          fd.set("cuotas", "1");
-          fd.set("monto_cuota", fd.get("monto"));
-        }
-
+        const form = e.target; const btn = form.querySelector('button[type="submit"]'); const fd = new FormData(form);
+        const fechaInput = document.getElementById(modo === "editar" ? "editFecha" : "fechaNuevo");
+        if (!fechaInput || !fechaInput.value) { alert("Fecha inválida"); return; }
+        const fechaLocal = new Date(fechaInput.value);
         fd.set("concepto", fd.get("concepto")?.trim() || "-");
-        fd.set(
-          "categoria",
-          catSeleccionada === "OTRA"
-            ? fd.get("categoria_nueva")
-            : catSeleccionada,
-        );
-        fd.set("fecha_manual", fechaValor);
-        fd.append(
-          "action",
-          modo === "editar" ? "edit_movimiento" : "add_movimiento",
-        );
-        const timestamp = fechaLocal.getTime();
-        fd.set("fecha_manual", timestamp.toString());
-        btn.disabled = true;
-        btn.innerText = "...";
-
+        fd.set("detalle", fd.get("detalle")?.trim() || "");
+        fd.set("categoria", fd.get("cat_select") === "OTRA" ? fd.get("categoria_nueva") : fd.get("cat_select"));
+        fd.append("action", modo === "editar" ? "edit_movimiento" : "add_movimiento");
+        fd.set("fecha_manual", fechaLocal.getTime().toString());
+        btn.disabled = true; btn.innerText = "...";
         try {
-          const resp = await fetch(scriptURL, { method: "POST", body: fd });
-          if (modo === "editar") modalEdit.hide();
-          else {
-            form.reset();
-            document.getElementById("fechaNuevo").value =
-              obtenerFechaHoraActual();
-            // Limpiar campos ocultos también
-            document.getElementById("hiddenCuotas").value = "1";
-            document.getElementById("hiddenMontoCuota").value = "0";
-          }
+          await fetch(scriptURL, { method: "POST", body: fd });
+          if (modo === "editar") modalEdit.hide(); else { form.reset(); document.getElementById("fechaNuevo").value = obtenerFechaHoraActual(); }
           await cargar();
-        } catch (error) {
-          console.error("Error:", error);
-          alert("Error al guardar. Revisa la consola.");
-        } finally {
-          btn.disabled = false;
-          btn.innerText = modo === "editar" ? "ACTUALIZAR" : "GUARDAR REGISTRO";
-        }
+        } catch (error) { alert("Error al guardar."); } finally { btn.disabled = false; btn.innerText = modo === "editar" ? "ACTUALIZAR" : "GUARDAR REGISTRO"; }
       }
 
       async function cargar() {
@@ -829,106 +905,46 @@
         categoriasExtra = { Personal: [], Trabajos: [] };
         ["personal", "trabajos"].forEach((k) => {
           const hN = k === "personal" ? "Personal" : "Trabajos";
-          db[k].forEach((m) => {
-            if (
-              m[4] &&
-              !CATS_BASE[hN].includes(m[4]) &&
-              !categoriasExtra[hN].includes(m[4])
-            )
-              categoriasExtra[hN].push(m[4]);
-          });
+          if(db[k]) db[k].forEach((m) => { if (m[4] && !CATS_BASE[hN].includes(m[4]) && !categoriasExtra[hN].includes(m[4])) categoriasExtra[hN].push(m[4]); });
         });
         actualizarCategoriasDinamicas();
         renderReporte();
+        // Si el gestor de tarjetas está abierto, actualizamos su info
+        if (modalGestorTarjetas && document.getElementById("modalGestorTarjetas").classList.contains("show")) {
+            renderTarjetas();
+        }
       }
 
       function actualizarCategoriasDinamicas(hojaForzada, comboForzado) {
         const h = hojaForzada || document.getElementById("hojaMain").value;
         const sel = comboForzado || document.getElementById("catDinamicaNuevo");
         const todas = [...new Set([...CATS_BASE[h], ...categoriasExtra[h]])];
-        sel.innerHTML =
-          `<option value="" disabled selected>Elegir...</option>` +
-          todas.map((c) => `<option value="${c}">${c}</option>`).join("") +
-          `<option value="OTRA">+ NUEVA</option>`;
+        sel.innerHTML = `<option value="" disabled selected>Elegir...</option>` + todas.map((c) => `<option value="${c}">${c}</option>`).join("") + `<option value="OTRA">+ NUEVA</option>`;
       }
 
-      function checkManual(el, id) {
-        document.getElementById(id).style.display =
-          el.value === "OTRA" ? "block" : "none";
-      }
+      function checkManual(el, id) { document.getElementById(id).style.display = el.value === "OTRA" ? "block" : "none"; }
 
-      function abrirEditor(h, id, con, mon, tip, cat, met, fec) {
-        document.getElementById("editId").value = id;
-        document.getElementById("editHoja").value = h;
-        document.getElementById("editConcepto").value = con;
-
-        document.getElementById("editFecha").value = fec;
-
-        const inputM = document.getElementById("editMonto");
-        inputM.value = parseFloat(mon).toFixed(2).replace(".", "");
-        inputM.dispatchEvent(new Event("input", { bubbles: true }));
-        document.getElementById("editTipo").value = tip;
-        document.getElementById("editMetodo").value = met;
-
-        const sel = document.getElementById("catDinamicaEdit");
-        actualizarCategoriasDinamicas(h, sel);
-        sel.value = [...sel.options].some((o) => o.value === cat)
-          ? cat
-          : "OTRA";
-
-        if (sel.value === "OTRA") {
-          document.getElementById("editCatManual").value = cat;
-        }
-        checkManual(sel, "wrapperManualEdit");
-        modalEdit.show();
+      function abrirEditor(h, id, con, mon, tip, cat, met, fec, det) {
+        document.getElementById("editId").value = id; document.getElementById("editHoja").value = h; document.getElementById("editConcepto").value = con; document.getElementById("editDetalle").value = det || ""; document.getElementById("editFecha").value = fec;
+        const inputM = document.getElementById("editMonto"); inputM.value = parseFloat(mon).toFixed(2).replace(".", ""); inputM.dispatchEvent(new Event("input", { bubbles: true }));
+        document.getElementById("editTipo").value = tip; document.getElementById("editMetodo").value = met;
+        const sel = document.getElementById("catDinamicaEdit"); actualizarCategoriasDinamicas(h, sel);
+        sel.value = [...sel.options].some((o) => o.value === cat) ? cat : "OTRA";
+        if (sel.value === "OTRA") document.getElementById("editCatManual").value = cat;
+        checkManual(sel, "wrapperManualEdit"); modalEdit.show();
       }
 
       function abrirAjustes() {
-        const h = document.getElementById("hojaMain").value;
-        const lista = document.getElementById("listaCategoriasGestion");
-        const extras = categoriasExtra[h];
-        if (extras.length === 0) {
-          lista.innerHTML = `<div class="text-center p-3 small text-muted">No hay categorías manuales en la hoja ${h}</div>`;
-        } else {
-          lista.innerHTML = extras
-            .map(
-              (c) => `
-        <div class="list-group-item d-flex justify-content-between align-items-center border-bottom py-2 px-0">
-          <span class="small">${c}</span>
-          <i class="bi bi-trash3 text-danger" style="cursor:pointer" onclick="eliminarCategoriaGlobal('${c}')"></i>
-        </div>
-      `,
-            )
-            .join("");
-        }
+        const h = document.getElementById("hojaMain").value; const lista = document.getElementById("listaCategoriasGestion"); const extras = categoriasExtra[h];
+        lista.innerHTML = extras.length === 0 ? `<div class="text-center p-3 small text-muted">No hay categorías manuales en ${h}</div>` : extras.map((c) => `<div class="list-group-item d-flex justify-content-between align-items-center border-bottom py-2 px-0"><span class="small">${c}</span><i class="bi bi-trash3 text-danger" style="cursor:pointer" onclick="eliminarCategoriaGlobal('${c}')"></i></div>`).join("");
         modalCats.show();
       }
 
       function eliminarCategoriaGlobal(catNombre) {
-        if (
-          confirm(
-            `¿Quieres dejar de ver "${catNombre}" en los filtros?\n\nNota: Si existen movimientos con esta categoría en el Excel, volverá a aparecer al recargar.`,
-          )
-        ) {
-          const h = document.getElementById("hojaMain").value;
-          categoriasExtra[h] = categoriasExtra[h].filter(
-            (c) => c !== catNombre,
-          );
-          actualizarCategoriasDinamicas();
-          renderCategoriasFiltro();
-          renderReporte();
-          modalCats.hide();
-        }
+        if (confirm(`¿Ocultar "${catNombre}" del filtro?`)) { const h = document.getElementById("hojaMain").value; categoriasExtra[h] = categoriasExtra[h].filter((c) => c !== catNombre); actualizarCategoriasDinamicas(); renderCategoriasFiltro(); renderReporte(); modalCats.hide(); }
       }
 
-      async function eliminarMov(h, id) {
-        if (confirm("¿Borrar?")) {
-          await fetch(
-            `${scriptURL}?action=delete_movimiento&hoja=${h}&id=${id}`,
-          );
-          cargar();
-        }
-      }
+      async function eliminarMov(h, id) { if (confirm("¿Borrar?")) { await fetch(`${scriptURL}?action=delete_movimiento&hoja=${h}&id=${id}`); cargar(); } }
 
       document.addEventListener("input", (e) => {
         if (e.target.classList.contains("montoMask")) {
@@ -938,11 +954,7 @@
         }
       });
 
-      function obtenerFechaHoraActual() {
-        const ahora = new Date();
-        ahora.setMinutes(ahora.getMinutes() - ahora.getTimezoneOffset());
-        return ahora.toISOString().slice(0, 16);
-      }
+      function obtenerFechaHoraActual() { const ahora = new Date(); ahora.setMinutes(ahora.getMinutes() - ahora.getTimezoneOffset()); return ahora.toISOString().slice(0, 16); }
 
       window.onload = () => {
         renderMeses();
