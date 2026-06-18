@@ -7,6 +7,7 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <title>Naza App</title>
+    <link rel="icon" type="image/png" href="favicon.png" />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
@@ -482,10 +483,7 @@
                 data-bs-dismiss="modal"
               ></button>
             </div>
-            <p class="small text-muted">
-              Solo puedes eliminar categorías creadas manualmente que no tengan
-              movimientos asociados (o se ocultarán de los filtros).
-            </p>
+            
             <div
               id="listaCategoriasGestion"
               class="list-group list-group-flush"
@@ -502,10 +500,10 @@
           <div class="modal-body">
             <h6 class="fw-bold mb-3">AGREGAR TARJETA</h6>
             <form onsubmit="guardarTarjeta(event)">
-              <label class="small fw-bold">Banco / Emisor:</label>
-              <input type="text" id="tarjBanco" class="form-control" placeholder="Ej: Galicia" required />
+              <label class="small fw-bold">Banco</label>
+              <input type="text" id="tarjBanco" class="form-control" placeholder="" required />
               <label class="small fw-bold mt-2">Terminación (4 dígitos):</label>
-              <input type="text" id="tarjTerminacion" class="form-control" placeholder="Ej: 4567" maxlength="4" required />
+              <input type="text" id="tarjTerminacion" class="form-control" placeholder="" maxlength="4" required />
               <label class="small fw-bold mt-2">Color Distintivo:</label>
               <input type="color" id="tarjColor" class="form-control form-control-color w-100" value="#f06292" required />
               <button type="submit" class="btn-pink mt-3">GUARDAR TARJETA</button>
