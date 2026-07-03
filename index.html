@@ -97,6 +97,16 @@
         color: #4a5a61;
         border: none;
       }
+      .btn-fino.cash {
+        width: 38px;
+        font-size: 0.9rem;
+        padding: 5px 0;
+      }
+      .btn-fino.cash.active {
+        background: #2e7d32;
+        color: white;
+        border-color: #2e7d32;
+      }
 
       .cats-scroll,
       .meses-grid {
@@ -167,6 +177,10 @@
       .v-ing {
         color: #1b5e20;
         font-weight: bold;
+      }
+      .badge-metodo {
+        font-size: 0.7rem;
+        margin-left: 4px;
       }
 
       #floatSuma {
@@ -351,6 +365,14 @@
         <div class="cats-scroll mb-2" id="contenedorCategoriasFiltro"></div>
 
         <div class="d-flex justify-content-end align-items-center gap-1 mb-3">
+          <button
+            class="btn-fino cash"
+            id="btnFiltroEfectivo"
+            onclick="toggleFiltroEfectivo()"
+            title="Ver solo movimientos en efectivo"
+          >
+            💵
+          </button>
           <button class="btn-fino blue" onclick="seleccionarTodo()">
             Todo
           </button>
@@ -442,6 +464,13 @@
                 name="concepto"
                 id="editConcepto"
                 class="form-control mb-2"
+              />
+              <input
+                type="text"
+                name="detalle"
+                id="editDetalle"
+                class="form-control mb-2"
+                placeholder="Detalle adicional (opcional)"
               />
               <select
                 id="catDinamicaEdit"
@@ -574,6 +603,7 @@
       const scriptURL = "https://script.google.com/macros/s/AKfycbxLyYG1h1HaZWlLN5gDWK7znA91SRv7I9vUHEpqPoVVPzElD_UxvV_ZwKzFRWW0bZ92/exec";
       let db = { personal: [], trabajos: [] }, categoriasExtra = { Personal: [], Trabajos: [] };
       let filtrosCategorias = [], criterioOrden = "carga", sumaAcumulada = 0, mesesSeleccionados = [new Date().getMonth()];
+      let filtroEfectivoActivo = false;
       const CATS_BASE = {
         Personal: ["Compras", "Servicios", "Salud", "Transporte"],
         Trabajos: ["Sueldo", "Insumos", "Viáticos", "Herramientas"],
@@ -837,13 +867,19 @@
         renderCategoriasFiltro(); renderReporte();
       }
 
+      function toggleFiltroEfectivo() {
+        filtroEfectivoActivo = !filtroEfectivoActivo;
+        document.getElementById("btnFiltroEfectivo").classList.toggle("active", filtroEfectivoActivo);
+        renderReporte();
+      }
+
       function renderReporte() {
         let todos = [];
         ["personal", "trabajos"].forEach((h) => { if (db[h]) db[h].forEach((m, i) => todos.push({ d: m, id: i + 2, h: h.charAt(0).toUpperCase() + h.slice(1) })); });
         const query = document.getElementById("inputBusqueda").value.toLowerCase();
         let filtrados = todos.filter((x) => {
           const f = new Date(x.d[0]);
-          return mesesSeleccionados.includes(f.getUTCMonth()) && (filtrosCategorias.length === 0 || filtrosCategorias.includes(x.d[4])) && (!query || x.d[1].toLowerCase().includes(query));
+          return mesesSeleccionados.includes(f.getUTCMonth()) && (filtrosCategorias.length === 0 || filtrosCategorias.includes(x.d[4])) && (!query || x.d[1].toLowerCase().includes(query)) && (!filtroEfectivoActivo || x.d[5] === "Efectivo");
         });
         filtrados.sort((a, b) => criterioOrden === "fecha" ? new Date(b.d[0]) - new Date(a.d[0]) : b.id - a.id);
         document.getElementById("listaDetallada").innerHTML = filtrados.map((x) => {
@@ -852,12 +888,14 @@
           const detalleNota = x.d[7] ? `<div class="mt-1 text-muted" style="font-size: 0.7rem;"><i class="bi bi-card-text"></i> ${x.d[7]}</div>` : '';
           const paramDetalle = (x.d[7] || "").replace(/'/g, "\\'");
           const paramConcepto = (x.d[1] || "").replace(/'/g, "\\'");
+          const esEfectivo = x.d[5] === "Efectivo";
+          const iconoMetodo = esEfectivo ? `<span class="badge-metodo" title="Efectivo">💵</span>` : "";
 
           return `<div class="mov-fila" id="fila-${x.h}-${x.id}" onclick="toggleCheck('${x.h}', ${x.id})">
               <div class="d-flex align-items-start gap-2">
                 <input type="checkbox" class="form-check-input chk-mov mt-1" value="${ing ? monto : -monto}" data-h="${x.h}" data-id="${x.id}" onclick="event.stopPropagation(); sumarSeleccion(this)">
                 <div>
-                  <div class="small fw-bold">${x.d[1]} <span class="text-muted fw-normal">(${fLab})</span></div>
+                  <div class="small fw-bold">${x.d[1]} <span class="text-muted fw-normal">(${fLab})</span>${iconoMetodo}</div>
                   <div style="font-size:0.6rem; color:#888">${x.h} | ${x.d[4]}</div>
                   ${detalleNota}
                 </div>
